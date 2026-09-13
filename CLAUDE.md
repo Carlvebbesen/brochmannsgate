@@ -8,4 +8,4 @@ three.js (Vite + TypeScript) model of Brochmanns gate 14C, 4. etg. See `README.m
 - The owner's measurements beat the floor plan (which is not to scale). Confirmed facts: `docs/02-measurements.md`.
 - Workflow: research → write findings to `docs/` → ask all questions at once with defaults → build → verify with headless screenshots
   (`window.apartment3d` exposes camera, orbit, setMode and setView) → log the round in `docs/04-changes.md` and `docs/05-open-questions.md`.
-- `npm run build` type-checks and must stay clean.
+- Use bun, not npm. `bun run build` type-checks and must stay clean.

@@ -5,15 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "dev:api": "wrangler dev",
+    "build": "bun run typecheck && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "three": "^0.186.0"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.54.8",
     "@cloudflare/workers-types": "^5.20260911.1",
     "@types/three": "^0.186.0",
     "typescript": "^5.9.3",

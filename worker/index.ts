@@ -121,12 +121,12 @@ function num(value: unknown, min: number, max: number): number | null {
 async function login(request: Request, env: Env, url: URL): Promise<Response> {
   const ip = request.headers.get('CF-Connecting-IP') ?? 'local';
   const { success } = await env.LOGIN_LIMITER.limit({ key: `login:${ip}` });
-  if (!success) return json({ error: 'For mange forsøk. Vent litt.' }, {}, 429);
+  if (!success) return json({ error: 'Too many attempts. Wait a minute.' }, {}, 429);
 
   const body = (await request.json().catch(() => null)) as { password?: unknown } | null;
   const password = typeof body?.password === 'string' ? body.password : '';
   if (!env.EDIT_PASSWORD || !(await sameSecret(password, env.EDIT_PASSWORD))) {
-    return json({ error: 'Feil passord' }, {}, 401);
+    return json({ error: 'Wrong password' }, {}, 401);
   }
   const exp = Date.now() + SESSION_DAYS * 864e5;
   const token = await signToken(exp, env.EDIT_PASSWORD);

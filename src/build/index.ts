@@ -28,6 +28,7 @@ export function buildApartment(mats: MaterialRegistry): ApartmentModel {
   buildOpenings(ctx);
   buildTrim(ctx);
   buildFixtures(ctx);
+  buildKitchen(ctx);
   buildBalcony(ctx);
 
   const passages = doorPassages();

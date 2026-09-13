@@ -11,6 +11,11 @@ const FIXED: Record<string, THREE.Material> = {
     depthWrite: false,
   }),
   handles: new THREE.MeshStandardMaterial({ color: '#9a9a98', roughness: 0.35, metalness: 0.8 }),
+  // Kitchen details. No environment map, so metals keep a low metalness to avoid rendering black.
+  steel: new THREE.MeshStandardMaterial({ color: '#c3c5c5', roughness: 0.3, metalness: 0.45 }),
+  shadowGap: new THREE.MeshStandardMaterial({ color: '#1c1d1e', roughness: 1 }),
+  ovenGlass: new THREE.MeshStandardMaterial({ color: '#34373a', roughness: 0.08, metalness: 0.1 }),
+  hobMarks: new THREE.MeshStandardMaterial({ color: '#6a6d70', roughness: 0.5 }),
 };
 
 /** Surface finish per key; everything else is matte paint. */

@@ -55,7 +55,8 @@ export const paletteGroups: PaletteGroup[] = [
       { key: 'kitchen.bulkhead', label: 'Bulkhead above cabinets', color: '#6f7375' },
       { key: 'kitchen.worktop', label: 'Worktop', color: '#8f8c88' },
       { key: 'kitchen.backsplash', label: 'Backsplash', color: '#b9bbb8' },
-      { key: 'kitchen.appliances', label: 'Hob, oven & sink', color: '#1f2022' },
+      { key: 'kitchen.handles', label: 'Handles', color: '#b4b6b5' },
+      { key: 'kitchen.appliances', label: 'Hob & ovens', color: '#1f2022' },
     ],
   },
   {

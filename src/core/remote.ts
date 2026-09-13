@@ -49,12 +49,12 @@ export class Remote {
         body: JSON.stringify({ password }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
-      if (!res.ok) return { ok: false, error: data.error ?? 'Kunne ikke logge inn' };
+      if (!res.ok) return { ok: false, error: data.error ?? 'Could not sign in' };
       this.editable = true;
       this.available = true;
       return { ok: true };
     } catch {
-      return { ok: false, error: 'Ingen forbindelse til serveren' };
+      return { ok: false, error: 'Could not reach the server' };
     }
   }
 
@@ -86,15 +86,15 @@ export class Remote {
       const data = (await res.json().catch(() => ({}))) as { error?: string; savedAt?: string };
       if (res.status === 401) {
         this.editable = false;
-        this.onStatus?.('error', 'Økten er utløpt – skriv passordet på nytt');
+        this.onStatus?.('error', 'Session expired – enter the password again');
       } else if (!res.ok) {
-        this.onStatus?.('error', data.error ?? 'Kunne ikke lagre');
+        this.onStatus?.('error', data.error ?? 'Could not save');
       } else {
         rememberSeen(data.savedAt);
         this.onStatus?.('saved');
       }
     } catch {
-      this.onStatus?.('error', 'Kunne ikke lagre – ingen forbindelse');
+      this.onStatus?.('error', 'Could not save – no connection');
     } finally {
       this.inFlight = false;
       if (this.pending) void this.flush();
@@ -102,11 +102,15 @@ export class Remote {
   }
 }
 
-/** True when the server's copy is newer than the one this browser last saw. */
+/**
+ * True when the server's copy is newer than the one this browser last saw or saved.
+ * KV reads can lag ~60 s at the edge, so an older copy must never replace a newer local one.
+ */
 export function isNewRemote(savedAt: string | undefined): boolean {
   if (!savedAt) return false;
   try {
-    return localStorage.getItem(SEEN_KEY) !== savedAt;
+    const seen = localStorage.getItem(SEEN_KEY);
+    return !seen || savedAt > seen; // ISO timestamps sort chronologically
   } catch {
     return true;
   }

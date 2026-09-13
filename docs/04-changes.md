@@ -48,3 +48,34 @@ Owner feedback: the entry "looks very good" and the Tvstue opening is "perf".
 - The island was briefly moved south (misreading "1.5–2 m between island and kitchen") and then **reverted on the owner's instruction**.
   It stays at y 3.131–4.031.
 - Findings were also saved to Claude's memory and to a project `CLAUDE.md`.
+
+## Round 5: deployed to Cloudflare (2026-09-13)
+The owner wanted the model online, with colours and view settings shared through Cloudflare KV and editable only with a password.
+Owner answers: visitors can view and try colours locally; colours **and** view settings are stored; changes auto-save; hosted on workers.dev for now;
+Cloudflare account ecvebbesen@gmail.com (Worker `brochmannsgate`, linked to GitHub `Carlvebbesen/brochmannsgate`).
+- **Live**: https://brochmannsgate.ecvebbesen.workers.dev
+- **Worker** `worker/index.ts` serves `dist/` plus `/api/settings` (GET public, PUT editors only), `/api/login` and `/api/logout`.
+  A correct password sets an HttpOnly session cookie (HMAC-signed, 30 days). Login is rate-limited to 10 attempts/min per IP.
+  The server keeps only valid hex colours and clamped view values.
+- **KV** namespace `brochmannsgate-settings` (id `7a5258b5…`), key `settings:v1`.
+- **Password** is the Worker secret `EDIT_PASSWORD` (locally in `.dev.vars`, git-ignored). Changing it signs everyone out.
+- **Client**: `src/core/remote.ts` loads the shared settings on start and auto-saves when unlocked. The panel has a new lock section.
+  View settings (sun, ceilings, labels, section cut) moved into the store, so they are saved too.
+  A visitor's own experiments stay in localStorage until a newer shared version is published.
+- Verified: API tests (no auth, wrong password, forged cookie, validation) and a headless browser flow against production.
+
+## Tooling: npm → bun (2026-09-13)
+- `bun.lock` replaces `package-lock.json`. Scripts, `wrangler.jsonc` `build.command`, README, `docs/06-app.md` and `CLAUDE.md` now use `bun run …`.
+- Verified: `bun run build` is clean.
+
+## Round 6: hex field in the colour picker (2026-09-13)
+Owner report: pasting a hex code into the selection card did nothing — only the native colour wheel (RGB sliders) worked.
+- The field only applied on `change`, so a paste followed by a click in the 3D scene was dropped, and `#` was mandatory.
+- `normalizeHex()` in `src/core/state.ts` now accepts `f5f1e8`, `#fe8` and `#rrggbbaa` (alpha dropped), plus stray whitespace.
+- `src/ui/panel.ts` applies on every `input` (paste included), mirrors the value into the colour swatch, marks an
+  unparseable value with a red border (`.hex.bad`) and restores the live colour on blur. Enter commits.
+
+## Round 7: header above the island removed (2026-09-13)
+Owner request: remove the header above the kitchen island, since that part will also be removed (like pier L below it).
+- Wall `HDR2` (the 2.10 header over the kitchen ↔ corridor opening, x 4.286–4.386, y 3.50–4.98) is gone. The opening now runs
+  floor to ceiling. The `HDR` beam across the corridor mouth stays.

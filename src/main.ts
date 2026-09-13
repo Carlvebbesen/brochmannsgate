@@ -5,6 +5,7 @@ import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer
 import { buildApartment } from './build';
 import { WalkController } from './controls/walk';
 import { MaterialRegistry } from './core/materials';
+import { Remote, isNewRemote, rememberSeen, type SyncStatus } from './core/remote';
 import { ColorStore } from './core/state';
 import { sunDirection } from './core/sun';
 import { toWorld } from './core/geom';
@@ -83,7 +84,7 @@ function setSun(hour: number) {
   sun.color.lerpColors(WARM, WHITE, THREE.MathUtils.clamp(altitude / 0.45, 0, 1));
   hemi.intensity = 1.0 + 0.8 * THREE.MathUtils.clamp(Math.sin(altitude) * 2, 0, 1);
 }
-setSun(16);
+setSun(store.view.sun);
 
 // ---- Navigation
 const orbit = new OrbitControls(camera, renderer.domElement);
@@ -97,17 +98,15 @@ camera.position.copy(PERSPECTIVE_POS);
 const walk = new WalkController(camera, renderer.domElement, apartment.obstacles, apartment.walkable);
 
 let mode: Mode = 'orbit';
-let showCeilings = false;
-let showLabels = true;
-let cutHeight: number | null = null;
 const clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
 const savedOrbit = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
 
 function applyVisibility() {
-  apartment.ceilings.visible = mode === 'walk' || showCeilings;
-  labelObjects.forEach((o) => (o.visible = mode === 'orbit' && showLabels));
-  if (mode === 'orbit' && cutHeight !== null) {
-    clipPlane.constant = cutHeight;
+  const { ceilings, labels, cut } = store.view;
+  apartment.ceilings.visible = mode === 'walk' || ceilings;
+  labelObjects.forEach((o) => (o.visible = mode === 'orbit' && labels));
+  if (mode === 'orbit' && cut !== null) {
+    clipPlane.constant = cut;
     renderer.clippingPlanes = [clipPlane];
   } else {
     renderer.clippingPlanes = [];
@@ -168,7 +167,8 @@ function pick(ndc: THREE.Vector2): Selection | null {
   raycaster.setFromCamera(ndc, camera);
   for (const hit of raycaster.intersectObject(apartment.root, true)) {
     if (!isShown(hit.object)) continue;
-    if (mode === 'orbit' && cutHeight !== null && hit.point.y > cutHeight) continue;
+    const cut = store.view.cut;
+    if (mode === 'orbit' && cut !== null && hit.point.y > cut) continue;
     const ud = hit.object.userData;
     if (ud.faces && hit.face) {
       const i = hit.face.materialIndex;
@@ -194,7 +194,12 @@ function refreshHighlight() {
   highlighted = selection ? mats.materialFor(selection) : null;
   highlighted?.emissive.set('#4f86c6');
 }
-store.onChange(() => {
+store.onChange((c) => {
+  if (c.type === 'view' || c.type === 'all') {
+    applyVisibility();
+    setSun(store.view.sun);
+  }
+  if (c.type === 'all') panel.setViewSettings(store.view);
   const before = highlighted;
   refreshHighlight();
   if (highlighted !== before) highlightUntil = timer.getElapsed() + 1.2;
@@ -218,23 +223,44 @@ window.addEventListener('keydown', (e) => {
 // ---- Panel
 const panel = new Panel(document.getElementById('panel')!, store, {
   setMode,
-  setCeilings: (on) => {
-    showCeilings = on;
-    applyVisibility();
-  },
-  setLabels: (on) => {
-    showLabels = on;
-    applyVisibility();
-  },
-  setCut: (h) => {
-    cutHeight = h;
-    applyVisibility();
-  },
-  setSun,
+  setCeilings: (ceilings) => store.setView({ ceilings }),
+  setLabels: (labels) => store.setView({ labels }),
+  setCut: (cut) => store.setView({ cut }),
+  setSun: (sun) => store.setView({ sun }),
   view: setView,
   select,
+  login: async (password) => {
+    const res = await remote.login(password);
+    if (res.ok) {
+      showSync('saved');
+      // Unlocking publishes what this browser shows, so any local experiments become the shared version.
+      remote.queueSave(store.toJSON());
+    }
+    return res;
+  },
+  logout: async () => {
+    await remote.logout();
+    showSync('idle');
+  },
 });
+panel.setViewSettings(store.view);
 applyVisibility();
+
+// ---- Shared settings (Cloudflare KV via worker/index.ts)
+const remote = new Remote();
+function showSync(status: SyncStatus, message?: string) {
+  panel.showSync({ available: remote.available, editable: remote.editable, status, message });
+}
+remote.onStatus = showSync;
+store.onPersist = (file) => remote.queueSave(file);
+remote.load().then(({ settings }) => {
+  // A newer shared version replaces this browser's local experiments; otherwise keep them.
+  if (settings && isNewRemote(settings.savedAt)) {
+    store.applyRemote(settings);
+    rememberSeen(settings.savedAt);
+  }
+  if (remote.available) showSync('saved');
+});
 
 // ---- Resize & loop
 function resize() {
@@ -248,7 +274,7 @@ new ResizeObserver(resize).observe(viewport);
 resize();
 
 // Handle for debugging from the browser console / automated screenshots.
-Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, select, store } });
+Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, select, store, remote } });
 
 renderer.setAnimationLoop((time) => {
   timer.update(time);

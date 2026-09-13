@@ -175,7 +175,6 @@ export const walls: Wall[] = [
   { id: 'J', kind: 'interior', x0: KIT_X0, x1: CORR_X0, y0: J_Y0, y1: J_Y1 }, // kitchen ↔ bath / entré (C)
   { id: 'D', kind: 'interior', x0: CORR_X0 - INT, x1: CORR_X0, y0: KOPEN_Y, y1: J_Y0 }, // corridor west side
   { id: 'HDR', kind: 'beam', x0: CORR_X0, x1: LIV_W, y0: MOUTH_Y, y1: MOUTH_Y + INT, bottom: 2.1 }, // beam over the corridor mouth
-  { id: 'HDR2', kind: 'beam', x0: CORR_X0 - INT, x1: CORR_X0, y0: MOUTH_Y, y1: KOPEN_Y, bottom: 2.1 }, // header over the kitchen ↔ corridor opening
   { id: 'KW', kind: 'exterior', x0: KOTT_X0 - STAIR, x1: KOTT_X0, y0: BAD_Y1, y1: HOV_Y1 }, // kott west (stairwell)
   { id: 'KS', kind: 'interior', x0: KOTT_X0, x1: LIV_W, y0: KS_Y0, y1: KOTT_Y0 }, // kott front (D3)
   { id: 'KN', kind: 'interior', x0: KOTT_X0, x1: LIV_W, y0: KOTT_Y1, y1: HOV_Y1 }, // solid behind the kott
@@ -261,33 +260,74 @@ export const openings: Opening[] = [
 
 // ---- Built-ins (not furniture): kitchen, bathroom, wardrobe, radiators
 
-/** Base cabinet with a recessed plinth and a worktop overhanging the front. */
-function baseCabinet(r: Rect, front: Side): Fixture[] {
-  const inset = (d: number): Rect => ({
-    x0: r.x0 + (front === '-x' ? d : 0),
-    x1: r.x1 - (front === '+x' ? d : 0),
-    y0: r.y0 + (front === '-y' ? d : 0),
-    y1: r.y1 - (front === '+y' ? d : 0),
-  });
-  return [
-    { key: 'kitchen.fronts', ...inset(0.06), z0: 0, z1: 0.1 },
-    { key: 'kitchen.fronts', ...r, z0: 0.1, z1: WORKTOP - 0.03 },
-    { key: 'kitchen.worktop', ...inset(-0.02), z0: WORKTOP - 0.03, z1: WORKTOP },
-  ];
-}
-
 const tallX1 = CORR_X0 - INT;
 const radiator = (r: Rect): Fixture => ({ key: 'radiators', ...r, z0: 0.15, z1: 0.75 });
 
+// Kitchen cabinets (HTH 2019). Unit widths and front heights are E, in the usual HTH module sizes; fronts go bottom → top.
+const BASE_TOP = WORKTOP - 0.03; // top of the base carcasses, under the 30 mm worktop
+const PLINTH = 0.1;
+const cabDoor = (hinge: 'start' | 'end', height?: number): CabinetFront => ({ kind: 'door', hinge, height });
+/** Drawer stack: the given heights from the bottom, the top drawer takes the rest. */
+const drawers = (...heights: number[]): CabinetFront[] => [
+  ...heights.map((height): CabinetFront => ({ kind: 'drawer', height })),
+  { kind: 'drawer' },
+];
+const base = { z0: 0, z1: BASE_TOP, plinth: PLINTH, worktop: true };
+
+export const kitchenRuns: CabinetRun[] = [
+  // Sink run along wall J: blind corner behind the window leg, sink, integrated dishwasher by the tall units
+  {
+    id: 'sink', front: '-y', x0: KIT_X0, x1: RUN_X1, y0: J_Y0 - 0.6, y1: J_Y0, ...base,
+    units: [
+      { width: 0.65, fronts: [{ kind: 'blank' }] },
+      { width: 0.497, fronts: [cabDoor('start')], sink: true },
+      { fronts: [{ kind: 'drawer' }] },
+    ],
+  },
+  // Leg under the kitchen window, full wall length (owner): two drawer stacks and a narrow pull-out by the corner
+  {
+    id: 'window', front: '+x', x0: KIT_X0, x1: KIT_X0 + 0.6, y0: LIV_D, y1: J_Y0 - 0.62, ...base,
+    units: [
+      { width: 0.6, fronts: drawers(0.3, 0.28) },
+      { width: 0.6, fronts: drawers(0.26, 0.2, 0.16) },
+      { fronts: [{ kind: 'drawer' }] },
+    ],
+  },
+  // Island: pan drawers under the hob (built-in extractor), a door at each end
+  {
+    id: 'island', front: '+y', x0: 2.78, x1: tallX1, y0: ISLAND_Y0, y1: ISLAND_Y0 + 0.9, ...base,
+    units: [
+      { width: 0.353, fronts: [cabDoor('start')] },
+      { width: 0.8, fronts: drawers(0.3, 0.28), hob: true },
+      { fronts: [cabDoor('end')] },
+    ],
+  },
+  // Tall units: oven + compact oven over two drawers, integrated fridge/freezer
+  {
+    id: 'tall', front: '-y', x0: RUN_X1, x1: tallX1, y0: J_Y0 - 0.6, y1: J_Y0, z0: 0, z1: CAB_TOP, plinth: PLINTH,
+    units: [
+      {
+        width: 0.6,
+        fronts: [
+          { kind: 'drawer', height: 0.26 },
+          { kind: 'drawer', height: 0.26 },
+          { kind: 'oven', height: 0.595 },
+          { kind: 'oven', height: 0.455 },
+          cabDoor('start'),
+        ],
+      },
+      { fronts: [cabDoor('end', 0.75), cabDoor('end', 1.03), cabDoor('end')] },
+    ],
+  },
+  // Wall cabinets from the window-wall corner, above the backsplash: two pairs of doors
+  {
+    id: 'wall', front: '-y', x0: KIT_X0, x1: RUN_X1, y0: J_Y0 - 0.35, y1: J_Y0 - 0.01, z0: WORKTOP + BACKSPLASH, z1: CAB_TOP,
+    units: (['start', 'end', 'start', 'end'] as const).map((h) => ({ width: (RUN_X1 - KIT_X0) / 4, fronts: [cabDoor(h)] })),
+  },
+];
+
 export const fixtures: Fixture[] = [
-  // Kitchen: sink run along wall J, leg under the kitchen window, tall units by the corridor, island
-  ...baseCabinet({ x0: KIT_X0, x1: RUN_X1, y0: J_Y0 - 0.6, y1: J_Y0 }, '-y'),
-  ...baseCabinet({ x0: KIT_X0, x1: KIT_X0 + 0.6, y0: LIV_D, y1: J_Y0 - 0.62 }, '+x'), // full wall length under the window (owner)
-  ...baseCabinet({ x0: 2.78, x1: tallX1, y0: ISLAND_Y0, y1: ISLAND_Y0 + 0.9 }, '+y'),
-  { key: 'kitchen.fronts', x0: RUN_X1, x1: tallX1, y0: J_Y0 - 0.54, y1: J_Y0, z0: 0, z1: 0.1 },
-  { key: 'kitchen.fronts', x0: RUN_X1, x1: tallX1, y0: J_Y0 - 0.6, y1: J_Y0, z0: 0.1, z1: CAB_TOP },
-  { key: 'kitchen.fronts', x0: KIT_X0, x1: RUN_X1, y0: J_Y0 - 0.35, y1: J_Y0 - 0.01, z0: WORKTOP + BACKSPLASH, z1: CAB_TOP },
-  // Bulkhead from the cabinet tops to the ceiling, with two vent grilles over the tall units
+  // Kitchen cabinets are in `kitchenRuns`. Bulkhead from the cabinet tops to the ceiling, with two vent grilles over the tall units
   { key: 'kitchen.bulkhead', x0: KIT_X0, x1: RUN_X1, y0: J_Y0 - 0.35, y1: J_Y0, z0: CAB_TOP, z1: CEILING, collide: false },
   { key: 'kitchen.bulkhead', x0: RUN_X1, x1: tallX1, y0: J_Y0 - 0.6, y1: J_Y0, z0: CAB_TOP, z1: CEILING, collide: false },
   { key: 'kitchen.appliances', x0: RUN_X1 + 0.08, x1: RUN_X1 + 0.5, y0: J_Y0 - 0.605, y1: J_Y0 - 0.6, z0: 2.36, z1: 2.44 },

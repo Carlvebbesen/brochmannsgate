@@ -5,7 +5,7 @@
 2. **Hovedsoverom door.** Measured 0.597 from the wardrobe wall and 1.244 from the bed wall, which puts the frame 6.63–7.51.
    But the tiles make the entry's north wall 7.33. The model keeps the 0.88 frame and ends it at 7.33
    (≈0.42 from the wardrobe wall). Please re-measure: distance from the Hovedsoverom door frame to the entry's front-door wall.
-3. **Heights not measured**: the bottom of the corridor beam and the kitchen-opening header (2.10 assumed), and the top of the kitchen cabinets (2.25).
+3. **Heights not measured**: the bottom of the corridor beam (2.10 assumed), and the top of the kitchen cabinets (2.25).
 
 ## Known deviations in the current model
 - **Bedroom wall colours** come from photos; which photo shows Kontor and which Tvstue is uncertain.

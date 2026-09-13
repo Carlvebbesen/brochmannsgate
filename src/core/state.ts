@@ -33,6 +33,15 @@ const HEX = /^#[0-9a-f]{6}$/i;
 
 export const isHex = (v: unknown): v is string => typeof v === 'string' && HEX.test(v);
 
+/** Accepts what people actually paste: `#F5F1E8`, `f5f1e8`, `#fe8`, with stray whitespace. */
+export function normalizeHex(v: string): string | null {
+  const s = v.trim().replace(/^#/, '');
+  if (/^[0-9a-f]{3}$/i.test(s)) return `#${s[0]}${s[0]}${s[1]}${s[1]}${s[2]}${s[2]}`.toLowerCase();
+  if (/^[0-9a-f]{6}$/i.test(s)) return `#${s}`.toLowerCase();
+  if (/^[0-9a-f]{8}$/i.test(s)) return `#${s.slice(0, 6)}`.toLowerCase(); // #rrggbbaa — drop the alpha
+  return null;
+}
+
 export class ColorStore {
   colors: Record<string, string>;
   overrides: Record<string, string> = {};

@@ -1,10 +1,14 @@
 # The app
 
 ```bash
-npm install
-npm run dev     # http://localhost:5173
-npm run build   # type-check + production build
+bun install
+bun run dev       # http://localhost:5173 (the UI; uses the API if dev:api is running)
+bun run dev:api   # the Worker + local KV on :8787 (password from .dev.vars)
+bun run build     # type-check (app + worker) + production build
+bun run deploy    # build + deploy to Cloudflare (wrangler deploy)
 ```
+
+Live at https://brochmannsgate.ecvebbesen.workers.dev. Pushing to GitHub `main` also deploys, through Cloudflare's Git integration.
 
 ## Controls
 - **Dollhouse**: left-drag to orbit, right-drag to pan, scroll to zoom. *3D view* / *Top view* presets. The ceilings are hidden
@@ -18,7 +22,10 @@ npm run build   # type-check + production build
 - Every surface of a type shares one colour key: e.g. `stue.walls`, `entre.tiles`, `kitchen.fronts`, `trim`.
   All keys and defaults are in `src/data/palette.ts`.
 - For a single wall face, *Only this wall surface* gives just that face an accent colour.
-- Colours save automatically in the browser (localStorage). *Export colours* / *Import* move them as JSON, and *Reset* restores the defaults.
+- **Shared settings**: everyone sees the colours and view settings stored in Cloudflare KV. Without the password, changes are
+  only saved in that browser. After *Unlock* with the password, every change (colours, accent walls, sun, ceilings, labels, section cut)
+  auto-saves for everyone. *Lock* signs out. Unlocking publishes what that browser currently shows.
+- *Export colours* / *Import* move them as JSON, and *Reset* restores the defaults (and, when unlocked, saves that for everyone).
 
 ## Code structure
 | Path | Role |
@@ -31,7 +38,10 @@ npm run build   # type-check + production build
 | `src/build/rooms.ts` | Floors, ceilings, floor zones (entry tiles), slabs, room labels |
 | `src/build/trim.ts` | Skirting and cornices along wall-backed edges |
 | `src/build/fixtures.ts`, `balcony.ts` | Built-ins; balcony slab, soffit, balustrade and railing |
-| `src/core/*` | Colour store, material registry, sun position, geometry helpers |
+| `src/core/*` | Colour/view store, material registry, sun position, geometry helpers |
+| `src/core/remote.ts` | Talks to the Worker API: loads shared settings, login/logout, debounced auto-save |
+| `worker/index.ts` | Cloudflare Worker: static assets + `/api/settings`, `/api/login`, `/api/logout` on KV |
+| `wrangler.jsonc` | Worker config: KV binding, login rate limit, build command |
 | `src/controls/walk.ts` | First-person walking with 2D collision |
 | `src/ui/panel.ts` | Side panel |
 

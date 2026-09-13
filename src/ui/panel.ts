@@ -1,5 +1,5 @@
 import { labelFor, paletteGroups } from '../data/palette';
-import { isHex, type ColorStore, type ViewSettings } from '../core/state';
+import { isHex, normalizeHex, type ColorStore, type ViewSettings } from '../core/state';
 import type { SyncStatus } from '../core/remote';
 
 export interface Selection {
@@ -103,15 +103,15 @@ export class Panel {
     this.sync = next;
     const { available, editable, status, message } = next;
     if (!available) {
-      this.syncCard.innerHTML = `<p class="sync-line muted">Frakoblet – endringene lagres bare i denne nettleseren.</p>`;
+      this.syncCard.innerHTML = `<p class="sync-line muted">Offline – changes are only saved in this browser.</p>`;
       return;
     }
     if (!editable) {
       this.syncCard.innerHTML = `
-        <p class="sync-line muted">Du ser de delte fargene. Prøv gjerne egne farger – de lagres bare hos deg.</p>
+        <p class="sync-line muted">You are viewing the shared colours. Feel free to try your own – they are only saved in your browser.</p>
         <form class="unlock">
-          <input type="password" placeholder="Passord for å endre for alle" autocomplete="current-password" />
-          <button type="submit">Lås opp</button>
+          <input type="password" placeholder="Password to edit for everyone" autocomplete="current-password" />
+          <button type="submit">Unlock</button>
         </form>
         ${message ? `<p class="sync-line error">${escapeHtml(message)}</p>` : ''}
       `;
@@ -122,7 +122,7 @@ export class Panel {
         e.preventDefault();
         if (!input.value) return;
         button.disabled = true;
-        button.textContent = 'Sjekker…';
+        button.textContent = 'Checking…';
         const res = await this.actions.login(input.value);
         if (!res.ok) {
           this.showSync({ ...this.sync, message: res.error });
@@ -132,13 +132,13 @@ export class Panel {
       return;
     }
     const text =
-      status === 'saving' ? 'Lagrer…' : status === 'error' ? (message ?? 'Kunne ikke lagre') : 'Lagret for alle';
+      status === 'saving' ? 'Saving…' : status === 'error' ? (message ?? 'Could not save') : 'Saved for everyone';
     this.syncCard.innerHTML = `
       <div class="sync-head">
         <span class="sync-line ${status === 'error' ? 'error' : 'ok'}">${status === 'error' ? '⚠︎' : '●'} ${escapeHtml(text)}</span>
-        <button class="sync-lock">Lås</button>
+        <button class="sync-lock">Lock</button>
       </div>
-      <p class="sync-line muted">Endringer lagres automatisk og vises for alle som åpner siden.</p>
+      <p class="sync-line muted">Changes save automatically and everyone who opens the page sees them.</p>
     `;
     this.syncCard.querySelector('.sync-lock')!.addEventListener('click', () => this.actions.logout());
   }
@@ -165,7 +165,7 @@ export class Panel {
       </div>
       <div class="sel-color">
         <input type="color" value="${hex}" />
-        <input class="hex" value="${hex}" spellcheck="false" maxlength="7" />
+        <input class="hex" value="${hex}" spellcheck="false" maxlength="9" autocapitalize="off" autocomplete="off" />
       </div>
       ${sel.faceId ? `<label class="check accent"><input type="checkbox" ${override ? 'checked' : ''} /> Only this wall surface (accent colour)</label>` : ''}
     `;
@@ -177,8 +177,29 @@ export class Panel {
       if (sel.faceId && accent?.checked) this.store.setOverride(sel.faceId, value);
       else this.store.setColor(sel.key, value);
     };
-    color.addEventListener('input', () => apply(color.value));
-    text.addEventListener('change', () => apply(text.value.trim()));
+    color.addEventListener('input', () => {
+      text.value = color.value;
+      text.classList.remove('bad');
+      apply(color.value);
+    });
+    // Apply as soon as the typed/pasted text is a valid colour — waiting for `change`
+    // meant a paste followed by a click in the scene was silently dropped.
+    const fromText = () => {
+      const normalized = normalizeHex(text.value);
+      text.classList.toggle('bad', normalized === null && text.value.trim() !== '');
+      if (!normalized) return;
+      color.value = normalized;
+      apply(normalized);
+    };
+    text.addEventListener('input', fromText); // also fires for paste
+    text.addEventListener('blur', () => {
+      // Tidy up on the way out: show the colour that is actually in use.
+      text.value = color.value;
+      text.classList.remove('bad');
+    });
+    text.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') text.blur();
+    });
     accent?.addEventListener('change', () => {
       this.store.setOverride(sel.faceId!, accent.checked ? color.value : null);
       if (!accent.checked) this.showSelection(sel);

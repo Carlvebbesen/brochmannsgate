@@ -12,7 +12,7 @@ Walls: exterior 0.30 (E), interior 0.10 (E), 0.20 towards the stairwell (E). Cei
 | Room | Outline | Source |
 |---|---|---|
 | Stue/Kjøkken | 0–5.488 × 0–3.475. Kitchen part x 1.33–4.386 up to y 5.52. The strip east of the hallway ends at the corridor beam (y 3.50) | M + P |
-| Entré | Corridor x 4.386–5.488 (1.102), y 3.50–5.67. It opens into the living room under a beam at y 3.50 and into the kitchen under a header (y 3.50–4.98). Vestibule x 3.40–5.488, y 5.67–7.332 | M |
+| Entré | Corridor x 4.386–5.488 (1.102), y 3.50–5.67. It opens into the living room under a beam at y 3.50 and into the kitchen through a full-height opening (y 3.50–4.98; header removed on request). Vestibule x 3.40–5.488, y 5.67–7.332 | M |
 | Bad | x 1.33–3.28, y 5.67–7.332 (1.95 × 1.662) | P + M |
 | Kott | x 4.698–5.488, y 7.432–8.372 (0.79 × 0.94). Door in line with the front door; solid behind it | M |
 | Hovedsoverom | x 5.588–8.618, y 6.035–8.757 (3.03 × 2.722) | M |
@@ -25,7 +25,7 @@ Building envelope ≈ 9.2 × 9.1 m including walls. The bottom dimension chain o
 ## Walls
 F south facade · G living-room west (V1) · H balcony-door wall (D7) · I kitchen/bathroom facing the balcony (V2, V3) ·
 N1 bathroom north + front-door wall (D1) · A bathroom ↔ entry (D2) · J kitchen ↔ bathroom/entry (C = its entry face) ·
-D corridor west side (y 4.98–5.52) · HDR beam over the corridor mouth, HDR2 header over the kitchen opening (both with underside at 2.10) ·
+D corridor west side (y 4.98–5.52) · HDR beam over the corridor mouth (underside at 2.10) ·
 KW kott west (stairwell) · KS kott front (D3) · KN solid behind the kott ·
 N north facade · E east facade (V4–V6) · K living room/entry ↔ bedrooms (D4, D5, O6) · B12, B23 between bedrooms.
 
@@ -58,4 +58,4 @@ N north facade · E east facade (V4–V6) · K living room/entry ↔ bedrooms (D
   Worktop height 0.90.
 - **Bathroom**: shower glass at x 2.10, floating vanity + mirror cabinet, wall-hung WC, soffit at 2.30 along the south wall.
 - **Radiators**: under V1, V4, V5, V6 (Tvstue radiator at 1.213–1.843 from the south wall, M).
-- Removed on request: the Hovedsoverom wardrobe, and the short wall/column beside the island.
+- Removed on request: the Hovedsoverom wardrobe, the short wall/column beside the island, and the header (HDR2) above it.

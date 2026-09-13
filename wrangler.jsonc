@@ -1,16 +1,21 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "leilighet-3d",
+  // Must match the Worker that Cloudflare's GitHub integration deploys to.
+  "name": "brochmannsgate",
   "main": "worker/index.ts",
   "compatibility_date": "2026-09-13",
+  // `wrangler deploy` (locally or in Cloudflare's GitHub build) builds the app first.
+  "build": { "command": "bun run build" },
   "assets": {
+    "directory": "./dist",
     "binding": "ASSETS",
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
   },
   "kv_namespaces": [
     {
       "binding": "SETTINGS",
-      "id": "PLACEHOLDER_KV_ID"
+      "id": "7a5258b54c1041308fe3163337b415df"
     }
   ],
   "ratelimits": [

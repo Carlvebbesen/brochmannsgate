@@ -46,6 +46,15 @@ export class BuildContext {
     return this.finish(mesh, key, opts);
   }
 
+  /** Round rod along a plan axis ('z' = vertical), centred on `center` at height `z`. */
+  cylinder(key: string, center: Vec2, z: number, radius: number, length: number, axis: 'x' | 'y' | 'z', opts: BoxOptions = {}) {
+    const mesh = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, length, 12), this.mats.get(key));
+    mesh.position.copy(toWorld(center[0], center[1], z));
+    if (axis === 'x') mesh.rotation.z = Math.PI / 2;
+    else if (axis === 'y') mesh.rotation.x = Math.PI / 2;
+    return this.finish(mesh, key, opts);
+  }
+
   private finish(mesh: THREE.Mesh, key: string, opts: BoxOptions) {
     mesh.castShadow = opts.castShadow ?? !this.mats.isFixed(key);
     mesh.receiveShadow = true;
