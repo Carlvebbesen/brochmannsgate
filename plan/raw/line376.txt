@@ -1,0 +1,126 @@
+                                    md:rounded-8" title="Akerselva er 9,8 kilometer lang og strekker seg fra Maridalsvannet i nord til Bjørvika/Paulsenkaia i sør" id="image-53" sizes="(min-width: 1020
+px) 980px" loading="lazy" style="z-index:1;transform-origin:0px 0px;transform:none" srcSet="https://images.finncdn.no/dynamic/1600w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc03856
+5d7.jpg 1600w,https://images.finncdn.no/dynamic/1280w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 1280w,https://images.finncdn.no/dynamic/960w/2026/6/vertical-2/20/0/46
+7/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 960w,https://images.finncdn.no/dynamic/640w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 640w,https://images.finncdn.n
+o/dynamic/320w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 320w,https://images.finncdn.no/dynamic/142w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc03
+8565d7.jpg 142w" data-srcset="https://images.finncdn.no/dynamic/1600w/2026/6/vertical-2/20/0/467/592/160_99a41cbc-2596-4ea4-a9fc-b3da2f9661fb.jpg 1600w,https://images.finncdn.no/dynamic/1280w/2026/6/v
+ertical-2/20/0/467/592/160_99a41cbc-2596-4ea4-a9fc-b3da2f9661fb.jpg 1280w,https://images.finncdn.no/dynamic/960w/2026/6/vertical-2/20/0/467/592/160_99a41cbc-2596-4ea4-a9fc-b3da2f9661fb.jpg 960w,https:
+//images.finncdn.no/dynamic/640w/2026/6/vertical-2/20/0/467/592/160_99a41cbc-2596-4ea4-a9fc-b3da2f9661fb.jpg 640w,https://images.finncdn.no/dynamic/320w/2026/6/vertical-2/20/0/467/592/160_99a41cbc-259
+6-4ea4-a9fc-b3da2f9661fb.jpg 320w,https://images.finncdn.no/dynamic/142w/2026/6/vertical-2/20/0/467/592/160_99a41cbc-2596-4ea4-a9fc-b3da2f9661fb.jpg 142w" alt="Galleribilde"/></li></ul><div class="abs
+olute bottom-0 left-0 right-0 text-center z-10 text-transition mr-16 mb-12 md:mr-24 md:mb-20 justify-end flex"><div class="w-full flex justify-between s-text-inverted"><div class="image-description p-
+8 rounded-4 ml-auto false"><span>1<!-- -->/<!-- -->54</span></div></div></div></a><div class="button-left-container"><button aria-label="Vis forrige bilde" class="button-left2"><svg width="16" height=
+"16" viewBox="0 0 16 16" fill="none" class="blockify inline" xmlns="http://www.w3.org/2000/svg"><path d="M10.5 13.75L5 8.25L10.5 2.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-l
+inejoin="round"></path></svg></button></div><div class="button-right-container"><button aria-label="Vis neste bilde" class="button-right2"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" c
+lass="blockify inline" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 13.75L11 8.25L5.5 2.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button><
+/div></div><div class="z-10 flex gap-8 ml-16 mb-12 sm:ml-24 sm:mb-20 absolute left-0 right-0 bottom-0"><button class="flex items-center gap-8 place-self-end !border-0 !p-8    py-[7px] px-[15px] text-x
+s border rounded-4 font-bold focusable justify-center transition-colors ease-in-out s-text s-bg hover:s-bg-hover active:s-bg-active s-border hover:s-border-hover active:s-border-active         max-w-m
+ax" style="box-shadow:0px 1px 1px 0px rgba(0, 0, 0, 0.16), 0px 1px 6px 0px rgba(0, 0, 0, 0.12)" type="button" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="
+0 0 16 16" fill="none" class="s-icon"><path d="M4 15H2C1.44772 15 1 14.5523 1 14V2C1 1.44772 1.44772 1 2 1H14C14.5523 1 15 1.44772 15 2V14C15 14.5523 14.5523 15 14 15H9.5" stroke="#47474F" stroke-widt
+h="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8.25 5C8.25 5.41421 8.58579 5.75 9 5.75C9.41421 5.75 9.75 5.41421 9.75 5L8.25 5ZM8.25 1L8.25 5L9.75 5L9.75 1L8.25 1Z" fill="#474
+74F"></path><path d="M5 4L5 11" stroke="#47474F" stroke-width="1.5" stroke-linecap="round"></path><path d="M15 10L9 10" stroke="#47474F" stroke-width="1.5" stroke-linecap="round"></path><path d="M5 8H
+1" stroke="#47474F" stroke-width="1.5" stroke-linecap="round"></path><path d="M9.75 8C9.75 7.58579 9.41421 7.25 9 7.25C8.58579 7.25 8.25 7.58579 8.25 8L9.75 8ZM9.75 10L9.75 8L8.25 8L8.25 10L9.75 10Z" 
+fill="#47474F"></path></svg><span class="s-text whitespace-nowrap">Interaktiv plantegning</span></button><button class="flex items-center gap-8 place-self-end !border-0 !p-8    py-[7px] px-[15px] text
+-xs border rounded-4 font-bold focusable justify-center transition-colors ease-in-out s-text s-bg hover:s-bg-hover active:s-bg-active s-border hover:s-border-hover active:s-border-active         max-w
+-max" style="box-shadow:0px 1px 1px 0px rgba(0, 0, 0, 0.16), 0px 1px 6px 0px rgba(0, 0, 0, 0.12)" type="button" role="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://
+www.w3.org/2000/svg" class="s-icon"><path d="M14.2628 4.46273C13.0379 2.42989 10.8092 1.07031 8.26283 1.07031C4.39683 1.07031 1.26283 4.20432 1.26283 8.07031C1.26283 11.9363 4.39683 15.0703 8.26283 15
+.0703C11.1846 15.0703 13.6883 13.2802 14.737 10.737" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M14.5962 2.73697L14.5962 4.73697L12.6637 4.4149" stroke="currentCol
+or" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M11 6.25V11H6V9.34074V6.25" stroke="currentColor" stroke-width="1.03333" stroke-linecap="round" stroke-linejoin="r
+ound"></path><path d="M4.75 6.75L8.5 4.75L12.25 6.75" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="s-text whitespace-nowrap">360° visning</span></butt
+on></div></div></div><div class="fallback flex-col"><img class="object-cover object-center" src="https://images.finncdn.no/dynamic/default/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0a
+fc038565d7.jpg" srcSet="https://images.finncdn.no/dynamic/1600w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 1600w,https://images.finncdn.no/dynamic/1280w/2026/6/vertica
+l-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 1280w,https://images.finncdn.no/dynamic/960w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 960w,https://imag
+es.finncdn.no/dynamic/640w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 640w,https://images.finncdn.no/dynamic/320w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155
+-8177-0afc038565d7.jpg 320w,https://images.finncdn.no/dynamic/142w/2026/6/vertical-2/20/0/467/592/160_40dfd1c6-5288-4155-8177-0afc038565d7.jpg 142w" sizes="(min-width: 1020px) 980px" title="Velkommen 
+til Brochmanns gate 14C! Foto: Marika Mørkestøl." loading="lazy"/></div><p class="text-caption s-text-subtle ml-4 mt-8 truncate-mobile h-[36] md:h-[18] md:truncate">Velkommen til Brochmanns gate 14C! 
+Foto: Marika Mørkestøl.</p></section><div inert="" class="sold-state-read-full relative my-32"><section aria-label="Detaljert informasjon om bolig" class="md:grid md:grid-cols-3 pt-16 mb-8 sm:mb-20"><
+div class="md:col-span-2 md:pr-32"><div class="u-word-break" data-testid="object-details"><div class="!text-m mb-24 py-4 px-8 border-0 rounded-4 text-xs inline-flex bg-[--w-color-badge-warning-backgro
+und] s-text     ">Solgt</div><section aria-label="Tittel" class="overflow-hidden max-w-full" data-testid="object-title"><div data-testid="local-area-name">BJØLSEN</div><h1>Herlig og lys 4-roms leiligh
+et med solrik balkong. Bad fra 2025. Fyring og varmtvann ink.Skjermet, grønt og barnevennlig</h1><button aria-label="Åpne kart for Brochmanns gate 14C, 0470 Oslo" data-testid="map-link" class="text-16
+ s-text-link mt-8 flex items-center select-text!      p-0 text-m leading-[24] bg-transparent focusable ease-in-out inline active:underline hover:underline focus:underline s-text-link  max-w-max" type=
+"button" role="link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><title>Kart</title><path stroke="currentColor" stroke-linecap="round" d="m7.75 12.19
+-2.16.864a.67.67 0 0 1-.495 0l-4.148-1.66a.67.67 0 0 1-.42-.618V1.86c0-.472.477-.794.915-.62l3.653 1.462a.67.67 0 0 0 .495 0L9.91.974a.67.67 0 0 1 .495 0l4.148 1.66c.253.1.42.346.42.619v2.919"></path>
+<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M5.342 2.801v10.111m4.816-11.555V5.69"></path><path stroke="currentColor" d="M14.972 10.264c0 1.596-2.738 4.815-2.889 4.81
+5s-2.889-3.22-2.889-4.815a2.889 2.889 0 1 1 5.778 0Z"></path><path stroke="currentColor" stroke-linecap="round" d="M11.666 10.666h1"></path></svg><span data-testid="object-address" class="pl-4">Brochm
+anns gate 14C, 0470 Oslo</span></button></section><section aria-label="Prisdetaljer" class="mt-40 sm:mt-64 pb-16 border-b" data-testid="pricing-details"><div class="pb-24" data-testid="pricing-incicat
+ive-price"><span class="text-16 block">Prisantydning</span><span class="text-28 font-bold">7 590 000 kr</span></div><dl class="grid md:grid-cols-3 grid-cols-2 gap-16 m-0 hide-if-empty"><div data-testi
+d="pricing-total-price"><dt class="m-0">Totalpris</dt><dd class="m-0 font-bold">7 823 909 kr</dd></div><div data-testid="pricing-registration-charge"><dt class="m-0">Omkostninger</dt><dd class="m-0 fo
+nt-bold">9 496 kr</dd></div><div data-testid="pricing-joint-debt"><dt class="m-0">Fellesgjeld</dt><dd class="m-0 font-bold">224 413 kr</dd></div><div data-testid="pricing-common-monthly-cost"><dt clas
+s="m-0">Felleskost/mnd.</dt><dd class="m-0 font-bold">6 146 kr</dd></div><div data-testid="pricing-collective-assets"><dt class="m-0">Fellesformue</dt><dd class="m-0 font-bold">46 946 kr</dd></div><di
+v data-testid="pricing-tax-value"><dt class="m-0">Formuesverdi</dt><dd class="m-0 font-bold">1 636 621 kr</dd></div></dl><div class="grid md:grid-cols-3 grid-cols-2 mt-24 gap-16" data-testid="pricing-
+links"><div class=" row-span-3" data-testid="pf-finance-link"><div style="margin:-16px 0 0 -16px"></div></div><a href="/realestate/ownershiphistory.html?finnkode=467592160" data-testid="ownership-hist
+ory-link" rel="nofollow">Hva er denne boligen solgt for tidligere?</a><a href="/prisstatistikk/467592160" data-testid="price-statistics-link" rel="nofollow">Prisstatistikk</a></div></section><div clas
+s="mt-8 sm:mt-32" style="margin-bottom:-8px"></div><section aria-labelledby="keyinfo-heading" class="mt-40 pb-16 border-b" data-testid="key-info"><h2 class="h3" id="keyinfo-heading">Nøkkelinfo</h2><dl
+ class="grid md:grid-cols-3 grid-cols-2 pb-8 gap-16 m-0"><div data-testid="info-property-type"><dt class="m-0">Boligtype</dt><dd class="m-0 font-bold">Leilighet</dd></div><div data-testid="info-owners
+hip-type"><dt class="m-0">Eieform</dt><dd class="m-0 font-bold">Andel </dd></div><div data-testid="info-bedrooms"><dt class="m-0">Soverom</dt><dd class="m-0 font-bold">3</dd></div><div data-testid="in
+fo-usable-i-area"><dt class="m-0">Internt bruksareal</dt><dd class="m-0 font-bold">66 m² (BRA-i)</dd></div><div data-testid="info-usable-area"><dt class="m-0">Bruksareal</dt><dd class="m-0 font-bold">
+77 m²</dd></div><div data-testid="info-usable-e-area"><dt class="m-0">Eksternt bruksareal</dt><dd class="m-0 font-bold">11 m² (BRA-e)</dd></div><div data-testid="info-open-area"><dt class="m-0">Balkon
+g/Terrasse</dt><dd class="m-0 font-bold">7 m² (TBA)</dd></div><div data-testid="info-floor"><dt class="m-0">Etasje</dt><dd class="m-0 font-bold">4</dd></div><div data-testid="info-construction-year"><
+dt class="m-0">Byggeår</dt><dd class="m-0 font-bold">1948</dd></div><div class="" data-testid="energy-label"><dt class="m-0">Energimerking</dt><dd class="m-0 font-bold"><svg width="37" height="22" vie
+wBox="0 0 81 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Energimerke C"><path d="M61.7147 45.2261C61.3248 45.6896 60.7485 45.9574 60.141 45.9574L4.10498 45.9574C2.97143 4
+5.9574 2.05249 45.043 2.05249 43.9149L2.0525 4.08527C2.0525 2.9572 2.97143 2.04272 4.10499 2.04272L60.141 2.04273C60.7485 2.04273 61.3248 2.31054 61.7147 2.77409L78.4688 22.6889C79.1071 23.4476 79.107
+1 24.5526 78.4688 25.3113L61.7147 45.2261Z" fill="#C0D731"></path><path d="M60.141 45.9574C60.7485 45.9574 61.3248 45.6896 61.7147 45.2261L78.4688 25.3113L78.5807 25.165C79.1043 24.4156 79.0672 23.400
+2 78.4688 22.6889L61.7147 2.77409C61.3248 2.31054 60.7485 2.04273 60.141 2.04273L4.10499 2.04272L3.89553 2.05369C2.92927 2.15118 2.16148 2.91524 2.06352 3.87683L2.0525 4.08527L2.05249 43.9149C2.05249 
+45.043 2.97143 45.9574 4.10498 45.9574L19.4987 45.9573L19.4985 47.9998L4.10498 48C1.83787 48 -1.98198e-07 46.171 0 43.9149L3.91481e-06 4.08527C4.64195e-06 1.82914 1.83787 0.000178301 4.10499 0.0001784
+84L60.1413 0.000185186C61.3562 0.000297422 62.5084 0.536282 63.2882 1.46328L80.0429 21.3781C81.319 22.8954 81.319 25.1048 80.0429 26.6221L63.2882 46.5369C62.5084 47.4639 61.3562 47.9999 60.1413 48L60.
+141 45.9574ZM4.10498 48L19.4985 47.9998L19.4987 45.9573L4.10498 45.9574L60.141 45.9574L60.1413 48L4.10498 48Z" fill="#202E2D"></path><path d="M29.7611 20.2598C29.7611 19.6448 30.0396 19.0624 30.5193 1
+8.6746L43.4367 8.23002C44.2099 7.60488 45.3225 7.62248 46.0752 8.27174L58.1395 18.6768C58.5893 19.0648 58.8477 19.628 58.8477 20.2203V37.7873C58.8477 38.9153 57.9288 39.8298 56.7952 39.8298H31.8136C30
+.68 39.8298 29.7611 38.9153 29.7611 37.7873V20.2598Z" fill="white"></path><path d="M58.8477 20.2203C58.8477 19.628 58.5893 19.0648 58.1395 18.6768L46.0752 8.27174C45.3225 7.62248 44.2099 7.60488 43.43
+67 8.23002L30.5193 18.6746L30.3494 18.8289C29.9746 19.2086 29.7611 19.7216 29.7611 20.2598V37.7873C29.7611 38.9153 30.68 39.8298 31.8136 39.8298H56.7952C57.8581 39.8298 58.7327 39.0259 58.8376 37.9957
+L58.8477 37.7873V20.2203ZM60.9001 37.7873C60.9001 40.0434 59.0623 41.8724 56.7951 41.8724H31.8136C29.5465 41.8724 27.7086 40.0434 27.7086 37.7873V20.2601C27.7086 19.03 28.2656 17.8653 29.2249 17.0895L
+42.1422 6.64444C43.6885 5.39417 45.9141 5.42969 47.4197 6.72821L59.484 17.1334C60.3835 17.9093 60.9001 19.0356 60.9001 20.2202V37.7873Z" fill="#202E2D"></path><path d="M2.0525 4.08527C2.0525 2.9572 2.
+97143 2.04272 4.10499 2.04272L19.4987 2.04255C20.6322 2.04255 21.5511 2.95702 21.5511 4.08509V43.9147C21.5511 45.0428 20.6322 45.9573 19.4987 45.9573L4.10498 45.9574C2.97143 45.9574 2.05249 45.043 2.0
+5249 43.9149L2.0525 4.08527Z" fill="white"></path><path d="M0 43.9149L3.91481e-06 4.08527C4.64195e-06 1.82914 1.83787 0.000178301 4.10499 0.000178484V2.04272C2.97143 2.04272 2.0525 2.9572 2.0525 4.085
+27L2.05249 43.9149C2.05249 45.043 2.97143 45.9574 4.10498 45.9574L19.4987 45.9573L19.7081 45.9463C20.6744 45.8488 21.4422 45.0847 21.5401 44.1232L21.5511 43.9147V4.08509C21.5511 3.02741 20.7433 2.1579
+5 19.7081 2.05352L19.4987 2.04255V0C21.7658 1.64493e-07 23.6036 1.82896 23.6036 4.08509V43.9147C23.6036 46.1709 21.7656 47.9998 19.4985 47.9998L4.10498 48C1.83787 48 -1.98198e-07 46.171 0 43.9149ZM19.
+4987 0V2.04255L4.10499 2.04272V0.000178484L19.4987 0Z" fill="#202E2D"></path><path d="M7.18372 15.3191L10.5936 6.12764H12.9832L16.4199 15.3191H14.2183L13.4933 13.2444H10.07L9.3451 15.3191H7.18372ZM10.
+701 11.4324H12.8624L11.7884 8.34671L10.701 11.4324Z" fill="#202E2D"></path><path d="M12.1828 41.8722C9.26888 41.8722 7.18372 39.9679 7.18372 37.2764C7.18372 34.6358 9.26888 32.6807 12.1026 32.6807C14.
+161 32.6807 15.8585 33.6202 16.4199 35.0675L14.5219 36.0196C14.161 35.1309 13.2253 34.585 12.1026 34.585C10.4585 34.585 9.28225 35.7022 9.28225 37.2764C9.28225 38.9903 10.3917 40.0567 12.1828 40.0567C
+13.0917 40.0567 13.76 39.9171 14.2278 39.5997V38.3429H12.0758V36.6671H16.1526V40.6407C15.1635 41.4405 13.76 41.8722 12.1828 41.8722Z" fill="#202E2D"></path><path d="M12.0135 18.9005C12.305 18.932 12.5
+389 19.0776 12.9105 19.4042L16.0624 22.2735C16.4872 22.6469 16.5278 23.2929 16.1526 23.7157C15.7774 24.1383 15.1282 24.1778 14.7034 23.8044L12.9105 22.0671V28.085C12.9105 28.649 12.451 29.1062 11.8843
+ 29.1063C11.3175 29.1063 10.858 28.649 10.858 28.085V22.0671L8.8807 23.8054C8.45594 24.1784 7.80766 24.1381 7.43253 23.7157C7.05734 23.2929 7.09691 22.6469 7.52173 22.2735L10.5985 19.5697C11.0233 19.1
+964 11.4874 18.8935 11.8843 18.8935L12.0135 18.9005Z" fill="#202E2D"></path><path d="M44.7853 35.6179C39.5638 35.6179 35.7215 31.8433 35.7215 26.7451C35.7215 21.6469 39.5638 17.8723 44.7853 17.8723C48
+.8 17.8723 51.9033 20.0537 52.8885 23.5097L49.3172 24.7842C48.8 22.7989 47.002 21.5488 44.7853 21.5488C41.7558 21.5488 39.5884 23.6813 39.5884 26.7451C39.5884 29.7844 41.7312 31.9413 44.7853 31.9413C4
+7.0759 31.9413 48.9477 30.5687 49.4403 28.5098L53.0856 29.7354C52.1004 33.3384 48.8738 35.6179 44.7853 35.6179Z" fill="#202E2D"></path></svg></dd></div><div data-testid="info-rooms"><dt class="m-0">Ro
+m</dt><dd class="m-0 font-bold">4</dd></div><div data-testid="info-plot-area"><dt class="m-0">Tomteareal</dt><dd class="m-0 font-bold">1 976 m² (eiet)</dd></div></dl><p class="mt-16"><a href="https://
+hjelpesenter.finn.no/hc/no/articles/15879206709010-Nye-regler-for-m%C3%A5ling-av-areal-og-opplysning-av-areal-i-takstrapporter-fra-01-01-2024" target="_blank" rel="noopener noreferrer">Les mer om bruk
+sareal her</a></p><div data-testid="hide-more-div" class="finn-legacy-browser-support hidden"><section aria-labelledby="preemption" class="py-16" data-testid="html-forkjøpsrett"><h2 class="h3" id="pre
+emption">Forkjøpsrett</h2><div class="description-area whitespace-pre-wrap" data-testid="preemption">Det foreligger forkjøpsrett for medlemmer i borettslaget/ boligbyggelaget. Dersom forkjøpsretten bl
+ir benyttet, vil kjøper bli løst fra den inngåtte kontrakten.</div></section><section aria-labelledby="common-cost" class="py-16" data-testid="html-felleskostnader inkluderer"><h2 class="h3" id="commo
+n-cost">Felleskostnader inkluderer</h2><div class="description-area whitespace-pre-wrap" data-testid="common-cost">Oppvarming og varmtvann (a-konto), vaktmestertjenester, trappevask, betjening av fell
+esgjeld, brukk av fellesvaskeri, felles bygningsforsikring, kommunale avgifter, forretningsførsel, samt øvrig drift og vedlikehold m.m.<br /><br />Herav: <br />Akonto varmtvann: 630,-<br />Felleskostn
+ader: 5 515,65,-<br /><br />Månedlige felleskostnader som ikke er spesifiserte, dekker boligselskapets driftskostnader. Felleskostnadene ble den 01.05-2026 økt med 25% som følge av vindusprosjektet. M
+erk, styret kan endre felleskostnadene med en måneds varsel uten generalforsamlings samtykke. <br /><br />Kjøper må selv tegne innboforsikring.</div></section><section aria-labelledby="cadastreinfo-pa
+rt" class="my-16" data-testid="cadastre-info"><h2 class="h3" id="cadastreinfo-part">Matrikkelinformasjon</h2><div class=""><div>Kommunenr<!-- -->: <!-- -->301</div><div>Gårdsnr<!-- -->: <!-- -->222</d
+iv><div>Bruksnr<!-- -->: <!-- -->67</div><div>Borettslag-navn<!-- -->: <!-- -->Brockmannsgate borettslag</div><div>Borettslag-orgnummer<!-- -->: <!-- -->948 318 245</div><div>Borettslag-andelsnummer<!
+-- -->: <!-- -->47</div></div></section><button class="flex! items-center      p-0 text-m leading-[24] bg-transparent focusable ease-in-out inline active:underline hover:underline focus:underline s-te
+xt-link  max-w-max" data-preview-dont-disable="true" data-testid="hide-more-button" type="button" role="link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16
+ 16"><title>Minus</title><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.5 8h11"></path></svg> <!-- -->Se færre detaljer</button></div><button class
+="mt-32 items-center flex!      p-0 text-m leading-[24] bg-transparent focusable ease-in-out inline active:underline hover:underline focus:underline s-text-link  max-w-max" data-preview-dont-disable="
+true" data-testid="show-more-button" type="button" role="link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><title>Pluss tegn</title><path stroke="cur
+rentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.5 8h11M8 2.5v11"></path></svg> <!-- -->Se flere detaljer</button></section><section class="mt-40 pb-16 border-b" aria
+-labelledby="facilities-heading" data-testid="object-facilities"><h2 class="h3" id="facilities-heading">Fasiliteter</h2><div class="grid md:grid-cols-3 grid-cols-2"><div class="py-4 break-words">Barne
+vennlig</div><div class="py-4 break-words">Fellesvaskeri</div><div class="py-4 break-words">Kjæledyr tillatt</div><div class="py-4 break-words">Parkett</div><div class="py-4 break-words">Rolig</div><d
+iv class="py-4 break-words">Sentralt</div><div class="py-4 break-words">Utsikt</div></div></section><div class="block sm:hidden"></div><section aria-label="Om boligen" data-testid="about-property" cla
+ss="about-section border-b pb-16 undefined"><div class="import-decoration relative finn-legacy-browser-support about-section-default"><div class="pt-16 sm:pt-40" data-testid="om boligen"><h2 class="h3
+">Om boligen</h2><div class="description-area whitespace-pre-wrap">Bo tilbaketrukket i grønne omgivelser, rett ved Akerselva!<br /><br />Dette er en svært lys, gjennomgående og nydelig 4-roms leilighe
+t med solrik balkong beliggende høyt, fritt og skjermet.<br /><br />Selgers sitat: "Jeg har stortrivdes både i leiligheten og i området. Det er en lys og hyggelig bolig med flott utsyn og lite innsyn.
+ Jeg har satt stor pris på det gode naboskapet og det trygge, hyggelige miljøet i området. Det er mange barnefamilier her, og borettslagets sosiale komité arrangerer jevnlig hyggelige treff som bidrar
+ til et fint fellesskap. Beliggenheten er sentral- kort vei til det meste".<br /><br />- Beliggende i 4.etg.<br />- 2,58m takhøyde i stue<br />- Vestvendt balkong<br />- Nye vinduer / balkongdør 2026<
+br />- Lekkert bad fra 2025<br />- HTH kjøkken fra 2019<br />- Fyring og varmtvann ink<br />- 2 boder<br />- Sosial  felles hage/bakgård</div></div></div><div class="hidden"><button class="flex items-
+center !s-text-link -ml-4 p-0     min-h-[44px] min-w-[44px] text-m leading-[24] p-4 rounded-full border-0 inline-flex items-center justify-center hover:bg-clip-padding font-bold focusable justify-cent
+er transition-colors ease-in-out s-icon hover:s-icon-hover active:s-icon-active bg-transparent hover:bg-[--w-color-button-pill-background-hover] active:bg-[--w-color-button-pill-background-active]    
+max-w-max" data-testid="hide-entire-description" data-preview-dont-disable="true" type="button" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16
+ 16"><title>Minus</title><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.5 8h11"></path></svg> Vis mindre</button><span class="sr-only">NB: Knappen 
+for å vise hele beskrivelsen har kun en visuell effekt.</span></div><div class="hidden"><button class="flex! items-center !s-text-link -ml-4 p-0     min-h-[44px] min-w-[44px] text-m leading-[24] p-4 r
+ounded-full border-0 inline-flex items-center justify-center hover:bg-clip-padding font-bold focusable justify-center transition-colors ease-in-out s-icon hover:s-icon-hover active:s-icon-active bg-tr
+ansparent hover:bg-[--w-color-button-pill-background-hover] active:bg-[--w-color-button-pill-background-active]    max-w-max" data-testid="show-entire-description" data-preview-dont-disable="true" typ
+e="button" role="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16"><title>Pluss tegn</title><path stroke="currentColor" stroke-linecap="round" stro
+ke-linejoin="round" stroke-width="1.5" d="M2.5 8h11M8 2.5v11"></path></svg> Vis hele beskrivelsen</button><span class="sr-only">NB: Knappen for å vise hele beskrivelsen har kun en visuell effekt.</spa
+n></div></section><div class="pb-16 mt-40 border-b"><p class="font-bold">Salgsoppgaven beskriver vesentlig og lovpålagt informasjon om eiendommen</p><a href="https://notar.no/api/boliger/c3de710c-db1d
+-4fd2-9919-b1124277f0e2" class=" py-12 px-16 text-m leading-[24] border-0 rounded-8 font-bold focusable justify-center transition-colors ease-in-out s-text-inverted bg-[--w-color-button-primary-backgr
+ound] hover:bg-[--w-color-button-primary-background-hover] active:bg-[--w-color-button-primary-background-active]           inline-block active:no-underline hover:no-underline focus:no-underline text-
+center w-full max-w-full" role="button">Se komplett salgsoppgave</a></div><div class="block sm:hidden"><section aria-labelledby="useful-links-1" class="my-24"><div class="box-border border s-border ro
+unded-8 p-16" data-testid="useful-links"><h2 class="h3" id="useful-links-1">Nyttige lenker</h2><div><div class="break-words mt-8"><a rel="nofollow" href="https://meglervisning.no/salgsoppgave/bestill?
+instid=MSNO&estateid=c3de710c-db1d-4fd2-9919-b1124277f0e2">Bestill komplett, utskriftsvennlig salgsoppgave</a></div><div class="break-words mt-8"><a rel="nofollow" href="https://notar.no/api/boliger/c
+3de710c-db1d-4fd2-9919-b1124277f0e2">Se komplett salgsoppgave</a></div><div class="break-words mt-8"><a rel="nofollow" href="https://my.matterport.com/show/?m=o5P3LBzLZqE">Virtuell visning</a></div></
+div></div></section></div></div></div><div><div class="sm:block hidden"><div>

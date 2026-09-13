@@ -1,0 +1,313 @@
+{
+  "meta": {
+    "address": "Brochmanns gate 14C, 4. etasje",
+    "source_image": "plan/images/plantegning.png",
+    "source_measurements": "plan/04-user-measurements.md",
+    "units": "meters",
+    "coordinate_system": {
+      "origin": "bottom-left outer corner of the living room / building footprint",
+      "x": "east (right on drawing)",
+      "z": "north (up on drawing)",
+      "y": "vertical (up), used for wall/ceiling heights"
+    },
+    "confidence_note": "Plan drawing is NOT to a single consistent pixel scale, especially the balcony/left dimension chain. Room interior sizes are taken from owner on-site measurements where available (confirmed), otherwise from the plan's printed labels; connecting walls, doors, windows and fixtures not explicitly measured are visual estimates from the drawing. See plan/02-floorplan-geometry.md section 10 for a full ambiguity list.",
+    "wall_thickness_m": { "exterior": 0.20, "interior": 0.10, "confirmed": false },
+    "ceiling_heights_m": {
+      "living_room": 2.58,
+      "bedrooms": 2.645,
+      "other_rooms_assumed": 2.60
+    },
+    "building_envelope_m": { "width_x": 10.22, "depth_z": 9.157 }
+  },
+
+  "rooms": [
+    {
+      "id": "stue_kjokken",
+      "name": "Stue/Kjøkken",
+      "type": "living_kitchen",
+      "polygon": [[0.20,0.20],[5.688,0.20],[5.688,3.331],[2.15,3.331],[2.15,3.675],[0.20,3.675]],
+      "area_m2": 17.9,
+      "ceiling_height_m": 2.58,
+      "notes": "L-shaped. West zone (x 0.20-2.15) depth 3.475m confirmed; east zone (x 2.15-5.688) depth 3.131m confirmed. Both dims from owner."
+    },
+    {
+      "id": "bad",
+      "name": "Bad",
+      "type": "bathroom",
+      "polygon": [[0.20,3.775],[2.15,3.775],[2.15,5.085],[0.20,5.085]],
+      "area_m2": 2.55,
+      "ceiling_height_m": 2.60,
+      "notes": "Width 1.95m from plan (unconfirmed by owner). Depth 1.31m inferred (see ambiguity #2 in md doc). North wall exterior/recessed."
+    },
+    {
+      "id": "kott",
+      "name": "Kott",
+      "type": "storage",
+      "polygon": [[6.10,8.017],[6.89,8.017],[6.89,8.957],[6.10,8.957]],
+      "area_m2": 0.74,
+      "ceiling_height_m": 2.60,
+      "notes": "0.79 x 0.94m per owner ('ca' = approximate). Position adjacent to Hovedsoverom west wall inferred from drawing adjacency, not confirmed."
+    },
+    {
+      "id": "entre",
+      "name": "Entré",
+      "type": "hallway_foyer",
+      "polygon": [[5.688,0.20],[6.890,0.20],[6.890,8.017],[6.100,8.017],[6.100,8.957],[2.250,8.957],[2.250,3.331],[5.688,3.331]],
+      "area_m2": 16.5,
+      "ceiling_height_m": 2.60,
+      "notes": "RECONSTRUCTED polygon combining a 1.102m-wide corridor (confirmed width, owner) alongside the bedroom column, plus a wider foyer at the north end near the front door/Bad/Kott. Exact shape not directly measured - see ambiguity #4."
+    },
+    {
+      "id": "hovedsoverom",
+      "name": "Soverom (top right) / Hovedsoverom",
+      "type": "bedroom",
+      "polygon": [[6.99,6.235],[10.02,6.235],[10.02,8.957],[6.99,8.957]],
+      "area_m2": 8.23,
+      "ceiling_height_m": 2.645,
+      "width_m": 3.022,
+      "depth_m": 2.722,
+      "notes": "Owner-confirmed dimensions."
+    },
+    {
+      "id": "kontor",
+      "name": "Soverom (middle) / Kontor",
+      "type": "bedroom",
+      "polygon": [[6.99,3.384],[10.02,3.384],[10.02,6.135],[6.99,6.135]],
+      "area_m2": 8.35,
+      "ceiling_height_m": 2.645,
+      "width_m": 3.034,
+      "depth_m": 2.751,
+      "notes": "Owner-confirmed dimensions."
+    },
+    {
+      "id": "tvstue",
+      "name": "Soverom (bottom) / Tvstue",
+      "type": "bedroom",
+      "polygon": [[6.99,0.20],[10.02,0.20],[10.02,3.284],[6.99,3.284]],
+      "area_m2": 9.33,
+      "ceiling_height_m": 2.645,
+      "width_m": 3.025,
+      "depth_m": 3.084,
+      "notes": "Owner-confirmed dimensions."
+    },
+    {
+      "id": "balkong",
+      "name": "Balkong",
+      "type": "balcony",
+      "shape": "rectangle_plus_arc",
+      "chord_start": [0.0, 0.20],
+      "chord_end": [0.0, 3.525],
+      "facade_width_m": 3.325,
+      "depth_at_arc_start_m": 1.691,
+      "depth_at_apex_m": 2.277,
+      "arc_radius_m": 2.65,
+      "soffit_height_m": 2.720,
+      "notes": "Owner-confirmed dims used exclusively (plan graphic not to scale here). z-position of chord_start (0.20) approximates flush with living room south wall - not independently confirmed. See ambiguity #3."
+    }
+  ],
+
+  "walls": [
+    { "id": "W-S",  "start": [0,0],       "end": [10.22,0],     "thickness": 0.20, "type": "exterior" },
+    { "id": "W-E",  "start": [10.22,0],   "end": [10.22,9.157], "thickness": 0.20, "type": "exterior" },
+    { "id": "W-N",  "start": [2.25,9.157],"end": [10.22,9.157], "thickness": 0.20, "type": "exterior" },
+    { "id": "W-NW-step", "start": [2.15,9.157], "end": [2.15,5.285], "thickness": 0.20, "type": "exterior" },
+    { "id": "W-Bad-N", "start": [0,5.285], "end": [2.15,5.285], "thickness": 0.20, "type": "exterior" },
+    { "id": "W-W",  "start": [0,5.285],   "end": [0,0],         "thickness": 0.20, "type": "exterior" },
+    { "id": "I-LR-Bad", "start": [2.15,0.20], "end": [2.15,5.085], "thickness": 0.10, "type": "interior", "note": "runs behind living room zone A and Bad; door cut for Bad near z 3.85-4.35" },
+    { "id": "I-LR-Entre-N", "start": [2.25,3.331], "end": [5.688,3.331], "thickness": 0.10, "type": "interior" },
+    { "id": "I-LR-Corridor", "start": [5.688,0.20], "end": [5.688,3.331], "thickness": 0.10, "type": "interior" },
+    { "id": "I-Corridor-Bedrooms", "start": [6.89,0.20], "end": [6.89,8.017], "thickness": 0.10, "type": "interior", "note": "door cuts for Tvstue, Kontor, Hovedsoverom doors" },
+    { "id": "I-Bed-1-2", "start": [6.99,6.135], "end": [10.02,6.135], "thickness": 0.10, "type": "interior" },
+    { "id": "I-Bed-2-3", "start": [6.99,3.284], "end": [10.02,3.284], "thickness": 0.10, "type": "interior" },
+    { "id": "I-Kott-S", "start": [6.10,8.017], "end": [6.89,8.017], "thickness": 0.10, "type": "interior" },
+    { "id": "I-Kott-W", "start": [6.10,8.017], "end": [6.10,8.957], "thickness": 0.10, "type": "interior" }
+  ],
+
+  "doors": [
+    {
+      "id": "main_entrance",
+      "wall": "W-NW-step",
+      "center_approx": [3.4, 5.285],
+      "width_m": 0.9,
+      "confirmed": false,
+      "hinge": "left",
+      "swing": "south, into Entré",
+      "connects": ["exterior", "entre"]
+    },
+    {
+      "id": "bad_door",
+      "wall": "I-LR-Bad",
+      "range_approx": [[2.15,3.85],[2.15,4.35]],
+      "width_m": 0.7,
+      "confirmed": false,
+      "hinge": "south",
+      "swing": "south/east into Entré",
+      "connects": ["bad", "entre"]
+    },
+    {
+      "id": "kott_door",
+      "wall": "I-Kott-S",
+      "range_approx": [[6.10,8.017],[6.6,8.017]],
+      "width_m": 0.6,
+      "confirmed": false,
+      "hinge": "west",
+      "swing": "into Kott",
+      "connects": ["entre", "kott"]
+    },
+    {
+      "id": "hovedsoverom_door",
+      "wall": "I-Corridor-Bedrooms",
+      "range": [[6.89,6.832],[6.89,7.713]],
+      "width_m": 0.881,
+      "confirmed": true,
+      "hinge": "south end (z=6.832)",
+      "swing": "north/east into room",
+      "connects": ["entre", "hovedsoverom"],
+      "notes": "Position derived from owner data: 1.244m from bed-wall (north) end, 0.597m from wardrobe-wall (south) end, opening 0.881m, along the 2.722m west wall."
+    },
+    {
+      "id": "kontor_door",
+      "wall": "I-Corridor-Bedrooms",
+      "range_approx": [[6.89,5.6],[6.89,6.1]],
+      "width_m": 0.8,
+      "confirmed": false,
+      "hinge": "top",
+      "swing": "down/east into room",
+      "connects": ["entre", "kontor"]
+    },
+    {
+      "id": "tvstue_door",
+      "wall": "I-Corridor-Bedrooms",
+      "range_approx": [[6.89,2.8],[6.89,3.3]],
+      "width_m": 0.8,
+      "confirmed": false,
+      "hinge": "top",
+      "swing": "down/east into room",
+      "connects": ["entre", "tvstue"]
+    },
+    {
+      "id": "balcony_door",
+      "wall": "W-W",
+      "range_approx": [[0.20,0.3],[0.20,1.2]],
+      "width_m": 0.9,
+      "confirmed": false,
+      "hinge": "top",
+      "swing": "east into living room",
+      "connects": ["stue_kjokken", "balkong"]
+    }
+  ],
+
+  "windows": [
+    {
+      "id": "living_room_window",
+      "wall": "W-W",
+      "range_approx": [[0.20,0.4],[0.20,3.4]],
+      "width_m": 3.0,
+      "confirmed": false,
+      "notes": "Long multi-panel run shown as striped pattern"
+    },
+    {
+      "id": "bad_window",
+      "wall": "W-W",
+      "range_approx": [[0.20,4.7],[0.20,5.0]],
+      "width_m": 0.5,
+      "confirmed": false
+    },
+    {
+      "id": "kontor_window",
+      "wall": "east exterior (bedroom column)",
+      "range": [[10.02,3.994],[10.02,5.491]],
+      "width_m": 1.497,
+      "confirmed": true,
+      "notes": "Frame 0.610m from one end, 0.644m from other, measured along the 2.751m window wall (owner)."
+    },
+    {
+      "id": "tvstue_window",
+      "wall": "east exterior (bedroom column)",
+      "range_approx": [[10.02,0.978],[10.02,2.478]],
+      "width_m": 1.5,
+      "confirmed_partial": true,
+      "sill_height_m": 0.915,
+      "notes": "Sill height and near-side offset (0.778m => start z=0.978) confirmed by owner. Width and far offset are ESTIMATED, not confirmed."
+    },
+    {
+      "id": "hovedsoverom_window",
+      "wall": "east exterior (bedroom column)",
+      "range_approx": [[10.02,7.0],[10.02,8.6]],
+      "width_m": 1.6,
+      "confirmed": false
+    },
+    {
+      "id": "kitchen_window",
+      "wall": "W-W",
+      "range_approx": [[0.20,1.3],[0.20,2.0]],
+      "width_m": 0.7,
+      "confirmed": false,
+      "notes": "Small segment near balcony door"
+    }
+  ],
+
+  "fixtures": [
+    {
+      "room": "stue_kjokken",
+      "type": "kitchen_counter",
+      "shape": "L-shaped",
+      "notes": "Runs along Bad's south exterior face (x 0.20-2.15, sink near west end), turns south ~0.35m at x~2.05-2.15, continues east to ~x=3.4. Depth ~0.6m.",
+      "backsplash_m": { "width": 1.747, "height": 0.527, "confirmed": true, "position_confirmed": false }
+    },
+    {
+      "room": "stue_kjokken",
+      "type": "kitchen_island",
+      "bbox_approx": [[3.6,1.6],[4.5,2.3]],
+      "notes": "Freestanding, 4-burner cooktop, small wall stub at east end (purpose unclear)"
+    },
+    {
+      "room": "bad",
+      "type": "shower",
+      "bbox_approx": [[0.3,3.85],[0.9,4.3]]
+    },
+    {
+      "room": "bad",
+      "type": "bathtub_or_vanity",
+      "bbox_approx": [[0.9,3.8],[1.8,4.0]]
+    },
+    {
+      "room": "bad",
+      "type": "toilet",
+      "bbox_approx": [[1.7,3.9],[1.95,4.3]]
+    },
+    {
+      "room": "kott",
+      "type": "washer_dryer",
+      "bbox_approx": [[6.2,8.75],[6.8,8.95]],
+      "notes": "Two round icons, could be washer+dryer or double basin"
+    },
+    {
+      "room": "hovedsoverom",
+      "type": "wardrobe",
+      "bbox_approx": [[7.0,6.24],[7.9,6.8]],
+      "notes": "Built-in, along south wall shared with Kontor ('skapvegg' per owner)"
+    }
+  ],
+
+  "unplaced_measurements": [
+    { "source": "Gang: Knaggvegg (coat-hook wall)", "value_mm": 1010, "issue": "unit assumed cm->mm; reference wall/point unclear" },
+    { "source": "Gang: Badevegg (bathroom wall) liststart", "value_mm": 890, "issue": "unit assumed cm->mm; reference point unclear" },
+    { "source": "Gang: Kommodevegg gang (dresser wall) between skirting", "value_mm": 1565, "issue": "unit assumed cm->mm; which wall segment unclear" },
+    { "source": "Tvstue: Varmeovn til sofavegg", "value_mm": 1213, "issue": "locates a radiator; not modeled" },
+    { "source": "Tvstue: Dør vegg til varmeovn", "value_mm": 2962, "issue": "locates a radiator; not modeled" },
+    { "source": "Veranda: Ved døra", "value_raw": "80/85", "issue": "unit and meaning entirely unclear; not used" },
+    { "source": "Veranda: Ved vegg", "value_raw": "110/122", "issue": "unit and meaning entirely unclear; not used" }
+  ],
+
+  "ambiguities": [
+    "Building width: plan's own bottom dimension chain (5.48+3.03=8.51m) omits the ~1.1m Entré corridor confirmed by owner; modeled envelope is ~10.22m wide, ~1.7m more than the plan's labeled total. Unresolved.",
+    "Left dimension chain (1.31/1.31/3.47) does not sum to total building depth (8.56m from bedroom column) - resolved by treating these as three independent measurements (recess, Bad depth, living room depth) rather than one continuous chain; the building has a large recess northwest of Bad occupied by Entré/foyer.",
+    "Balcony shape simplified to rectangle+circular-arc from 3 owner numbers; true drawn shape (stepped notch + bulge) not precisely reproduced.",
+    "Entré polygon is a reconstruction from topology + corridor width, not directly measured.",
+    "Kott position inferred from visual adjacency only.",
+    "Wall thicknesses (0.20 ext / 0.10 int) are pixel estimates, unconfirmed on site.",
+    "Ceiling heights for Bad/Entré/Kott assumed (~2.60m), not measured.",
+    "Most door widths/positions and most window positions/widths are visual estimates from the drawing, not measured on site (exceptions noted with confirmed:true)."
+  ]
+}
