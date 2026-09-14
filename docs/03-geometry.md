@@ -55,7 +55,9 @@ N north facade · E east facade (V4–V6) · K living room/entry ↔ bedrooms (D
   run from the window-wall corner, above the 0.527 backsplash, up to 2.25. Tall oven/fridge units x 3.077–4.286, also up to 2.25.
   Grey bulkhead from 2.25 to the ceiling, with two vent grilles over the tall units. The leg under V2 runs the full wall length, down to y 3.475 (owner).
   Island x 2.78–4.286, y 3.131–4.031 with hob; 3.131 from the south wall (M, owner confirmed the position). Island length and depth are E.
-  Worktop height 0.90.
+  Worktop height 0.90. Fronts, pulls, sink, hob and ovens are in `kitchenRuns` (round 8). Unit widths and front heights are E
+  (HTH module sizes): sink unit 0.497 + dishwasher 0.60 east of a 0.65 blind corner; island 0.353 | 0.80 hob drawers | 0.353;
+  tall units 0.60 ovens (oven at 0.62–1.215, compact oven to 1.67) | 0.609 fridge/freezer; four 0.437 wall-cabinet doors.
 - **Bathroom**: shower glass at x 2.10, floating vanity + mirror cabinet, wall-hung WC, soffit at 2.30 along the south wall.
 - **Radiators**: under V1, V4, V5, V6 (Tvstue radiator at 1.213–1.843 from the south wall, M).
 - Removed on request: the Hovedsoverom wardrobe, the short wall/column beside the island, and the header (HDR2) above it.

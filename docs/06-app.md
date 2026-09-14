@@ -16,6 +16,8 @@ Live at https://brochmannsgate.ecvebbesen.workers.dev. Pushing to GitHub `main` 
 - **Walk**: click the view to capture the mouse. WASD/arrows to move, Shift to go faster, Esc to release.
   You can't walk through walls or built-ins. Click (while captured) selects the surface under the crosshair.
 - **Sun**: time-of-day slider, using the real sun position for Oslo on today's date (the balcony faces west).
+- **Vinyl floor texture**: the Bastion furu vinyl on every floor except the bathroom and entry tiles; off shows flat colours. Shared.
+- **High quality**: ambient occlusion and a sharper sun shadow. Only for this browser; turn it off on slow devices.
 
 ## Colours
 - Click a surface in the model, or a row in the side panel. Then pick a colour or type a hex value.
@@ -38,7 +40,10 @@ Live at https://brochmannsgate.ecvebbesen.workers.dev. Pushing to GitHub `main` 
 | `src/build/rooms.ts` | Floors, ceilings, floor zones (entry tiles), slabs, room labels |
 | `src/build/trim.ts` | Skirting and cornices along wall-backed edges |
 | `src/build/fixtures.ts`, `balcony.ts` | Built-ins; balcony slab, soffit, balustrade and railing |
+| `src/build/kitchen.ts` | Kitchen runs: carcasses, fronts with shadow gaps, bar pulls, worktops with the sink cut-out, hob, ovens |
 | `src/core/*` | Colour/view store, material registry, sun position, geometry helpers |
+| `src/core/vinyl.ts` | Loads the vinyl floor textures; tile size and average colour |
+| `scripts/floor-texture.py` | Builds `public/textures/vinyl-*.webp` from the parkett.no swatch (needs numpy + Pillow). Re-run after changing it |
 | `src/core/remote.ts` | Talks to the Worker API: loads shared settings, login/logout, debounced auto-save |
 | `worker/index.ts` | Cloudflare Worker: static assets + `/api/settings`, `/api/login`, `/api/logout` on KV |
 | `wrangler.jsonc` | Worker config: KV binding, login rate limit, build command |
@@ -49,4 +54,6 @@ Live at https://brochmannsgate.ecvebbesen.workers.dev. Pushing to GitHub `main` 
 - **Move or resize a wall, door or window**: edit its numbers in `apartment.ts`. Faces, skirting and collision update automatically.
 - **Add a doorless opening**: add an `Opening` with `kind: 'opening'` (see O6 for Tvstue).
 - **Add a colourable element**: add a `Fixture` with a new key and add that key to `palette.ts`.
-- Debug handle in the browser console: `apartment3d` (scene, camera, orbit, setMode, setView, select, store).
+- **Change the floor texture**: edit `scripts/floor-texture.py` and run it. If the tile size changes, update `VINYL.tile`
+  (and the printed average colour) in `src/core/vinyl.ts`.
+- Debug handle in the browser console: `apartment3d` (scene, camera, orbit, setMode, setView, select, store, remote, renderer, gtao, setQuality).

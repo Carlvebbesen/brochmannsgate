@@ -79,3 +79,38 @@ Owner report: pasting a hex code into the selection card did nothing — only th
 Owner request: remove the header above the kitchen island, since that part will also be removed (like pier L below it).
 - Wall `HDR2` (the 2.10 header over the kitchen ↔ corridor opening, x 4.286–4.386, y 3.50–4.98) is gone. The opening now runs
   floor to ceiling. The `HDR` beam across the corridor mouth stays.
+
+## Round 8: detailed kitchen cabinets and handles (2026-09-14)
+Owner request: more handles and more detailed, realistic kitchen cabinets. Owner answers (all defaults): slim bar pulls,
+a typical HTH front layout, and detailed appliances.
+- New `kitchenRuns` in `src/data/apartment.ts` (five runs: sink, window leg, island, tall, wall) built by `src/build/kitchen.ts`.
+  Each run has carcasses, 19 mm fronts with 4 mm shadow gaps (a dark backing shows through), a recessed plinth and bar pulls.
+- **Layout** (unit widths E): sink run = blind corner, sink unit, integrated dishwasher. Window leg = two drawer stacks and a narrow
+  pull-out. Island = pan drawers under the hob, a door at each end. Tall = two drawers, oven, compact oven, top door | fridge,
+  freezer and top door. Wall cabinets = two pairs of doors meeting in the middle.
+- **Pulls**: horizontal near the top of drawers; vertical on doors, on the side away from the hinge, near the bottom of wall
+  cabinets and at hand height on the fridge. New colour key *Handles* (`kitchen.handles`).
+- **Appliances**: steel undermount sink cut into the worktop with an L-shaped tap; induction hob with a centre downdraft vent and
+  four cooking zones; black-glass ovens with a window, display and steel bar. The *Hob, oven & sink* key is now *Hob & ovens*
+  (the sink is steel).
+- Review render: `images/model-kitchen-detail.png`.
+
+## Round 9: realistic vinyl floor and lighting (2026-09-14)
+Owner request: make the model look more realistic, starting with the real floor, **Bastion vinylgulv 1-stav Furu** (parkett.no),
+everywhere except the bathroom and the entry tiles. Research: `plan/08-realism-research.md`. Owner answers (all defaults): texture from
+the parkett.no swatch, planks east–west, all six rooms, colour row tints the vinyl with a toggle back to flat colour, lighting + AO now
+with a quality switch, tiles and a photo-render mode later.
+- **Texture**: `scripts/floor-texture.py` builds `public/textures/vinyl-{color,normal,rough}.webp` (0.5 MB total) from the flat
+  swatch in `plan/images/floor/`. Planks are 1828 × 220 mm, staggered at least 30 cm, each a random strip of the swatch (flipped at random),
+  with a bevel on all four edges (normal map), darker joints and a satin roughness map. One tile = 2 planks × 8 rows = 3.656 × 1.76 m.
+  The floor UVs are already plan metres, so the planks run continuously through doorways.
+- **Floors**: `stue`, `entre`, `kott`, `hovedsoverom`, `kontor` and `tvstue` floors (`VINYL_FLOORS` in `palette.ts`) use the texture.
+  Their colour row is now *Floor (vinyl tint)*, default white (= the vinyl as it is). *Vinyl floor texture* off shows a flat colour
+  (tint × the texture's average `#f5dfd2`). It is a shared view setting.
+- **Settings v3**: older files (local, imported or from KV) held the flat oak `#d9bd8e`. On load, their six floor colours are dropped
+  so the vinyl isn't tinted orange. The Worker now writes `version: 3` and stores `view.vinyl`.
+- **Lighting**: `RoomEnvironment` image-based light replaces the ambient light; the hemisphere light is much lower. Both scale with the sun
+  (tuned against screenshots: env 0.4 / hemi 0.2 at 16:00). The lacquered floor gets faint reflections from it.
+- **Ambient occlusion**: GTAO (radius 0.5 m) through an `EffectComposer` with a 4× MSAA target. *High quality* (per browser, not shared)
+  switches AO and the 4096² sun shadow map; off = the plain renderer and 2048² shadows. Note: three r186 removed `PCFSoftShadowMap`.
+- Review renders: `images/model-vinyl-stue.png` (before: `images/model-before-vinyl-stue.png`), `images/model-vinyl-floor.png`.

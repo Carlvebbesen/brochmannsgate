@@ -5,6 +5,8 @@
  * own experiments survive a reload.
  */
 
+import { VINYL_FLOORS } from '../data/palette';
+
 export type ColorChange =
   | { type: 'color'; key: string; hex: string }
   | { type: 'override'; faceId: string; hex: string | null }
@@ -17,16 +19,19 @@ export interface ViewSettings {
   labels: boolean;
   /** Section-cut height in metres, or null for no cut. */
   cut: number | null;
+  /** Vinyl texture on the floors; off shows them as flat colours. */
+  vinyl: boolean;
 }
 
 export interface ColorFile {
-  version: 1 | 2;
+  /** 3: floor colours are a tint over the vinyl texture (before that they were flat oak). */
+  version: 1 | 2 | 3;
   colors: Record<string, string>;
   overrides: Record<string, string>;
   view?: ViewSettings;
 }
 
-export const defaultView: ViewSettings = { sun: 16, ceilings: false, labels: true, cut: null };
+export const defaultView: ViewSettings = { sun: 16, ceilings: false, labels: true, cut: null, vinyl: true };
 
 const STORAGE_KEY = 'leilighet-3d:colors:v1';
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -86,7 +91,7 @@ export class ColorStore {
   }
 
   toJSON(): ColorFile {
-    return { version: 2, colors: { ...this.colors }, overrides: { ...this.overrides }, view: { ...this.view } };
+    return { version: 3, colors: { ...this.colors }, overrides: { ...this.overrides }, view: { ...this.view } };
   }
 
   importJSON(data: unknown) {
@@ -111,7 +116,10 @@ export class ColorStore {
   }
 
   private apply(file: Partial<ColorFile>) {
-    this.colors = { ...this.defaults, ...pickHex(file.colors) };
+    const colors = pickHex(file.colors);
+    // Older files hold the flat oak floor colour, which would now tint the vinyl orange.
+    if ((file.version ?? 1) < 3) for (const key of VINYL_FLOORS) delete colors[key];
+    this.colors = { ...this.defaults, ...colors };
     this.overrides = pickHex(file.overrides ?? {});
     this.view = pickView(file.view);
   }
@@ -170,5 +178,6 @@ function pickView(view: unknown): ViewSettings {
     ceilings: v.ceilings === true,
     labels: v.labels !== false,
     cut: v.cut === null || v.cut === undefined ? null : clamp(v.cut, 0.4, 2.8, 2.8),
+    vinyl: v.vinyl !== false,
   };
 }

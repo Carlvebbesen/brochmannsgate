@@ -1,5 +1,7 @@
 import * as THREE from 'three';
+import { VINYL_FLOORS } from '../data/palette';
 import type { ColorChange, ColorStore } from './state';
+import { VINYL, type VinylMaps } from './vinyl';
 
 /** Materials that are not user-colourable. */
 const FIXED: Record<string, THREE.Material> = {
@@ -23,6 +25,7 @@ const FINISH: Record<string, THREE.MeshStandardMaterialParameters> = {
   'kitchen.fronts': { roughness: 0.55 },
   'kitchen.worktop': { roughness: 0.6 },
   'kitchen.appliances': { roughness: 0.25, metalness: 0.2 },
+  'kitchen.handles': { roughness: 0.3, metalness: 0.45 },
   'bad.porcelain': { roughness: 0.2 },
   'bad.walls': { roughness: 0.5 },
   'bad.floor': { roughness: 0.6 },
@@ -44,7 +47,10 @@ export class MaterialRegistry {
   private byFace = new Map<string, THREE.MeshStandardMaterial>();
   private slots = new Map<string, FaceSlot>();
 
-  constructor(private readonly store: ColorStore) {
+  constructor(
+    private readonly store: ColorStore,
+    private readonly vinyl: VinylMaps,
+  ) {
     store.onChange((c) => this.sync(c));
   }
 
@@ -58,8 +64,8 @@ export class MaterialRegistry {
     let m = this.byKey.get(key);
     if (!m) {
       m = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0, ...FINISH[key] });
-      m.color.set(this.store.getColor(key));
       m.name = key;
+      this.paint(key, m);
       this.byKey.set(key, m);
     }
     return m;
@@ -91,13 +97,36 @@ export class MaterialRegistry {
     return m instanceof THREE.MeshStandardMaterial ? m : null;
   }
 
+  /**
+   * Sets a shared material's colour. A vinyl floor's colour is a tint: with the texture on it multiplies the texture,
+   * and as a flat colour it multiplies the texture's average, so white means the vinyl either way.
+   */
+  private paint(key: string, m: THREE.MeshStandardMaterial) {
+    m.color.set(this.store.getColor(key));
+    if (!VINYL_FLOORS.has(key)) return;
+    const textured = this.store.view.vinyl;
+    if (!textured) m.color.multiply(VINYL.average);
+    if ((m.map !== null) === textured) return;
+    m.map = textured ? this.vinyl.map : null;
+    m.normalMap = textured ? this.vinyl.normalMap : null;
+    m.roughnessMap = textured ? this.vinyl.roughnessMap : null;
+    m.roughness = textured ? 1 : 0.5; // the map holds the satin lacquer's roughness
+    m.needsUpdate = true;
+  }
+
   private sync(c: ColorChange) {
     if (c.type === 'color') {
-      this.byKey.get(c.key)?.color.set(c.hex);
+      const m = this.byKey.get(c.key);
+      if (m) this.paint(c.key, m);
     } else if (c.type === 'override') {
       this.applyFace(c.faceId);
+    } else if (c.type === 'view') {
+      for (const key of VINYL_FLOORS) {
+        const m = this.byKey.get(key);
+        if (m) this.paint(key, m);
+      }
     } else {
-      for (const [key, m] of this.byKey) m.color.set(this.store.getColor(key));
+      for (const [key, m] of this.byKey) this.paint(key, m);
       for (const faceId of this.slots.keys()) this.applyFace(faceId);
     }
   }

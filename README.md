@@ -21,6 +21,8 @@ and changing them for everyone requires the edit password (Worker secret `EDIT_P
   surface* gives that single face an accent colour. Everyone sees the shared colours. *Unlock* with the password
   to save changes for everyone; without it, changes stay in your browser. *Export* and *Import* move colours as JSON, and *Reset* restores the photo-based defaults.
 - **Sun**: real orientation (the balcony faces west), with a time-of-day slider for Oslo.
+- **Floor**: the planned Bastion vinyl (1-stav furu) as a texture, with ambient occlusion and soft image-based light. The floor colour
+  tints the vinyl (white = as is). *Vinyl floor texture* switches to flat colours, and *High quality* can be turned off on slow devices.
 
 ## Where things live
 | File | What |
@@ -32,6 +34,7 @@ and changing them for everyone requires the edit password (Worker secret `EDIT_P
 | `worker/index.ts`, `wrangler.jsonc` | Cloudflare Worker: serves the app, settings API on KV, password login |
 | `src/controls/walk.ts` | First-person walking with collision |
 | `src/ui/panel.ts` | Side panel |
+| `scripts/floor-texture.py`, `public/textures/` | Vinyl floor texture generator and its output |
 | `docs/` | **Consolidated findings**: apartment facts, measurements, geometry, change log, open questions, app guide |
 | `plan/` | Raw research: listing photos, ad HTML, floor-plan analysis scripts, first-round agent reports |
 

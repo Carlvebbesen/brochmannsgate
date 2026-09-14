@@ -61,7 +61,7 @@ for r, off in enumerate(offsets):
             plank = plank.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
         px = np.asarray(plank.resize((PLANK_PX, ROW_PX), Image.Resampling.LANCZOS), np.float32) / 255
         px *= 1 + rng.normal(0, 0.025)  # plank-to-plank brightness
-        px *= 1 + rng.normal(0, 0.008, 3)  # and a faint hue shift
+        px *= 1 + rng.normal(0, 0.004, 3)  # and a faint hue shift
         x0 = (off + c * PLANK_PX) % W
         cols = (np.arange(PLANK_PX) + x0) % W
         color[r * ROW_PX:(r + 1) * ROW_PX, cols] = px

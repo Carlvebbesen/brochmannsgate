@@ -1,4 +1,4 @@
-import type { Balcony, Fixture, FloorZone, Opening, Rect, Room, Side, Vec2, Wall } from './types';
+import type { Balcony, CabinetFront, CabinetRun, Fixture, FloorZone, Opening, Rect, Room, Side, Vec2, Wall } from './types';
 
 /*
  * Brochmanns gate 14C, 4. etasje — geometry source of truth.
@@ -333,9 +333,6 @@ export const fixtures: Fixture[] = [
   { key: 'kitchen.appliances', x0: RUN_X1 + 0.08, x1: RUN_X1 + 0.5, y0: J_Y0 - 0.605, y1: J_Y0 - 0.6, z0: 2.36, z1: 2.44 },
   { key: 'kitchen.appliances', x0: RUN_X1 + 0.7, x1: RUN_X1 + 1.12, y0: J_Y0 - 0.605, y1: J_Y0 - 0.6, z0: 2.36, z1: 2.44 },
   { key: 'kitchen.backsplash', x0: KIT_X0, x1: RUN_X1, y0: J_Y0 - 0.01, y1: J_Y0, z0: WORKTOP, z1: WORKTOP + BACKSPLASH },
-  { key: 'kitchen.appliances', x0: 2.0, x1: 2.45, y0: J_Y0 - 0.52, y1: J_Y0 - 0.12, z0: WORKTOP, z1: WORKTOP + 0.003 },
-  { key: 'kitchen.appliances', x0: 3.25, x1: 3.85, y0: ISLAND_Y0 + 0.2, y1: ISLAND_Y0 + 0.7, z0: WORKTOP, z1: WORKTOP + 0.005 },
-  { key: 'kitchen.appliances', x0: RUN_X1 + 0.06, x1: RUN_X1 + 0.56, y0: J_Y0 - 0.605, y1: J_Y0 - 0.6, z0: 0.85, z1: 1.62 },
 
   // Bathroom: walk-in shower (SW corner), floating vanity, wall-hung WC, boxed soffit
   { key: 'glass', x0: 2.1, x1: 2.11, y0: J_Y1, y1: J_Y1 + 0.8, z0: 0.02, z1: 2.0, pickable: false },

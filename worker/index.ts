@@ -73,10 +73,10 @@ async function putSettings(request: Request, env: Env): Promise<Response> {
 }
 
 interface Settings {
-  version: 2;
+  version: 3;
   colors: Record<string, string>;
   overrides: Record<string, string>;
-  view: { sun: number; ceilings: boolean; labels: boolean; cut: number | null };
+  view: { sun: number; ceilings: boolean; labels: boolean; cut: number | null; vinyl: boolean };
   savedAt: string;
 }
 
@@ -88,7 +88,7 @@ function sanitize(body: unknown): Settings | null {
   const v = (b.view ?? {}) as Record<string, unknown>;
   const cut = num(v.cut, 0.4, 2.8);
   return {
-    version: 2,
+    version: 3,
     colors: hexMap(b.colors),
     overrides: hexMap(b.overrides),
     view: {
@@ -96,6 +96,7 @@ function sanitize(body: unknown): Settings | null {
       ceilings: v.ceilings === true,
       labels: v.labels !== false,
       cut: cut,
+      vinyl: v.vinyl !== false,
     },
     savedAt: new Date().toISOString(),
   };

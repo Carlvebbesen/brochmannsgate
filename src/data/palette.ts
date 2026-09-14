@@ -11,12 +11,16 @@ export interface PaletteGroup {
   items: PaletteItem[];
 }
 
-const OAK = '#d9bd8e';
 const SAGE = '#c1c7ba';
 const CEILING = '#f6f5f1';
+/** The vinyl floor's colour is a tint over its texture; white shows the vinyl as it is. */
+const VINYL_TINT = '#ffffff';
 
-const room = (id: string, walls: string, floor = OAK): PaletteItem[] => [
-  { key: `${id}.floor`, label: 'Floor', color: floor },
+/** Floors laid with the Bastion vinyl: every room except the bathroom (the entry tiles are a floor zone on top). */
+export const VINYL_FLOORS = new Set(['stue', 'entre', 'kott', 'hovedsoverom', 'kontor', 'tvstue'].map((id) => `${id}.floor`));
+
+const room = (id: string, walls: string): PaletteItem[] => [
+  { key: `${id}.floor`, label: 'Floor (vinyl tint)', color: VINYL_TINT },
   { key: `${id}.walls`, label: 'Walls', color: walls },
   { key: `${id}.ceiling`, label: 'Ceiling', color: CEILING },
 ];

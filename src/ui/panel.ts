@@ -1,4 +1,4 @@
-import { labelFor, paletteGroups } from '../data/palette';
+import { labelFor, paletteGroups, VINYL_FLOORS } from '../data/palette';
 import { isHex, normalizeHex, type ColorStore, type ViewSettings } from '../core/state';
 import type { SyncStatus } from '../core/remote';
 
@@ -16,6 +16,8 @@ export interface PanelActions {
   setLabels(on: boolean): void;
   setCut(height: number | null): void;
   setSun(hour: number): void;
+  setVinyl(on: boolean): void;
+  setQuality(high: boolean): void;
   view(preset: 'perspective' | 'top'): void;
   select(sel: Selection | null): void;
   login(password: string): Promise<{ ok: boolean; error?: string }>;
@@ -52,6 +54,8 @@ const TEMPLATE = /* html */ `
       <label class="range"><span>Section cut</span><input type="range" id="opt-cut" min="0.4" max="${CUT_OFF}" step="0.05" value="${CUT_OFF}" /><output id="cut-v">off</output></label>
     </div>
     <label class="range"><span>Sun</span><input type="range" id="opt-sun" min="5" max="22" step="0.25" value="16" /><output id="sun-v">16:00</output></label>
+    <label class="check"><input type="checkbox" id="opt-vinyl" checked /> Vinyl floor texture</label>
+    <label class="check" title="Ambient occlusion and sharper shadows. Turn off on slow devices; only affects this browser."><input type="checkbox" id="opt-hq" checked /> High quality</label>
   </section>
   <section class="sync" id="sync"></section>
   <section class="selected" id="selected"></section>
@@ -91,12 +95,18 @@ export class Panel {
   setViewSettings(v: ViewSettings) {
     this.$<HTMLInputElement>('#opt-ceil').checked = v.ceilings;
     this.$<HTMLInputElement>('#opt-labels').checked = v.labels;
+    this.$<HTMLInputElement>('#opt-vinyl').checked = v.vinyl;
     const cut = this.$<HTMLInputElement>('#opt-cut');
     cut.value = String(v.cut ?? CUT_OFF);
     this.$<HTMLOutputElement>('#cut-v').textContent = v.cut === null ? 'off' : `${v.cut.toFixed(2)} m`;
     const sun = this.$<HTMLInputElement>('#opt-sun');
     sun.value = String(v.sun);
     this.$<HTMLOutputElement>('#sun-v').textContent = formatHour(v.sun);
+  }
+
+  /** Quality is a per-browser setting (not shared), so main.ts tells the panel what it loaded. */
+  setQuality(high: boolean) {
+    this.$<HTMLInputElement>('#opt-hq').checked = high;
   }
 
   showSync(next: SyncView) {
@@ -167,6 +177,7 @@ export class Panel {
         <input type="color" value="${hex}" />
         <input class="hex" value="${hex}" spellcheck="false" maxlength="9" autocapitalize="off" autocomplete="off" />
       </div>
+      ${VINYL_FLOORS.has(sel.key) ? `<p class="hint">Bastion vinyl, furu. White shows the vinyl as it is; any other colour tints it.</p>` : ''}
       ${sel.faceId ? `<label class="check accent"><input type="checkbox" ${override ? 'checked' : ''} /> Only this wall surface (accent colour)</label>` : ''}
     `;
     const color = this.card.querySelector<HTMLInputElement>('input[type=color]')!;
@@ -247,6 +258,10 @@ export class Panel {
     ceil.addEventListener('change', () => this.actions.setCeilings(ceil.checked));
     const labels = this.$<HTMLInputElement>('#opt-labels');
     labels.addEventListener('change', () => this.actions.setLabels(labels.checked));
+    const vinyl = this.$<HTMLInputElement>('#opt-vinyl');
+    vinyl.addEventListener('change', () => this.actions.setVinyl(vinyl.checked));
+    const hq = this.$<HTMLInputElement>('#opt-hq');
+    hq.addEventListener('change', () => this.actions.setQuality(hq.checked));
 
     const cut = this.$<HTMLInputElement>('#opt-cut');
     const cutV = this.$<HTMLOutputElement>('#cut-v');

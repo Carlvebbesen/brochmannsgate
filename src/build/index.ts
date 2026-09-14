@@ -7,6 +7,7 @@ import type { Rect } from '../data/types';
 import { buildBalcony } from './balcony';
 import { BuildContext } from './context';
 import { buildFixtures } from './fixtures';
+import { buildKitchen } from './kitchen';
 import { buildOpenings, doorPassages } from './openings';
 import { buildRooms } from './rooms';
 import { buildTrim } from './trim';

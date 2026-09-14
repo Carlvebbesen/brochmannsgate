@@ -1,6 +1,11 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 import { buildApartment } from './build';
 import { WalkController } from './controls/walk';
@@ -8,6 +13,7 @@ import { MaterialRegistry } from './core/materials';
 import { Remote, isNewRemote, rememberSeen, type SyncStatus } from './core/remote';
 import { ColorStore } from './core/state';
 import { sunDirection } from './core/sun';
+import { loadVinyl } from './core/vinyl';
 import { toWorld } from './core/geom';
 import { center, walkStart } from './data/apartment';
 import { defaultColors } from './data/palette';
@@ -38,7 +44,7 @@ const PERSPECTIVE_POS = new THREE.Vector3(CENTER.x - 5.5, 13, CENTER.z + 10);
 
 // ---- Model
 const store = new ColorStore(defaultColors);
-const mats = new MaterialRegistry(store);
+const mats = new MaterialRegistry(store, loadVinyl(renderer.capabilities.getMaxAnisotropy()));
 const apartment = buildApartment(mats);
 scene.add(apartment.root);
 
@@ -61,13 +67,17 @@ const labelObjects = [...apartment.labels, compass];
 
 // ---- Lights
 const timer = new THREE.Timer();
-const hemi = new THREE.HemisphereLight('#f2f5fb', '#d8d2c4', 1.6);
-const ambient = new THREE.AmbientLight('#ffffff', 0.9);
-scene.add(hemi, ambient);
+// Soft, directional fill from a generic interior (image-based lighting), instead of a flat ambient light.
+// It also gives the lacquered floor its faint reflections.
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.4;
+const hemi = new THREE.HemisphereLight('#f2f5fb', '#d8d2c4', 0.2);
+scene.add(hemi);
 const sun = new THREE.DirectionalLight('#fff4e0', 2.5);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.radius = 3;
+sun.shadow.radius = 4;
 Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 80 });
 sun.shadow.bias = -0.0004;
 sun.shadow.normalBias = 0.02;
@@ -82,7 +92,10 @@ function setSun(hour: number) {
   const strength = THREE.MathUtils.clamp(Math.sin(altitude) * 3, 0, 1);
   sun.intensity = 2.6 * strength;
   sun.color.lerpColors(WARM, WHITE, THREE.MathUtils.clamp(altitude / 0.45, 0, 1));
-  hemi.intensity = 1.0 + 0.8 * THREE.MathUtils.clamp(Math.sin(altitude) * 2, 0, 1);
+  const daylight = THREE.MathUtils.clamp(Math.sin(altitude) * 2, 0, 1);
+  // Tuned against screenshots: stronger fill washes out the sun patches and the floor.
+  hemi.intensity = 0.1 + 0.15 * daylight;
+  scene.environmentIntensity = 0.2 + 0.3 * daylight;
 }
 setSun(store.view.sun);
 
@@ -220,6 +233,39 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'Escape' && mode === 'orbit') select(null);
 });
 
+// ---- Render quality (per browser, not shared): ambient occlusion and a sharper sun shadow map
+const QUALITY_KEY = 'leilighet-3d:quality';
+let highQuality = true;
+try {
+  highQuality = localStorage.getItem(QUALITY_KEY) !== 'low';
+} catch {
+  // storage unavailable – default to high
+}
+
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 }));
+composer.addPass(new RenderPass(scene, camera));
+const gtao = new GTAOPass(scene, camera);
+// Radius in metres: enough to darken room corners, skirting lines and the gap under cabinets.
+gtao.updateGtaoMaterial({ radius: 0.5, distanceExponent: 1, thickness: 1, scale: 1, samples: 16, distanceFallOff: 1, screenSpaceRadius: false });
+composer.addPass(gtao);
+composer.addPass(new OutputPass());
+
+function setQuality(high: boolean) {
+  highQuality = high;
+  const size = high ? 4096 : 2048;
+  if (sun.shadow.mapSize.x !== size) {
+    sun.shadow.mapSize.set(size, size);
+    sun.shadow.map?.dispose();
+    sun.shadow.map = null;
+  }
+  try {
+    localStorage.setItem(QUALITY_KEY, high ? 'high' : 'low');
+  } catch {
+    // ignore
+  }
+}
+setQuality(highQuality);
+
 // ---- Panel
 const panel = new Panel(document.getElementById('panel')!, store, {
   setMode,
@@ -227,6 +273,8 @@ const panel = new Panel(document.getElementById('panel')!, store, {
   setLabels: (labels) => store.setView({ labels }),
   setCut: (cut) => store.setView({ cut }),
   setSun: (sun) => store.setView({ sun }),
+  setVinyl: (vinyl) => store.setView({ vinyl }),
+  setQuality,
   view: setView,
   select,
   login: async (password) => {
@@ -244,6 +292,7 @@ const panel = new Panel(document.getElementById('panel')!, store, {
   },
 });
 panel.setViewSettings(store.view);
+panel.setQuality(highQuality);
 applyVisibility();
 
 // ---- Shared settings (Cloudflare KV via worker/index.ts)
@@ -266,6 +315,7 @@ remote.load().then(({ settings }) => {
 function resize() {
   const { clientWidth: w, clientHeight: h } = viewport;
   renderer.setSize(w, h);
+  composer.setSize(w, h);
   labelRenderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -274,7 +324,7 @@ new ResizeObserver(resize).observe(viewport);
 resize();
 
 // Handle for debugging from the browser console / automated screenshots.
-Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, select, store, remote } });
+Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, select, store, remote, renderer, gtao, setQuality } });
 
 renderer.setAnimationLoop((time) => {
   timer.update(time);
@@ -284,6 +334,7 @@ renderer.setAnimationLoop((time) => {
     const left = highlightUntil - timer.getElapsed();
     highlighted.emissiveIntensity = left > 0 ? 0.35 * Math.abs(Math.sin(left * 4)) : 0;
   }
-  renderer.render(scene, camera);
+  if (highQuality) composer.render();
+  else renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
 });
