@@ -19,7 +19,7 @@ FINN 467592160, sold. There is a Matterport tour: https://my.matterport.com/show
   (kitchen and bathroom windows) and its south side (balcony door).
 - **Bad**: north of the kitchen, window onto the balcony.
 - **Entré**: front door on the north side, near the bathroom. A 1.102 m hallway runs south between the kitchen wall and
-  the bedroom wall and opens into the living room under a beam.
+  the bedroom wall and opens into the living room (the beam over its mouth is removed in the model, on request).
 - **Kott**: small empty closet (0.79 × 0.94) next to the front door.
 - **Bedroom column** on the east facade, from north to south: Hovedsoverom, Kontor, Tvstue (owner's names).
 

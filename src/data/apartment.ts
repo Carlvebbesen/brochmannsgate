@@ -39,7 +39,7 @@ const A_X1 = BAD_X1 + 0.12; // bathroom east wall (wall A, "badevegg")
 // ---- Entré
 const CORR_X0 = LIV_W - 1.102; // M: corridor width 1.102 (coat-hook wall C ≈ 1.01 from the bathroom wall)
 const KOPEN_Y = 4.98; // P: south end of wall D, where the kitchen ↔ corridor opening starts
-const MOUTH_Y = 3.5; // P: corridor opens into the living room under a beam (south end of the removed pier L)
+const MOUTH_Y = 3.5; // P: corridor opens into the living room here (south end of the removed pier L; beam removed on request)
 const KOTT_X0 = LIV_W - 0.79; // M: kott width 0.79
 const KS_Y0 = BAD_Y1; // kott door in line with the front door (photo 38, plan)
 const KOTT_Y0 = KS_Y0 + INT;
@@ -174,7 +174,6 @@ export const walls: Wall[] = [
   { id: 'A', kind: 'interior', x0: BAD_X1, x1: A_X1, y0: J_Y1, y1: BAD_Y1 }, // bath ↔ entré (D2)
   { id: 'J', kind: 'interior', x0: KIT_X0, x1: CORR_X0, y0: J_Y0, y1: J_Y1 }, // kitchen ↔ bath / entré (C)
   { id: 'D', kind: 'interior', x0: CORR_X0 - INT, x1: CORR_X0, y0: KOPEN_Y, y1: J_Y0 }, // corridor west side
-  { id: 'HDR', kind: 'beam', x0: CORR_X0, x1: LIV_W, y0: MOUTH_Y, y1: MOUTH_Y + INT, bottom: 2.1 }, // beam over the corridor mouth
   { id: 'KW', kind: 'exterior', x0: KOTT_X0 - STAIR, x1: KOTT_X0, y0: BAD_Y1, y1: HOV_Y1 }, // kott west (stairwell)
   { id: 'KS', kind: 'interior', x0: KOTT_X0, x1: LIV_W, y0: KS_Y0, y1: KOTT_Y0 }, // kott front (D3)
   { id: 'KN', kind: 'interior', x0: KOTT_X0, x1: LIV_W, y0: KOTT_Y1, y1: HOV_Y1 }, // solid behind the kott

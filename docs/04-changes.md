@@ -114,3 +114,10 @@ with a quality switch, tiles and a photo-render mode later.
 - **Ambient occlusion**: GTAO (radius 0.5 m) through an `EffectComposer` with a 4× MSAA target. *High quality* (per browser, not shared)
   switches AO and the 4096² sun shadow map; off = the plain renderer and 2048² shadows. Note: three r186 removed `PCFSoftShadowMap`.
 - Review renders: `images/model-vinyl-stue.png` (before: `images/model-before-vinyl-stue.png`), `images/model-vinyl-floor.png`.
+
+## Round 10: corridor beam removed (2026-09-14)
+Owner request (screenshot of the beam next to the island): "Remove this wall … the floating part out from the wall there above the island."
+- Wall `HDR` (the beam across the corridor mouth, x 4.386–5.488, y 3.50–3.60, underside 2.10) is gone. The corridor now opens into the
+  living room floor to ceiling, like the kitchen ↔ corridor opening since round 4. The Stue/Entré room boundary at y 3.50 is unchanged
+  (it still decides floor and wall colours).
+- Review render: `images/model-corridor-open.png`.
