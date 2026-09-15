@@ -71,9 +71,27 @@ export const paletteGroups: PaletteGroup[] = [
     ],
   },
   {
+    title: 'Kontor innredning',
+    items: [{ key: 'kontor.wardrobe', label: 'Wardrobes & desk (fixed)', color: '#d9c8a8' }],
+  },
+  {
+    title: 'Møbler',
+    items: [
+      { key: 'furniture.bedFabric', label: 'Seng (ramme & gavel)', color: '#b8a88d' },
+      { key: 'furniture.bedLegs', label: 'Seng (ben)', color: '#dcc9a3' },
+      { key: 'furniture.nightstand', label: 'Nattbord', color: '#d9c39a' },
+      { key: 'furniture.sofa', label: 'Sofa', color: '#b3bb9e' },
+      { key: 'furniture.tvBench', label: 'TV-benk', color: '#c9a876' },
+      { key: 'furniture.diningTable', label: 'Spisebord', color: '#dcc9a3' },
+      { key: 'furniture.diningChair', label: 'Spisestol (Casper armstol)', color: '#e8dfc9' },
+      { key: 'furniture.diningChairSeat', label: 'Spisestol, sete', color: '#f2ede2' },
+      { key: 'furniture.skjenk', label: 'Skjenk (Eikeskjenk 240)', color: '#e6dcc4' },
+    ],
+  },
+  {
     title: 'Felles',
     items: [
-      { key: 'trim', label: 'Skirting, cornices & reveals', color: '#fbfbf8' },
+      { key: 'trim', label: 'Skirting & reveals', color: '#fbfbf8' },
       { key: 'doors', label: 'Door leaves', color: '#fbfbf8' },
       { key: 'windows', label: 'Window frames', color: '#fbfbf8' },
       { key: 'radiators', label: 'Radiators', color: '#f1f1ee' },

@@ -61,6 +61,18 @@ body {
   font-size: 11px;
 }
 
+.dim-label {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgb(79 134 198 / 0.85);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateY(23px);
+  pointer-events: none;
+}
+
 .compass {
   font-weight: 700;
   font-size: 13px;

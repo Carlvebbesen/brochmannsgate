@@ -7,7 +7,8 @@ import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
-import { buildApartment } from './build';
+import { buildApartment, updateObstacle } from './build';
+import { setPose } from './build/furniture';
 import { WalkController } from './controls/walk';
 import { MaterialRegistry } from './core/materials';
 import { Remote, isNewRemote, rememberSeen, type SyncStatus } from './core/remote';
@@ -15,7 +16,8 @@ import { ColorStore } from './core/state';
 import { sunDirection } from './core/sun';
 import { loadVinyl } from './core/vinyl';
 import { toWorld } from './core/geom';
-import { center, walkStart } from './data/apartment';
+import { center, rooms, walkStart } from './data/apartment';
+import { furnitureDefaults } from './data/furniture';
 import { defaultColors } from './data/palette';
 import { Panel, type Mode, type Selection } from './ui/panel';
 
@@ -43,10 +45,24 @@ const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
 const PERSPECTIVE_POS = new THREE.Vector3(CENTER.x - 5.5, 13, CENTER.z + 10);
 
 // ---- Model
-const store = new ColorStore(defaultColors);
+const store = new ColorStore(defaultColors, furnitureDefaults);
 const mats = new MaterialRegistry(store, loadVinyl(renderer.capabilities.getMaxAnisotropy()));
 const apartment = buildApartment(mats);
 scene.add(apartment.root);
+
+// ---- Furniture: positioned from the store (defaults, then any saved drag), kept in sync with it
+function applyFurniturePoses(onlyId?: string) {
+  for (const item of apartment.furniture) {
+    if (onlyId && item.id !== onlyId) continue;
+    setPose(item.group, store.getPose(item.id));
+    if (item.obstacle) updateObstacle(item.obstacle, item);
+  }
+}
+applyFurniturePoses();
+store.onChange((c) => {
+  if (c.type === 'furniture') applyFurniturePoses(c.id);
+  else if (c.type === 'all') applyFurniturePoses();
+});
 
 const ground = new THREE.Mesh(
   new THREE.CircleGeometry(40, 64),
@@ -64,6 +80,7 @@ const compass = new CSS2DObject(compassEl);
 compass.position.copy(toWorld(center[0], 10.4, 0));
 scene.add(compass);
 const labelObjects = [...apartment.labels, compass];
+const dimensionObjects = apartment.dimensions;
 
 // ---- Lights
 const timer = new THREE.Timer();
@@ -115,9 +132,10 @@ const clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
 const savedOrbit = { pos: new THREE.Vector3(), target: new THREE.Vector3() };
 
 function applyVisibility() {
-  const { ceilings, labels, cut } = store.view;
+  const { ceilings, labels, cut, dimensions } = store.view;
   apartment.ceilings.visible = mode === 'walk' || ceilings;
   labelObjects.forEach((o) => (o.visible = mode === 'orbit' && labels));
+  dimensionObjects.forEach((o) => (o.visible = mode === 'orbit' && dimensions));
   if (mode === 'orbit' && cut !== null) {
     clipPlane.constant = cut;
     renderer.clippingPlanes = [clipPlane];
@@ -149,6 +167,7 @@ function setMode(next: Mode) {
   camera.updateProjectionMatrix();
   mode = next;
   applyVisibility();
+  setMoveFurniture(moveFurniture);
   panel.setMode(mode);
 }
 
@@ -218,16 +237,94 @@ store.onChange((c) => {
   if (highlighted !== before) highlightUntil = timer.getElapsed() + 1.2;
 });
 
+function ndcFromEvent(e: PointerEvent): THREE.Vector2 {
+  const rect = renderer.domElement.getBoundingClientRect();
+  return new THREE.Vector2(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
+}
+
+// ---- Dragging movable furniture (dollhouse view only): click-drag translates it across the floor.
+const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const APARTMENT_BOUNDS = rooms.reduce(
+  (b, r) => {
+    for (const [x, y] of r.polygon) {
+      b.x0 = Math.min(b.x0, x);
+      b.x1 = Math.max(b.x1, x);
+      b.y0 = Math.min(b.y0, y);
+      b.y1 = Math.max(b.y1, y);
+    }
+    return b;
+  },
+  { x0: Infinity, x1: -Infinity, y0: Infinity, y1: -Infinity },
+);
+
+function furnitureAt(ndc: THREE.Vector2): (typeof apartment.furniture)[number] | null {
+  raycaster.setFromCamera(ndc, camera);
+  for (const hit of raycaster.intersectObject(apartment.root, true)) {
+    if (!isShown(hit.object)) continue;
+    let o: THREE.Object3D | null = hit.object;
+    while (o) {
+      const id = o.userData.furnitureId as string | undefined;
+      if (id) return apartment.furniture.find((f) => f.id === id) ?? null;
+      o = o.parent;
+    }
+    return null; // the nearest hit isn't furniture – don't drag through it
+  }
+  return null;
+}
+
+function groundHit(ndc: THREE.Vector2): THREE.Vector3 | null {
+  raycaster.setFromCamera(ndc, camera);
+  return raycaster.ray.intersectPlane(groundPlane, new THREE.Vector3());
+}
+
+let drag: { item: (typeof apartment.furniture)[number]; offset: THREE.Vector3; moved: boolean } | null = null;
+/** Off by default: dragging never nudges furniture until the owner turns this on (panel: "Move furniture"). */
+let moveFurniture = false;
+function setMoveFurniture(on: boolean) {
+  moveFurniture = on;
+  renderer.domElement.style.cursor = on && mode === 'orbit' ? 'grab' : '';
+}
+
 const down = new THREE.Vector2();
-renderer.domElement.addEventListener('pointerdown', (e) => down.set(e.clientX, e.clientY));
-renderer.domElement.addEventListener('pointerup', (e) => {
+renderer.domElement.addEventListener('pointerdown', (e) => {
+  down.set(e.clientX, e.clientY);
+  if (mode !== 'orbit' || e.button !== 0 || !moveFurniture) return;
+  const item = furnitureAt(ndcFromEvent(e));
+  const hit = item && groundHit(ndcFromEvent(e));
+  if (!item || !hit) return;
+  orbit.enabled = false;
+  renderer.domElement.style.cursor = 'grabbing';
+  drag = { item, offset: item.group.position.clone().sub(hit), moved: false };
+});
+window.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  const hit = groundHit(ndcFromEvent(e));
+  if (!hit) return;
+  const target = hit.add(drag.offset);
+  const { w, d } = drag.item.footprint;
+  const x = THREE.MathUtils.clamp(target.x, APARTMENT_BOUNDS.x0 + w / 2, APARTMENT_BOUNDS.x1 - w / 2);
+  const y = THREE.MathUtils.clamp(-target.z, APARTMENT_BOUNDS.y0 + d / 2, APARTMENT_BOUNDS.y1 - d / 2);
+  drag.item.group.position.set(x, 0, -y);
+  if (drag.item.obstacle) updateObstacle(drag.item.obstacle, drag.item);
+  drag.moved = true;
+});
+window.addEventListener('pointerup', (e) => {
+  if (drag) {
+    const { item, moved } = drag;
+    drag = null;
+    orbit.enabled = true;
+    renderer.domElement.style.cursor = moveFurniture && mode === 'orbit' ? 'grab' : '';
+    if (moved) {
+      store.setPose(item.id, { x: item.group.position.x, y: -item.group.position.z, yaw: item.group.rotation.y });
+      return;
+    }
+  }
   if (mode === 'walk') {
     if (walk.controls.isLocked) select(pick(new THREE.Vector2(0, 0)));
     return;
   }
   if (down.distanceTo(new THREE.Vector2(e.clientX, e.clientY)) > 5) return;
-  const rect = renderer.domElement.getBoundingClientRect();
-  select(pick(new THREE.Vector2(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1)));
+  select(pick(ndcFromEvent(e)));
 });
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Escape' && mode === 'orbit') select(null);
@@ -269,8 +366,10 @@ setQuality(highQuality);
 // ---- Panel
 const panel = new Panel(document.getElementById('panel')!, store, {
   setMode,
+  setMoveFurniture,
   setCeilings: (ceilings) => store.setView({ ceilings }),
   setLabels: (labels) => store.setView({ labels }),
+  setDimensions: (dimensions) => store.setView({ dimensions }),
   setCut: (cut) => store.setView({ cut }),
   setSun: (sun) => store.setView({ sun }),
   setVinyl: (vinyl) => store.setView({ vinyl }),

@@ -1,14 +1,13 @@
-import { CEILING, rooms, walls } from '../data/apartment';
+import { rooms, walls } from '../data/apartment';
 import type { Vec2 } from '../data/types';
 import { inRect, signedArea } from '../core/geom';
 import type { BuildContext } from './context';
 import { doorPassages } from './openings';
 
 const SKIRTING_H = 0.07;
-const CORNICE = 0.05;
 const STEP = 0.02;
 
-/** Skirting boards and cornices along every wall-backed edge of the dry rooms. */
+/** Skirting boards along every wall-backed edge of the dry rooms. */
 export function buildTrim(ctx: BuildContext) {
   const doors = doorPassages();
   const solid = (x: number, y: number) => walls.some((w) => w.kind !== 'beam' && inRect(x, y, w));
@@ -27,19 +26,13 @@ export function buildTrim(ctx: BuildContext) {
       const yaw = Math.atan2(u[1], u[0]);
       const at = (t: number, off: number): Vec2 => [p[0] + u[0] * t + out[0] * off, p[1] + u[1] * t + out[1] * off];
 
-      const runs = (skipDoors: boolean) => scan(len, (t) => {
+      const runs = scan(len, (t) => {
         const [x, y] = at(t, 0.04);
-        return solid(x, y) && !(skipDoors && inDoor(x, y));
+        return solid(x, y) && !inDoor(x, y);
       });
 
-      for (const [t0, t1] of runs(true)) {
+      for (const [t0, t1] of runs) {
         ctx.orientedBox('trim', at((t0 + t1) / 2, -0.006), t1 - t0, 0.012, 0, SKIRTING_H, yaw, { castShadow: false });
-      }
-      for (const [t0, t1] of runs(false)) {
-        ctx.orientedBox('trim', at((t0 + t1) / 2, -CORNICE / 2), t1 - t0, CORNICE, CEILING - CORNICE, CEILING, yaw, {
-          parent: ctx.ceilings,
-          castShadow: false,
-        });
       }
     }
   }

@@ -6,11 +6,13 @@
  */
 
 import { VINYL_FLOORS } from '../data/palette';
+import type { Pose } from '../data/furniture';
 
 export type ColorChange =
   | { type: 'color'; key: string; hex: string }
   | { type: 'override'; faceId: string; hex: string | null }
   | { type: 'view' }
+  | { type: 'furniture'; id: string }
   | { type: 'all' };
 
 export interface ViewSettings {
@@ -21,6 +23,8 @@ export interface ViewSettings {
   cut: number | null;
   /** Vinyl texture on the floors; off shows them as flat colours. */
   vinyl: boolean;
+  /** Width × depth labels on rooms and movable furniture. */
+  dimensions: boolean;
 }
 
 export interface ColorFile {
@@ -29,9 +33,11 @@ export interface ColorFile {
   colors: Record<string, string>;
   overrides: Record<string, string>;
   view?: ViewSettings;
+  /** Live position of the movable furniture, keyed by id (src/data/furniture.ts). Absent = at its default pose. */
+  furniture?: Record<string, Pose>;
 }
 
-export const defaultView: ViewSettings = { sun: 16, ceilings: false, labels: true, cut: null, vinyl: true };
+export const defaultView: ViewSettings = { sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false };
 
 const STORAGE_KEY = 'leilighet-3d:colors:v1';
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -51,14 +57,27 @@ export class ColorStore {
   colors: Record<string, string>;
   overrides: Record<string, string> = {};
   view: ViewSettings = { ...defaultView };
+  furniture: Record<string, Pose> = {};
   private listeners = new Set<(c: ColorChange) => void>();
   private saveTimer: number | undefined;
   /** Set by main.ts: called (debounced) whenever anything changes. */
   onPersist: ((file: ColorFile) => void) | null = null;
 
-  constructor(private readonly defaults: Record<string, string>) {
+  constructor(
+    private readonly defaults: Record<string, string>,
+    private readonly furnitureDefaults: Record<string, Pose> = {},
+  ) {
     this.colors = { ...defaults };
     this.load();
+  }
+
+  getPose(id: string): Pose {
+    return this.furniture[id] ?? this.furnitureDefaults[id] ?? { x: 0, y: 0, yaw: 0 };
+  }
+
+  setPose(id: string, pose: Pose) {
+    this.furniture[id] = pose;
+    this.emit({ type: 'furniture', id });
   }
 
   getColor(key: string): string {
@@ -87,11 +106,18 @@ export class ColorStore {
     this.colors = { ...this.defaults };
     this.overrides = {};
     this.view = { ...defaultView };
+    this.furniture = {};
     this.emit({ type: 'all' });
   }
 
   toJSON(): ColorFile {
-    return { version: 3, colors: { ...this.colors }, overrides: { ...this.overrides }, view: { ...this.view } };
+    return {
+      version: 3,
+      colors: { ...this.colors },
+      overrides: { ...this.overrides },
+      view: { ...this.view },
+      furniture: { ...this.furniture },
+    };
   }
 
   importJSON(data: unknown) {
@@ -122,6 +148,7 @@ export class ColorStore {
     this.colors = { ...this.defaults, ...colors };
     this.overrides = pickHex(file.overrides ?? {});
     this.view = pickView(file.view);
+    this.furniture = pickPoses(file.furniture);
   }
 
   private emit(change: ColorChange) {
@@ -169,6 +196,18 @@ function pickHex(obj: unknown): Record<string, string> {
   return out;
 }
 
+function pickPoses(furniture: unknown): Record<string, Pose> {
+  const out: Record<string, Pose> = {};
+  if (!furniture || typeof furniture !== 'object') return out;
+  for (const [id, v] of Object.entries(furniture as Record<string, unknown>)) {
+    const p = v as Partial<Pose> | null;
+    if (p && typeof p.x === 'number' && typeof p.y === 'number' && typeof p.yaw === 'number') {
+      out[id] = { x: p.x, y: p.y, yaw: p.yaw };
+    }
+  }
+  return out;
+}
+
 function pickView(view: unknown): ViewSettings {
   const v = (view ?? {}) as Partial<ViewSettings>;
   const clamp = (n: unknown, min: number, max: number, fallback: number) =>
@@ -179,5 +218,6 @@ function pickView(view: unknown): ViewSettings {
     labels: v.labels !== false,
     cut: v.cut === null || v.cut === undefined ? null : clamp(v.cut, 0.4, 2.8, 2.8),
     vinyl: v.vinyl !== false,
+    dimensions: v.dimensions === true,
   };
 }

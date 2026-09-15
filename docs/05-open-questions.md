@@ -9,6 +9,27 @@
 4. **Kitchen front layout** (optional): doors, drawers and appliance positions are a typical HTH layout (round 8), not taken
    from the real kitchen. Tell me which units differ (e.g. dishwasher side, fridge hinge, drawers vs doors).
 
+## Waiting for the owner (furniture, round 11)
+5. **TV-benk legs**: built "floating" (no legs, per the owner's wording) even though the linked Porto product photo shows visible
+   wood legs. Say the word and it goes back on the floor.
+6. **Rotate**: dragging only moves furniture, it doesn't rotate it. If a piece needs turning (e.g. the sofa the other way round),
+   say so and it'll be edited in `src/data/furniture.ts`, or rotate-while-dragging can be added.
+7. Bed, nightstand, TV-benk and desk sizes beyond the stated product dimensions (height, depth, drawer counts) are E (estimated
+   from the product photos), not measured.
+
+## Known deviations in the current model (dining chairs, round 15)
+- **No collision box for the chairs**: they're built as children of the `diningTable` group so they move with it as one unit,
+  but only the table itself has a drag obstacle/bounding-box footprint. Dragging the table right up against a wall could in
+  theory let a chair clip through it — not visible at the table's current position, not worth the extra plumbing unless it
+  becomes one.
+
+## Known deviations in the current model (dimensions toggle, round 14)
+- **Room size labels are bounding-box, not per-wall**: an L-shaped or irregular room's tag shows its overall envelope
+  (max width × max depth), not the length of each wall — fine for the mostly-rectangular rooms here, but not exact for one that
+  isn't.
+- **Crowded near the entry**: with *Show dimensions* on, the small adjacent rooms (Kott, Bad, Entré) and nearby furniture tags can
+  overlap on screen. No per-label collision avoidance was built — turn labels/dimensions off selectively if it's in the way.
+
 ## Known deviations in the current model
 - **Bedroom wall colours** come from photos; which photo shows Kontor and which Tvstue is uncertain.
 - **Estimates** (tag E in `src/data/apartment.ts`): wall thicknesses, most door widths, window heights, and the bathroom window size.

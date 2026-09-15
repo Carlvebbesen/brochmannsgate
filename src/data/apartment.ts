@@ -16,17 +16,17 @@ const INT = 0.1; // E: interior wall thickness
 const STAIR = 0.2; // E: walls towards the common stairwell
 
 // ---- Stue/Kjøkken
-const LIV_W = 5.488; // M: width
-const LIV_D = 3.475; // M: south wall → balcony-door wall
+export const LIV_W = 5.488; // M: width
+export const LIV_D = 3.475; // M: south wall → balcony-door wall
 
 // ---- Bedroom column along the east facade (widths M: 3.022–3.034)
-const K_X1 = LIV_W + INT;
-const BED_X1 = K_X1 + 3.03;
-const TV_Y1 = 3.084; // M: Tvstue depth
-const KON_Y0 = TV_Y1 + INT;
-const KON_Y1 = KON_Y0 + 2.751; // M: Kontor depth
-const HOV_Y0 = KON_Y1 + INT;
-const HOV_Y1 = HOV_Y0 + 2.722; // M: Hovedsoverom depth
+export const K_X1 = LIV_W + INT;
+export const BED_X1 = K_X1 + 3.03;
+export const TV_Y1 = 3.084; // M: Tvstue depth
+export const KON_Y0 = TV_Y1 + INT;
+export const KON_Y1 = KON_Y0 + 2.751; // M: Kontor depth
+export const HOV_Y0 = KON_Y1 + INT;
+export const HOV_Y1 = HOV_Y0 + 2.722; // M: Hovedsoverom depth
 
 // ---- Kitchen / bathroom block (west side of the upper half)
 const KIT_X0 = 1.33; // P: inner face of the wall facing the balcony (plan 1.24 + wall)

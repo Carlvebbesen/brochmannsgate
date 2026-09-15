@@ -55,3 +55,10 @@ export function bboxCenter(poly: Vec2[]): Vec2 {
   const ys = poly.map((p) => p[1]);
   return [(Math.min(...xs) + Math.max(...xs)) / 2, (Math.min(...ys) + Math.max(...ys)) / 2];
 }
+
+/** Bounding-box width (east-west) and depth (north-south) of a plan polygon, in metres. */
+export function bboxSize(poly: Vec2[]): Vec2 {
+  const xs = poly.map((p) => p[0]);
+  const ys = poly.map((p) => p[1]);
+  return [Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)];
+}

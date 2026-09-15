@@ -121,3 +121,129 @@ Owner request (screenshot of the beam next to the island): "Remove this wall …
   living room floor to ceiling, like the kitchen ↔ corridor opening since round 4. The Stue/Entré room boundary at y 3.50 is unchanged
   (it still decides floor and wall colours).
 - Review render: `images/model-corridor-open.png`.
+
+## Round 11: furniture, and drag-to-move (2026-09-14)
+Owner request: add furniture from specific product links/photos (Möbelringen Lofoten kontinentalseng, Bohus Vinstra nattbord, an IKEA
+Pax-style wardrobe, Skeidar Hedda hjørnesofa and A-Line Plank spisebord, a Porto-style floating TV-benk) to Hovedsoverom, Kontor and
+Tvstue/Stue-Kjøkken, "all furniture moveable except the wardrobe on the kontor". Owner answers (all defaults offered):
+1. Moveable = real click-drag in the browser (not just fixed geometry to hand-edit later).
+2. Kontor's second wall (4-door wardrobe + desk) runs straight across, ignoring the window.
+3. The Hedda corner sofa sits in Tvstue's south-east corner, under the window.
+
+**New: draggable furniture.** `src/data/furniture.ts` holds each piece's footprint and default pose (plan x/y + yaw);
+`src/build/furniture.ts` builds bed, 2× nightstand, sofa, TV-benk and spisebord as `THREE.Group`s at those poses. `ColorStore`
+(`src/core/state.ts`) now also keeps `furniture: Record<id, Pose>` and persists it exactly like colours (localStorage + shared KV,
+version 3 file gains an optional `furniture` field — old files without it just fall back to the defaults). `main.ts` drags the picked
+group's group along the floor plane on pointer move (clamped to the apartment's bounding box) and commits the pose to the store on
+release; a plain click (no movement) still opens the colour picker, as before. Each movable item keeps a live 2D collision box in
+`apartment.obstacles`, so Walk mode can't walk through wherever furniture currently sits.
+
+**Fixed built-ins (not furniture, don't move):**
+- Kontor: a 6-door Pax-style wardrobe (0.5 m doors × 2.36 m, filled to the ceiling above) on the wall facing Hovedsoverom (`B12`);
+  a 100+75 cm (4-door) wardrobe plus a legless floating desk filling the rest of the wall facing Tvstue (`B23`), straight across per
+  the owner's answer. New palette key `kontor.wardrobe` (light oak, one colour for both walls and the desk). `src/build/kontor.ts`.
+- Tvstue: a wall-mounted TV above the TV-benk, on the same wall as the Kontor millwork (seen from the Tvstue side). Not user-colourable
+  (`tv.screen` / `tv.frame` in `src/core/materials.ts`, like glass/handles/steel).
+
+**Movable furniture:**
+- **Bed** (Lofoten kontinentalseng, 180×200, E height/detail): light-coloured legs (owner asked for lighter than the product default),
+  and the sengegavel got two recessed vertical grooves splitting it into three panels instead of a plain flat panel (owner asked for this).
+  New keys `furniture.bedFabric`, `furniture.bedLegs`.
+- **2× nightstand** (Vinstra-style, 46×40), one drawer front over an open base, flanking the bed. Key `furniture.nightstand`.
+- **Sofa** (Hedda-style L/corner sofa, 265×218, seat 48/depth 50, overall H 87): two straight arms (0.95 m seat+back depth, E) bent
+  into the room corner. Key `furniture.sofa` — its first default (`#8f978c`) was accidentally almost the same colour as the Tvstue
+  walls (`#8a9884`) and was invisible in every screenshot until changed to `#b7ab98`.
+- **TV-benk** (Porto-style, 200×40×49): built "floating" (bottom at 0.35 m) per the owner's wording, even though the linked product
+  photo shows visible wood legs — flag this if it should sit on the floor instead. Key `furniture.tvBench`.
+- **Spisebord** (A-Line Plank-style, 200×95×75): trestle-style end legs (no centre leg), centred in the Stue/Kjøkken living area.
+  Key `furniture.diningTable`.
+
+**Not built (scope simplifications, flagged to the owner):** no rotate-while-dragging (yaw is fixed per item, only x/y move); dragging
+clamps to the whole apartment's bounding box, not to each room's own polygon, so a piece can in theory be dragged into a room it
+doesn't belong in; the sofa's L-shape is two overlapping boxes (seat + backrest), not a single moulded shape.
+- Verified with headless Playwright screenshots (`docs/images/model-furniture-*.png`) and a scripted drag test (mouse down → move →
+  up → reload) confirming a moved piece's new position survives a reload.
+
+## Round 12: realism pass from the real product photos (2026-09-14)
+Owner request: "pull the actual images, and make it more realistic." Round 11 had built the four Skeidar/Bohus/Møbelringen pieces
+from their stated dimensions alone (their pages are JS-rendered, so the initial pass never actually saw a photo of them). This round
+fetched each product's real `og:image` and rebuilt the pieces to match:
+- **Bed** (`refs: bed.png`): the sengegavel is a dense quilted grid (5 columns × 3 rows of shallow square panels), not two plain
+  grooves — matches the "Hedda Natur" tufted fabric in the photo. Fabric colour is now a warm taupe (`#b8a88d`), closer to the
+  photographed textile than the greyish tone round 11 used.
+- **Nightstand** (`refs: nightstand.jpg`): completely rebuilt. The real Vinstra stands on a **black metal leg frame** (with an X
+  cross-brace) at ~30 cm, not the four wood corner legs round 11 modelled — the wood body (now a light oak, `#d9c39a`) sits above
+  that, with two drawers with vertical reeded grooves and a round black knob each, instead of one plain box with a single line.
+  New fixed material `nightstand.metal` (`src/core/materials.ts`).
+- **Sofa** (`refs: sofa.png`): rounded seat/backrest edges (`RoundedBoxGeometry`, matching real cushions instead of sharp boxes),
+  a groove splitting the long arm into two seat cushions and the backrests into three, and four round light-wood peg legs at the
+  outer corners (the photo shows slim round tapered legs, not a plinth). Colour changed to a sage tone closer to the photo
+  (`#b3bb9e`) — round 11's `#8f978c` default was almost the exact colour of the Tvstue walls (`#8a9884`) and made the sofa
+  invisible in every screenshot until this was caught.
+- **Spisebord** (`refs: table.png`): the photo shows plain square legs at each corner, not a trestle/A-frame end panel as round 11
+  guessed from the name alone — rebuilt with four straight corner legs, and a lighter natural-oak top colour (`#dcc9a3`).
+- **General realism**: `src/core/textures.ts` adds two small generated (canvas) bump maps — a wood-grain streak pattern and a
+  fabric-weave noise pattern — applied as `bumpMap` (not a colour/tint, so the owner's chosen colour still shows through) to the
+  wood keys (`kontor.wardrobe`, `furniture.nightstand`, `furniture.tvBench`, `furniture.diningTable`) and fabric keys
+  (`furniture.bedFabric`, `furniture.sofa`) in `MaterialRegistry.get()`.
+- The Pax wardrobe and Porto TV-benk were already built from the owner's own two photos in round 11 and were left as they were.
+- Reference photos saved to the scratchpad only (not committed) — `og:image` URLs are in this log if they need re-fetching:
+  bed `backend.mobelringen.no/media/catalog/product/6/1/6194099_...4.png`, nightstand `bohus.no/pimcorecdn/.../298400 - Vinstra
+  nattbord...2.9888615f.jpg`, sofa and table via `ellinorassetsblobs...azurefd.net/assetsblobs/{8592586,6882510}/...webp`.
+
+## Round 13: a "Move furniture" mode (2026-09-14)
+Owner request: dragging furniture on every touch was too easy to trigger by accident (e.g. while orbiting near a piece). A new
+*Move furniture* checkbox in the panel (off by default) now gates it: furniture only drags when it's switched on; otherwise a
+click-drag over furniture just orbits the camera like clicking anywhere else, and a plain click (no drag, either way) still opens
+the colour picker. Cursor becomes a hand (`grab`/`grabbing`) while the mode is on. `src/main.ts` (`moveFurniture` flag),
+`src/ui/panel.ts` (`#opt-move`). Not persisted — resets to off on reload, like the Dollhouse/Walk mode itself.
+
+## Round 14: a "Show dimensions" toggle (2026-09-14)
+Owner request: an easy way to see the width/depth of every room and piece of furniture at a glance, not just by clicking each one.
+A new *Show dimensions* checkbox in the panel (off by default, dollhouse view only, like room labels) now overlays a small blue
+tag on every room (`src/build/rooms.ts`: bounding-box width × depth of the room polygon, in metres, via the new `bboxSize` helper
+in `src/core/geom.ts`) and every movable furniture piece (`src/build/furniture.ts`: its `footprint.w`/`d` in centimetres, attached
+as a child of the furniture group so it tracks drags but stays unrotated at yaw 0 since it sits at the local origin). Both label
+kinds are `CSS2DObject`s pushed onto a new `ctx.dimensions` array (`src/build/context.ts`, `src/build/index.ts`), toggled in
+`applyVisibility()` (`src/main.ts`) the same way room labels are, and offset 23px below the room-name label via a CSS transform
+(`.dim-label` in `src/style.css`) so the two don't sit on top of each other. New `ViewSettings.dimensions` field in
+`src/core/state.ts`, persisted the same way as the other view options.
+Not built: labels only give a bounding-box size, not per-wall lengths, so an L-shaped or irregular room only shows its overall
+envelope; in the small rooms near the entry (Kott/Bad/Entré) several tags sit close enough to overlap when everything is on at
+once — flagged in `docs/05-open-questions.md` rather than chasing per-label collision avoidance.
+
+## Round 15: six dining chairs, as one unit with the table (2026-09-14)
+Owner request: "around the table add 6 of this chair. These will move around with the table, so they are one unit" — linked the
+Casper armstol (hvitoljet ask/hvit) from sleepo.no. Fetched the product page's spec table directly (the page's headline "Måle"
+field was internally inconsistent with its own detail rows, so the detail rows — 54×62×79 cm, seat height 44, armrest 65 — were
+used) and the product photo to match the bent-wood wraparound arm/back silhouette.
+- Built as **children of the `diningTable` group** (`src/build/furniture.ts`: `buildChair`, called from `buildDiningTable`), not
+  as separate `FurnitureId`s — so they translate (and would rotate, if rotation is ever added) with the table automatically, with
+  no new drag/obstacle/state plumbing needed. Positions (`diningChairs` in `src/data/furniture.ts`) are in the table's own local
+  frame: 3 per long edge (no end chairs — owner's revision), evenly spaced.
+- **Pushed halfway in** (owner's revision, "so it does not take up that much space"): each chair's centre sits exactly on the
+  table edge, so about half its seat is tucked under the tabletop, like a chair pushed in at home, rather than the full chair
+  sitting outside the table's footprint.
+  Each chair: 4 round legs (front pair rises only to the armrest, back pair continues up into the top back rail — matches the
+  photo, where the back frame is a continuous piece from floor to headrest), two armrest rails, one back rail, and a rounded
+  cream seat cushion.
+- New palette/material keys: `furniture.diningChair` (wood, `#e8dfc9`) and `furniture.diningChairSeat` (fabric, `#f2ede2`),
+  added to `WOOD_KEYS`/`FABRIC_KEYS` in `src/core/materials.ts` for the same bump-map treatment as the other furniture.
+- The table's own dimension label (`footprints.diningTable`, "200 × 95 cm") still reflects the table only, not the chairs —
+  the chairs have no separate obstacle/collision box, so dragging the table close to a wall can in theory let a chair clip
+  through it; not an issue at the table's current position (room is 5.49 × 3.48 m).
+- Verified with a headless Playwright screenshot (top view and a close 3D angle) — chairs tuck cleanly under the table on all
+  four sides, no overlap with the kitchen island or skjenk.
+
+## Round 15: "Eikeskjenk 240" sideboard (2026-09-14)
+Owner supplied a byggemanual PDF for a piece they're planning to build themselves — a 2400 × 350 × 800 mm free-standing oak
+sideboard on six turned legs, five sections left to right: an open cubby (speaker/books/vinyl), an open bookshelf, an
+asymmetric two-shelf section, a ten-bottle wine rack, and a closed door. Added as new movable furniture (`skjenk`, joining
+`FurnitureId`) built from the manual's own deleliste/oppriss measurements (section widths, shelf heights, leg positions),
+not estimated: `src/data/furniture.ts` (`SKJENK_W/D/H`, footprint, default pose) and `src/build/furniture.ts`
+(`buildSkjenk`). New colourable key `furniture.skjenk` in the palette, given the wood bump map like the other oak pieces
+in `src/core/materials.ts`.
+Placed flush against the south wall of Stue/Kjøkken (wall F, y = 0), centred on the wall — the only blank, window- and
+door-free wall long enough for a 2.4 m piece; front faces north into the room. Verified with headless screenshots from
+several angles (`window.apartment3d`): the five sections, wine-rack grid and door/knob read correctly, and it clears the
+dining table (added in a concurrent round) by a comfortable margin.

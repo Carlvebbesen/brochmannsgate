@@ -18,6 +18,8 @@ export class BuildContext {
   /** Ceilings, cornices and soffits – hidden in dollhouse view. */
   readonly ceilings = new THREE.Group();
   readonly labels: CSS2DObject[] = [];
+  /** Width × depth labels on rooms and furniture, shown only when the "dimensions" view option is on. */
+  readonly dimensions: CSS2DObject[] = [];
   /** 2D footprints that block walking in first-person mode. */
   readonly obstacles: Rect[] = [];
 

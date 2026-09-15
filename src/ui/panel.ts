@@ -12,8 +12,10 @@ export type Mode = 'orbit' | 'walk';
 
 export interface PanelActions {
   setMode(mode: Mode): void;
+  setMoveFurniture(on: boolean): void;
   setCeilings(on: boolean): void;
   setLabels(on: boolean): void;
+  setDimensions(on: boolean): void;
   setCut(height: number | null): void;
   setSun(hour: number): void;
   setVinyl(on: boolean): void;
@@ -49,8 +51,12 @@ const TEMPLATE = /* html */ `
         <button data-view="perspective">3D view</button>
         <button data-view="top">Top view</button>
       </div>
+      <label class="check move-furniture" title="While on, click-drag a bed/sofa/table/etc. to slide it. While off, dragging never moves furniture by accident.">
+        <input type="checkbox" id="opt-move" /> Move furniture
+      </label>
       <label class="check"><input type="checkbox" id="opt-ceil" /> Show ceilings</label>
       <label class="check"><input type="checkbox" id="opt-labels" checked /> Room labels</label>
+      <label class="check" title="Width × depth on every room and movable piece of furniture."><input type="checkbox" id="opt-dims" /> Show dimensions</label>
       <label class="range"><span>Section cut</span><input type="range" id="opt-cut" min="0.4" max="${CUT_OFF}" step="0.05" value="${CUT_OFF}" /><output id="cut-v">off</output></label>
     </div>
     <label class="range"><span>Sun</span><input type="range" id="opt-sun" min="5" max="22" step="0.25" value="16" /><output id="sun-v">16:00</output></label>
@@ -95,6 +101,7 @@ export class Panel {
   setViewSettings(v: ViewSettings) {
     this.$<HTMLInputElement>('#opt-ceil').checked = v.ceilings;
     this.$<HTMLInputElement>('#opt-labels').checked = v.labels;
+    this.$<HTMLInputElement>('#opt-dims').checked = v.dimensions;
     this.$<HTMLInputElement>('#opt-vinyl').checked = v.vinyl;
     const cut = this.$<HTMLInputElement>('#opt-cut');
     cut.value = String(v.cut ?? CUT_OFF);
@@ -254,10 +261,14 @@ export class Panel {
     this.el.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((b) =>
       b.addEventListener('click', () => this.actions.view(b.dataset.view as 'perspective' | 'top')),
     );
+    const move = this.$<HTMLInputElement>('#opt-move');
+    move.addEventListener('change', () => this.actions.setMoveFurniture(move.checked));
     const ceil = this.$<HTMLInputElement>('#opt-ceil');
     ceil.addEventListener('change', () => this.actions.setCeilings(ceil.checked));
     const labels = this.$<HTMLInputElement>('#opt-labels');
     labels.addEventListener('change', () => this.actions.setLabels(labels.checked));
+    const dims = this.$<HTMLInputElement>('#opt-dims');
+    dims.addEventListener('change', () => this.actions.setDimensions(dims.checked));
     const vinyl = this.$<HTMLInputElement>('#opt-vinyl');
     vinyl.addEventListener('change', () => this.actions.setVinyl(vinyl.checked));
     const hq = this.$<HTMLInputElement>('#opt-hq');
