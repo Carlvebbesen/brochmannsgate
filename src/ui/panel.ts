@@ -8,7 +8,7 @@ export interface Selection {
   faceId?: string;
 }
 
-export type Mode = 'orbit' | 'walk';
+export type Mode = 'orbit' | 'walk' | 'plan';
 
 export interface PanelActions {
   setMode(mode: Mode): void;
@@ -45,6 +45,7 @@ const TEMPLATE = /* html */ `
     <div class="seg">
       <button data-mode="orbit" class="on">Dollhouse</button>
       <button data-mode="walk">Walk</button>
+      <button data-mode="plan" title="Flat top view for planning the electrical work">El-plan</button>
     </div>
     <div class="orbit-only">
       <div class="views">
@@ -64,6 +65,7 @@ const TEMPLATE = /* html */ `
     <label class="check" title="Ambient occlusion and sharper shadows. Turn off on slow devices; only affects this browser."><input type="checkbox" id="opt-hq" checked /> High quality</label>
   </section>
   <section class="sync" id="sync"></section>
+  <section class="el" id="electrical"></section>
   <section class="selected" id="selected"></section>
   <section class="groups" id="groups"></section>
   <footer>
@@ -163,6 +165,7 @@ export class Panel {
   setMode(mode: Mode) {
     this.el.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.classList.toggle('on', b.dataset.mode === mode));
     this.el.classList.toggle('walking', mode === 'walk');
+    this.el.classList.toggle('planning', mode === 'plan');
   }
 
   showSelection(sel: Selection | null) {

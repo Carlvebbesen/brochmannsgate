@@ -22,7 +22,7 @@ export interface Env {
 const KV_KEY = 'settings:v1';
 const COOKIE = 'l3d_session';
 const SESSION_DAYS = 30;
-const MAX_BODY = 64 * 1024;
+const MAX_BODY = 192 * 1024; // colours + furniture + up to 500 el-points
 const HEX = /^#[0-9a-f]{6}$/i;
 
 export default {
@@ -72,13 +72,43 @@ async function putSettings(request: Request, env: Env): Promise<Response> {
   return json({ ok: true, savedAt: settings.savedAt });
 }
 
+interface Pose {
+  x: number;
+  y: number;
+  yaw: number;
+}
+
+interface ElectricalItem {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  status: string;
+  height?: number | null;
+  note?: string;
+}
+
 interface Settings {
-  version: 3;
+  version: 4;
   colors: Record<string, string>;
   overrides: Record<string, string>;
-  view: { sun: number; ceilings: boolean; labels: boolean; cut: number | null; vinyl: boolean };
+  view: {
+    sun: number;
+    ceilings: boolean;
+    labels: boolean;
+    cut: number | null;
+    vinyl: boolean;
+    dimensions: boolean;
+    elPhase: string;
+    elFurniture: boolean;
+  };
+  furniture: Record<string, Pose>;
+  electrical: ElectricalItem[];
   savedAt: string;
 }
+
+const EL_TYPES = new Set(['outlet2', 'outlet6', 'tv', 'net', 'dimmer', 'switch', 'switch2', 'ceiling', 'wallLight', 'spot', 'led']);
+const EL_STATUS = new Set(['existing', 'new', 'remove']);
 
 /** Accepts only the shape the app writes – KV holds nothing a visitor could smuggle in. */
 function sanitize(body: unknown): Settings | null {
@@ -88,7 +118,7 @@ function sanitize(body: unknown): Settings | null {
   const v = (b.view ?? {}) as Record<string, unknown>;
   const cut = num(v.cut, 0.4, 2.8);
   return {
-    version: 3,
+    version: 4,
     colors: hexMap(b.colors),
     overrides: hexMap(b.overrides),
     view: {
@@ -97,9 +127,57 @@ function sanitize(body: unknown): Settings | null {
       labels: v.labels !== false,
       cut: cut,
       vinyl: v.vinyl !== false,
+      dimensions: v.dimensions === true,
+      elPhase: v.elPhase === 'today' || v.elPhase === 'planned' ? v.elPhase : 'compare',
+      elFurniture: v.elFurniture !== false,
     },
+    furniture: poses(b.furniture),
+    electrical: electrical(b.electrical),
     savedAt: new Date().toISOString(),
   };
+}
+
+/** Dragged furniture positions, keyed by the ids in src/data/furniture.ts. */
+function poses(obj: unknown): Record<string, Pose> {
+  const out: Record<string, Pose> = {};
+  if (!obj || typeof obj !== 'object') return out;
+  for (const [id, value] of Object.entries(obj)) {
+    if (id.length > 40 || Object.keys(out).length >= 50) break;
+    const p = value as Record<string, unknown> | null;
+    const x = num(p?.x, -50, 50);
+    const y = num(p?.y, -50, 50);
+    const yaw = num(p?.yaw, -100, 100);
+    if (x !== null && y !== null && yaw !== null) out[id] = { x, y, yaw };
+  }
+  return out;
+}
+
+/** The el-plan's points (src/data/electrical.ts). */
+function electrical(list: unknown): ElectricalItem[] {
+  if (!Array.isArray(list)) return [];
+  const out: ElectricalItem[] = [];
+  for (const raw of list.slice(0, 500)) {
+    const e = raw as Record<string, unknown> | null;
+    if (!e || typeof e.id !== 'string' || typeof e.type !== 'string' || !EL_TYPES.has(e.type)) continue;
+    const x = num(e.x, -50, 50);
+    const y = num(e.y, -50, 50);
+    if (x === null || y === null) continue;
+    const item: ElectricalItem = {
+      id: e.id.slice(0, 40),
+      type: e.type,
+      x,
+      y,
+      status: typeof e.status === 'string' && EL_STATUS.has(e.status) ? e.status : 'new',
+    };
+    if (e.height === null) item.height = null;
+    else {
+      const h = num(e.height, 0, 300);
+      if (h !== null) item.height = h;
+    }
+    if (typeof e.note === 'string' && e.note.trim()) item.note = e.note.slice(0, 200);
+    out.push(item);
+  }
+  return out;
 }
 
 function hexMap(obj: unknown): Record<string, string> {

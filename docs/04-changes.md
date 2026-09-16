@@ -247,3 +247,47 @@ Placed flush against the south wall of Stue/Kjøkken (wall F, y = 0), centred on
 door-free wall long enough for a 2.4 m piece; front faces north into the room. Verified with headless screenshots from
 several angles (`window.apartment3d`): the five sections, wine-rack grid and door/knob read correctly, and it clears the
 dining table (added in a concurrent round) by a comfortable margin.
+
+## Round 16: El-plan — 2D top view for planning the electrical work (2026-09-16)
+Owner request: a top-down view "used to plan the electrical work", with power outlets (2- and 6-gang), dimmers, actual lights and
+internet/TV outlets, a "current → new" distinction, and the same admin editing as the colours.
+
+**A flat 2D sheet, not the 3D camera.** A third mode (*El-plan*, next to Dollhouse/Walk) swaps the WebGL view for an SVG plan
+drawn straight from `src/data/apartment.ts` — walls split around every door and window, door swings as arcs, windows as glass
+lines, built-ins and (optionally) the movable furniture as light outlines, room names with areas. SVG was chosen over an
+orthographic three.js camera because the symbols stay crisp at any zoom and the sheet prints/exports as something an electrician
+can actually read. Coordinates are the plan's own metres (SVG y = −y), so everything is to scale by construction.
+- `src/ui/plan2d.ts` — the renderer and all plan interaction (pan, zoom, place, drag, select) plus the legend/title block.
+- `src/data/electrical.ts` — the catalogue: 11 point types in three groups, each with a short code, a Norwegian name for the
+  printed sheet, a default mounting height and an SVG symbol (NS 3931-ish: half disc for a socket, stem + lever for a switch,
+  circle with a cross for a light point).
+- `src/ui/electrical.ts` — the panel section: phase switch, palette, and the editor for the selected point.
+
+**Types**: outlet 2-gang, outlet 6-gang, TV/antenna, network (RJ45); dimmer, switch, two-way switch; ceiling light, wall light,
+downlight/spot, LED strip/driver.
+
+**Current → new** is a status on each point — `existing`, `new` or `remove` — with a three-way phase switch: *Today* (existing +
+to-be-removed), *Planned* (existing + new, i.e. what the flat ends up with) and *Compare* (all three at once: grey / blue / red
+with a cross). One list of points, no duplication between a "before" and an "after" layer.
+
+**Each point** stores its type, position, status, a mounting height in cm above the floor (or "tak" for a ceiling point,
+defaulting to the type's own height) and a free-text note. Both are drawn next to the symbol, so the printed sheet carries the
+heights. Points that land within 30 cm of each other stagger their labels instead of printing on top of one another.
+
+**Placing and editing**: pick a type, click the plan. The point snaps to the nearest wall, cabinet or built-in face within 40 cm
+(sitting 6 cm off it, on the side the cursor is on), otherwise to a 5 cm grid; Alt places freely. Drag to move, click to edit,
+Delete to remove, Esc to drop the tool. *Fit*, *Print* (A3 landscape, via a serialised standalone SVG) and *PNG* export the sheet
+with its legend, which lists only the types in use with per-status counts, a status key, the date and a 1 m scale bar.
+
+**Sharing** works exactly like the colours: points live in `ColorStore.electrical` (settings `version: 4`), auto-save to
+Cloudflare KV when the browser is unlocked with the password, and are local-only otherwise. *Reset* (colours) deliberately leaves
+the el-plan alone; the panel has its own *Clear plan* with a confirmation.
+
+**Fixed along the way**: the Worker's `sanitize()` (`worker/index.ts`) rebuilt the settings document field by field and silently
+dropped everything it didn't know — so dragged **furniture positions** and the `dimensions` view flag had never actually reached
+KV (they only survived in localStorage). Both are now validated and stored, along with the el-plan; the body limit went from
+64 KB to 192 KB to fit up to 500 points.
+
+Verified with headless Playwright: all three phases filter correctly, click-placement + wall snapping, dragging a point persists
+to the store, the exported SVG parses and rasterises to PNG (1197 × 1456), no console errors, and switching back to Dollhouse
+restores the 3D scene and the colour panel unchanged.

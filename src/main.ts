@@ -20,9 +20,12 @@ import { center, rooms, walkStart } from './data/apartment';
 import { furnitureDefaults } from './data/furniture';
 import { defaultColors } from './data/palette';
 import { Panel, type Mode, type Selection } from './ui/panel';
+import { Plan2D, PLAN_SVG_CSS } from './ui/plan2d';
+import { ElectricalPanel, newItem } from './ui/electrical';
 
 const viewport = document.getElementById('viewport')!;
 const walkHint = document.getElementById('walk-hint')!;
+const planHost = document.getElementById('plan')!;
 const crosshair = document.getElementById('crosshair')!;
 
 // ---- Renderer & scene
@@ -146,6 +149,31 @@ function applyVisibility() {
 
 function setMode(next: Mode) {
   if (next === mode) return;
+  // The el-plan is a flat 2D sheet drawn over the scene; the 3D view keeps its camera underneath.
+  const toPlan = next === 'plan';
+  planHost.hidden = !toPlan;
+  renderer.domElement.style.visibility = toPlan ? 'hidden' : '';
+  labelRenderer.domElement.style.visibility = toPlan ? 'hidden' : '';
+  if (toPlan) {
+    walk.enabled = false;
+    walk.controls.unlock();
+    orbit.enabled = false;
+    walkHint.hidden = true;
+    crosshair.hidden = true;
+    mode = next;
+    panel.setMode(mode);
+    return;
+  }
+  if (mode === 'plan') {
+    selectPoint(null);
+    electrical.setTool(null);
+    orbit.enabled = true;
+    mode = 'orbit';
+    if (next === 'orbit') {
+      panel.setMode(mode);
+      return;
+    }
+  }
   if (next === 'walk') {
     savedOrbit.pos.copy(camera.position);
     savedOrbit.target.copy(orbit.target);
@@ -394,6 +422,95 @@ panel.setViewSettings(store.view);
 panel.setQuality(highQuality);
 applyVisibility();
 
+// ---- El-plan (2D top view for the electrical work)
+let pointSelection: string | null = null;
+const plan = new Plan2D(planHost, store, {
+  select: (id) => selectPoint(id),
+  place: (type, x, y) => {
+    const item = newItem(type, x, y);
+    store.addElectrical(item);
+    selectPoint(item.id);
+  },
+});
+const electrical = new ElectricalPanel(document.getElementById('electrical')!, store, {
+  setTool: (type) => plan.setTool(type),
+  select: (id) => selectPoint(id),
+  fit: () => plan.fit(),
+  print: () => printPlan(),
+  exportPng: () => exportPlanPng(),
+});
+
+function selectPoint(id: string | null) {
+  pointSelection = id;
+  plan.setSelected(id);
+  electrical.showSelection(id);
+}
+
+store.onChange((c) => {
+  if (c.type === 'electrical' || c.type === 'all' || (c.type === 'view' && mode === 'plan')) plan.refresh();
+  if (c.type === 'electrical' && pointSelection && !store.electrical.some((i) => i.id === pointSelection)) selectPoint(null);
+});
+
+window.addEventListener('keydown', (e) => {
+  if (mode !== 'plan') return;
+  const typing = (e.target as HTMLElement | null)?.closest('input, select, textarea');
+  if (e.code === 'Escape') {
+    electrical.setTool(null);
+    selectPoint(null);
+  } else if ((e.key === 'Delete' || e.key === 'Backspace') && pointSelection && !typing) {
+    e.preventDefault();
+    store.removeElectrical(pointSelection);
+    selectPoint(null);
+  }
+});
+
+function planSheet(): string {
+  return plan.toSVG();
+}
+
+function printPlan() {
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('The print window was blocked. Allow pop-ups for this page, or use PNG instead.');
+    return;
+  }
+  win.document.write(
+    `<!doctype html><html><head><title>El-plan – Brochmanns gate 14C</title><style>@page{size:A3 landscape;margin:8mm}html,body{margin:0}svg{width:100%;height:auto}${PLAN_SVG_CSS}</style></head><body>${planSheet()}</body></html>`,
+  );
+  win.document.close();
+  win.addEventListener('load', () => win.print());
+}
+
+function exportPlanPng() {
+  const svg = planSheet();
+  const img = new Image();
+  const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
+  img.onload = () => {
+    const scale = 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'el-plan.png';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    alert('Could not render the plan as PNG – use Print instead.');
+  };
+  img.src = url;
+}
+
 // ---- Shared settings (Cloudflare KV via worker/index.ts)
 const remote = new Remote();
 function showSync(status: SyncStatus, message?: string) {
@@ -423,7 +540,7 @@ new ResizeObserver(resize).observe(viewport);
 resize();
 
 // Handle for debugging from the browser console / automated screenshots.
-Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, select, store, remote, renderer, gtao, setQuality } });
+Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, select, store, remote, renderer, gtao, setQuality, plan, selectPoint } });
 
 renderer.setAnimationLoop((time) => {
   timer.update(time);

@@ -182,6 +182,17 @@ body {
   gap: 4px;
 }
 
+.controls > .seg {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* While planning the electrical work, the panel shows only the el-plan controls. */
+#panel.planning .controls > :not(.seg),
+#panel.planning .selected,
+#panel.planning .groups {
+  display: none;
+}
+
 .seg {
   padding: 3px;
   border-radius: var(--radius);
@@ -453,3 +464,226 @@ footer .danger {
     border-top: 1px solid var(--line);
   }
 }
+
+
+/* ---- El-plan: the flat 2D sheet and its panel section */
+
+#plan {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+}
+
+#plan[hidden] {
+  display: none;
+}
+
+.plan2d {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+}
+
+.plan2d.panning {
+  cursor: grabbing;
+}
+
+.plan2d.placing {
+  cursor: crosshair;
+}
+
+.plan2d .point {
+  cursor: pointer;
+}
+
+.plan2d .point.sel .halo {
+  fill: #fff;
+  opacity: 1;
+  stroke: var(--accent);
+  stroke-width: 0.03;
+}
+
+.plan2d .point:hover .halo {
+  stroke: #b6c6bf;
+  stroke-width: 0.03;
+}
+
+.el {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+#panel.planning .el {
+  display: flex;
+}
+
+.el-phase {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.el-selected .hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.el-selected kbd {
+  padding: 1px 4px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  font-size: 11px;
+}
+
+.el-palette details {
+  margin-top: 4px;
+}
+
+.el-palette summary {
+  padding: 4px 0;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.el-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 3px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  text-align: left;
+}
+
+.el-type:hover {
+  border-color: #cfcfc8;
+}
+
+.el-type.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.el-code {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  padding: 1px 4px;
+  border-radius: 5px;
+  background: #eeeeea;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.el-type.on .el-code {
+  background: #fff;
+}
+
+.el-field {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.el-field span {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.el-field input,
+.el-field select {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+.el-field.note {
+  grid-template-columns: 58px 1fr;
+}
+
+.el-status {
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-top: 8px;
+}
+
+.el-status button.on {
+  color: var(--c);
+}
+
+.el-pos {
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.el-summary {
+  display: flex;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.el-tools {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.el-tools button {
+  padding: 5px 4px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+}
+
+.el-tools button:hover {
+  border-color: #cfcfc8;
+}
+
+/* The live sheet uses the same styles as the exported/printed SVG (src/ui/plan2d.ts). */
+.plan2d { background: #fff; }
+.plan2d .room { fill: #f4f4f1; }
+.plan2d .room.outdoor,
+.plan2d .balcony { fill: #eceee9; }
+.plan2d .wall { fill: #2f3336; }
+.plan2d .wall.interior { fill: #4a5054; }
+.plan2d .builtin { fill: none; stroke: #b9bcc0; stroke-width: 0.02; }
+.plan2d .furniture { fill: none; stroke: #d2d5d8; stroke-width: 0.02; stroke-dasharray: 0.08 0.06; }
+.plan2d .glass { stroke: #6f9fc4; stroke-width: 0.04; }
+.plan2d .jamb { stroke: #2f3336; stroke-width: 0.025; }
+.plan2d .hole { stroke: #9aa0a5; stroke-width: 0.03; stroke-dasharray: 0.1 0.08; }
+.plan2d .leaf { stroke: #6b7175; stroke-width: 0.035; }
+.plan2d .swing { fill: none; stroke: #b9bcc0; stroke-width: 0.02; }
+.plan2d .room-name { font-size: 0.2px; fill: #6d7378; }
+.plan2d .room-area { font-size: 0.16px; fill: #9aa0a5; }
+.plan2d .point .sym { fill: none; stroke: var(--c); stroke-width: 0.17; stroke-linecap: round; stroke-linejoin: round; }
+.plan2d .point .halo { fill: #fff; opacity: 0.85; }
+.plan2d .point .hit { fill: transparent; }
+.plan2d .point .strike { stroke: #c0392b; stroke-width: 0.03; }
+.plan2d .point-label { font-size: 0.15px; font-weight: 600; fill: var(--c); }
+.plan2d .point-note { font-size: 0.12px; fill: #7b8186; }
+.plan2d .sheet-title { font-size: 0.28px; font-weight: 700; fill: #23272a; }
+.plan2d .sheet-sub { font-size: 0.16px; fill: #6d7378; }
+.plan2d .legend-text { font-size: 0.15px; fill: #3d4245; }
+.plan2d .scalebar { stroke: #3d4245; stroke-width: 0.02; }
+.plan2d .plan-legend .sym { fill: none; stroke: #444; stroke-width: 0.17; stroke-linecap: round; }

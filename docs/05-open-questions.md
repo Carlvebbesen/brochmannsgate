@@ -17,6 +17,21 @@
 7. Bed, nightstand, TV-benk and desk sizes beyond the stated product dimensions (height, depth, drawer counts) are E (estimated
    from the product photos), not measured.
 
+## Waiting for the owner (el-plan, round 16)
+8. **The plan starts empty.** Nothing was invented about the flat's existing wiring — no existing sockets, switches or ceiling
+   points are placed. Walk round with the plan open and drop the points that are there today as *Existing*, or send a list/photos
+   per room and they'll be placed.
+9. **Circuits (kurs)** are not modelled: a point has a type, a status, a height and a note, but no circuit number, and there is no
+   fuse box symbol or cable routing. Say the word if the electrician wants the plan grouped or coloured by kurs.
+10. **Fixed symbol orientation**: symbols are drawn upright and are not rotated to face along the wall they sit on. Readable, but
+    not the convention on a formal el-tegning.
+
+## Known deviations in the current model (el-plan, round 16)
+- **Heavy/utility points are not in the palette** (cooker point, floor-heating thermostat, fuse box, floor outlet, outdoor
+  socket) — the owner picked the outlet/data, switch and light sets. Adding more is a few lines in `src/data/electrical.ts`.
+- **The plan is 2D only**: points are not shown in the 3D model, and the heights are a number on the sheet, not a position on a wall.
+- **Print goes through a pop-up window**; if the browser blocks pop-ups, use *PNG* instead.
+
 ## Known deviations in the current model (dining chairs, round 15)
 - **No collision box for the chairs**: they're built as children of the `diningTable` group so they move with it as one unit,
   but only the table itself has a drag obstacle/bounding-box footprint. Dragging the table right up against a wall could in

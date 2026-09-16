@@ -7,12 +7,14 @@
 
 import { VINYL_FLOORS } from '../data/palette';
 import type { Pose } from '../data/furniture';
+import { isElStatus, isElTypeId, type ElectricalItem } from '../data/electrical';
 
 export type ColorChange =
   | { type: 'color'; key: string; hex: string }
   | { type: 'override'; faceId: string; hex: string | null }
   | { type: 'view' }
   | { type: 'furniture'; id: string }
+  | { type: 'electrical' }
   | { type: 'all' };
 
 export interface ViewSettings {
@@ -25,19 +27,30 @@ export interface ViewSettings {
   vinyl: boolean;
   /** Width × depth labels on rooms and movable furniture. */
   dimensions: boolean;
+  /** El-plan: which of existing/new/both to draw. */
+  elPhase: ElPhase;
+  /** El-plan: draw the furniture footprints under the points. */
+  elFurniture: boolean;
 }
 
+/** What the el-plan shows: the flat today, the flat as planned, or both side by side. */
+export type ElPhase = 'today' | 'planned' | 'compare';
+
 export interface ColorFile {
-  /** 3: floor colours are a tint over the vinyl texture (before that they were flat oak). */
-  version: 1 | 2 | 3;
+  /** 3: floor colours are a tint over the vinyl texture (before that they were flat oak). 4: adds the el-plan. */
+  version: 1 | 2 | 3 | 4;
   colors: Record<string, string>;
   overrides: Record<string, string>;
   view?: ViewSettings;
   /** Live position of the movable furniture, keyed by id (src/data/furniture.ts). Absent = at its default pose. */
   furniture?: Record<string, Pose>;
+  /** The el-plan's points (src/data/electrical.ts). */
+  electrical?: ElectricalItem[];
 }
 
-export const defaultView: ViewSettings = { sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false };
+export const defaultView: ViewSettings = {
+  sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false, elPhase: 'compare', elFurniture: true,
+};
 
 const STORAGE_KEY = 'leilighet-3d:colors:v1';
 const HEX = /^#[0-9a-f]{6}$/i;
@@ -58,6 +71,7 @@ export class ColorStore {
   overrides: Record<string, string> = {};
   view: ViewSettings = { ...defaultView };
   furniture: Record<string, Pose> = {};
+  electrical: ElectricalItem[] = [];
   private listeners = new Set<(c: ColorChange) => void>();
   private saveTimer: number | undefined;
   /** Set by main.ts: called (debounced) whenever anything changes. */
@@ -78,6 +92,36 @@ export class ColorStore {
   setPose(id: string, pose: Pose) {
     this.furniture[id] = pose;
     this.emit({ type: 'furniture', id });
+  }
+
+  // ---- El-plan points
+
+  addElectrical(item: ElectricalItem) {
+    this.electrical = [...this.electrical, item];
+    this.emit({ type: 'electrical' });
+  }
+
+  updateElectrical(id: string, patch: Partial<Omit<ElectricalItem, 'id'>>) {
+    const i = this.electrical.findIndex((e) => e.id === id);
+    if (i < 0) return;
+    const next = [...this.electrical];
+    next[i] = { ...next[i], ...patch };
+    this.electrical = next;
+    this.emit({ type: 'electrical' });
+  }
+
+  removeElectrical(id: string) {
+    const next = this.electrical.filter((e) => e.id !== id);
+    if (next.length === this.electrical.length) return;
+    this.electrical = next;
+    this.emit({ type: 'electrical' });
+  }
+
+  /** Empties the el-plan. Kept out of `reset()`, which is only about colours. */
+  clearElectrical() {
+    if (!this.electrical.length) return;
+    this.electrical = [];
+    this.emit({ type: 'electrical' });
   }
 
   getColor(key: string): string {
@@ -102,6 +146,7 @@ export class ColorStore {
     this.emit({ type: 'view' });
   }
 
+  /** Colours, view settings and furniture back to the defaults. The el-plan is left alone. */
   reset() {
     this.colors = { ...this.defaults };
     this.overrides = {};
@@ -112,11 +157,12 @@ export class ColorStore {
 
   toJSON(): ColorFile {
     return {
-      version: 3,
+      version: 4,
       colors: { ...this.colors },
       overrides: { ...this.overrides },
       view: { ...this.view },
       furniture: { ...this.furniture },
+      electrical: this.electrical.map((e) => ({ ...e })),
     };
   }
 
@@ -149,6 +195,7 @@ export class ColorStore {
     this.overrides = pickHex(file.overrides ?? {});
     this.view = pickView(file.view);
     this.furniture = pickPoses(file.furniture);
+    this.electrical = pickElectrical(file.electrical);
   }
 
   private emit(change: ColorChange) {
@@ -208,6 +255,21 @@ function pickPoses(furniture: unknown): Record<string, Pose> {
   return out;
 }
 
+function pickElectrical(items: unknown): ElectricalItem[] {
+  if (!Array.isArray(items)) return [];
+  const out: ElectricalItem[] = [];
+  for (const raw of items.slice(0, 500)) {
+    const e = raw as Partial<ElectricalItem> | null;
+    if (!e || typeof e.id !== 'string' || !isElTypeId(e.type)) continue;
+    if (typeof e.x !== 'number' || typeof e.y !== 'number' || !Number.isFinite(e.x) || !Number.isFinite(e.y)) continue;
+    const item: ElectricalItem = { id: e.id.slice(0, 40), type: e.type, x: e.x, y: e.y, status: isElStatus(e.status) ? e.status : 'new' };
+    if (e.height === null || typeof e.height === 'number') item.height = e.height;
+    if (typeof e.note === 'string' && e.note.trim()) item.note = e.note.slice(0, 200);
+    out.push(item);
+  }
+  return out;
+}
+
 function pickView(view: unknown): ViewSettings {
   const v = (view ?? {}) as Partial<ViewSettings>;
   const clamp = (n: unknown, min: number, max: number, fallback: number) =>
@@ -219,5 +281,7 @@ function pickView(view: unknown): ViewSettings {
     cut: v.cut === null || v.cut === undefined ? null : clamp(v.cut, 0.4, 2.8, 2.8),
     vinyl: v.vinyl !== false,
     dimensions: v.dimensions === true,
+    elPhase: v.elPhase === 'today' || v.elPhase === 'planned' ? v.elPhase : 'compare',
+    elFurniture: v.elFurniture !== false,
   };
 }
