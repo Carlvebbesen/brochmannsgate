@@ -291,3 +291,47 @@ KV (they only survived in localStorage). Both are now validated and stored, alon
 Verified with headless Playwright: all three phases filter correctly, click-placement + wall snapping, dragging a point persists
 to the store, the exported SVG parses and rasterises to PNG (1197 × 1456), no console errors, and switching back to Dollhouse
 restores the 3D scene and the colour panel unchanged.
+
+## Round 17: El-plan — wall-mounted symbols, measurements, 3D base, hover info, edit mode (2026-09-21)
+Owner feedback on the el-plan: better outlet (stikkontakt) icons that face the wall they're on and sit *on* it (not inside
+it), toggleable measurements from the walls, a switch between the floor plan and the 3D top view, information on hover, and an
+edit mode so nothing changes by mistake. The owner picked the default for every question (hybrid icon, along-wall + height
+measurements, edit mode off by default, points + room names over the 3D view).
+
+**Symbols** (`src/data/electrical.ts`): every type now has a `glyph` (white body, stroked lines, filled dots). Sockets are the
+Norwegian half circle with its flat side on the wall plus the two pin holes of a Schuko face, 6-gang is a wide plate with three pin
+pairs, TV and RJ45 have their own marks, switches are a circle with a lever (two for two-way, half filled for a dimmer).
+The palette buttons, the hover card and the legend use the same glyphs.
+
+**On the wall** (`src/ui/plan2d.ts`): wall points (anything with a height, i.e. not "tak") attach to the nearest exposed face —
+walls, base cabinets, low built-ins — with the parts of faces hidden inside other walls cut away. The symbol stands on the face
+and is rotated to point into the room; its label sits on the room side, upright, and moves further out if it would overlap
+another label. A point over a worktop goes on the wall *behind* it (the one facing the same way as the cabinet fronts), an island
+socket on the island's side; upper cabinets never carry a point. Old points (saved 6 cm off the face, sometimes inside the wall)
+are drawn on the face they belong to without being rewritten. Dragging redraws the symbol live, so it turns when dragged round a
+corner. Snapping now puts a point exactly on the face.
+
+**Measurements**: *Show measurements* draws chained dimensions along every wall (corner → point → point → corner, stopping at
+door/window edges and free wall ends) and, for ceiling points, dashed lines to the nearest wall in x and y. The hovered or selected
+point always gets its own dimensions to the corners, highlighted. Shared view flag `elMeasures`.
+
+**Base**: *Floor plan* | *3D top view*. The 3D view is rendered by `renderTopView()` in `main.ts` — an orthographic camera
+straight down, framed on the plan's own rectangle, so it lines up exactly — with the ceilings hidden, and embedded as an
+`<image>` under the points and room names (so Print/PNG include it). Rendered only when shown and re-rendered after the model
+changes. Shared view flag `elBase`. The render loop now idles while the el-plan is on screen.
+
+**Hover card**: type (EN + NO), status, height, room, distance to the corner/door/window on each side (or to the walls for a ceiling
+point) and the note.
+
+**Edit mode**: the el-plan opens view-only every time. Hover and click show information; dragging pans. *Edit* (button or **E**)
+shows the palette and *Clear plan* and unlocks placing, dragging, editing and **Delete**. The selected-point card is read-only while
+locked.
+
+Also: the live sheet and the printed/exported sheet now share one stylesheet (`PLAN_SVG_CSS`, scoped to `.plan2d` and injected
+once), instead of two copies in `style.css` and `plan2d.ts`. A click on a point no longer clears the selection straight away
+(pointer capture sent the click to the svg). `elBase` and `elMeasures` were added to the Worker's `sanitize()` so they reach KV.
+
+Verified with headless Playwright on the live shared points (26): symbols face their walls, the counter socket moves onto wall J,
+the balcony socket faces out, hover card, measurements on/off, 3D top view aligned, locked drag/Delete change nothing, edit-mode
+drag round a corner, export SVG (with 3D base) rasterises, Dollhouse renders normally afterwards.
+Renders: `docs/images/model-elplan.png`, `model-elplan-measures.png`, `model-elplan-3d.png`.
