@@ -162,11 +162,12 @@ function setMode(next: Mode) {
     crosshair.hidden = true;
     mode = next;
     panel.setMode(mode);
+    plan.refresh(); // renders the 3D top view now, if that is the base
     return;
   }
   if (mode === 'plan') {
     selectPoint(null);
-    electrical.setTool(null);
+    setElEditing(false); // the el-plan always opens view-only
     orbit.enabled = true;
     mode = 'orbit';
     if (next === 'orbit') {
@@ -431,14 +432,50 @@ const plan = new Plan2D(planHost, store, {
     store.addElectrical(item);
     selectPoint(item.id);
   },
+  renderModel: renderTopView,
 });
 const electrical = new ElectricalPanel(document.getElementById('electrical')!, store, {
   setTool: (type) => plan.setTool(type),
+  setEditing: (on) => setElEditing(on),
   select: (id) => selectPoint(id),
   fit: () => plan.fit(),
   print: () => printPlan(),
   exportPng: () => exportPlanPng(),
 });
+
+function setElEditing(on: boolean) {
+  plan.setEditing(on);
+  electrical.setEditing(on);
+}
+
+/**
+ * The 3D model seen straight down with an orthographic camera framed on `rect` (plan metres), so
+ * it lines up exactly with the el-plan's coordinates. Ceilings are hidden, as in the dollhouse
+ * top view. Returns a JPEG data URL (it is embedded in prints and PNG exports too).
+ */
+function renderTopView(rect: { x0: number; x1: number; y0: number; y1: number }, ppm: number): string {
+  const w = Math.round((rect.x1 - rect.x0) * ppm);
+  const h = Math.round((rect.y1 - rect.y0) * ppm);
+  // Camera space: right = +x (east), up = -z (north), so the frustum is simply the plan rectangle.
+  const cam = new THREE.OrthographicCamera(rect.x0, rect.x1, rect.y1, rect.y0, 0.1, 60);
+  cam.position.set(0, 30, 0);
+  cam.up.set(0, 0, -1);
+  cam.lookAt(0, 0, 0);
+  const ceilings = apartment.ceilings.visible;
+  const clipping = renderer.clippingPlanes;
+  apartment.ceilings.visible = false;
+  renderer.clippingPlanes = [];
+  const ratio = renderer.getPixelRatio();
+  renderer.setPixelRatio(1);
+  renderer.setSize(w, h, false);
+  renderer.render(scene, cam);
+  const url = renderer.domElement.toDataURL('image/jpeg', 0.88);
+  apartment.ceilings.visible = ceilings;
+  renderer.clippingPlanes = clipping;
+  renderer.setPixelRatio(ratio);
+  resize();
+  return url;
+}
 
 function selectPoint(id: string | null) {
   pointSelection = id;
@@ -447,6 +484,8 @@ function selectPoint(id: string | null) {
 }
 
 store.onChange((c) => {
+  // Anything that changes how the model looks makes the 3D top view stale.
+  if (c.type !== 'electrical' && (c.type !== 'view' || mode !== 'plan')) plan.invalidateModel();
   if (c.type === 'electrical' || c.type === 'all' || (c.type === 'view' && mode === 'plan')) plan.refresh();
   if (c.type === 'electrical' && pointSelection && !store.electrical.some((i) => i.id === pointSelection)) selectPoint(null);
 });
@@ -457,7 +496,9 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'Escape') {
     electrical.setTool(null);
     selectPoint(null);
-  } else if ((e.key === 'Delete' || e.key === 'Backspace') && pointSelection && !typing) {
+  } else if (e.code === 'KeyE' && !typing && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    setElEditing(!electrical.isEditing);
+  } else if ((e.key === 'Delete' || e.key === 'Backspace') && pointSelection && !typing && electrical.isEditing) {
     e.preventDefault();
     store.removeElectrical(pointSelection);
     selectPoint(null);
@@ -544,6 +585,7 @@ Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, s
 
 renderer.setAnimationLoop((time) => {
   timer.update(time);
+  if (mode === 'plan') return; // the canvas is hidden under the flat sheet
   if (mode === 'orbit') orbit.update();
   else walk.update(timer.getDelta());
   if (highlighted) {

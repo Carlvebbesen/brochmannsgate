@@ -101,6 +101,8 @@ interface Settings {
     dimensions: boolean;
     elPhase: string;
     elFurniture: boolean;
+    elBase: string;
+    elMeasures: boolean;
   };
   furniture: Record<string, Pose>;
   electrical: ElectricalItem[];
@@ -130,6 +132,8 @@ function sanitize(body: unknown): Settings | null {
       dimensions: v.dimensions === true,
       elPhase: v.elPhase === 'today' || v.elPhase === 'planned' ? v.elPhase : 'compare',
       elFurniture: v.elFurniture !== false,
+      elBase: v.elBase === 'model' ? 'model' : 'plan',
+      elMeasures: v.elMeasures === true,
     },
     furniture: poses(b.furniture),
     electrical: electrical(b.electrical),

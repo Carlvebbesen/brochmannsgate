@@ -31,7 +31,13 @@ export interface ViewSettings {
   elPhase: ElPhase;
   /** El-plan: draw the furniture footprints under the points. */
   elFurniture: boolean;
+  /** El-plan: what the points sit on – the drawn floor plan, or the 3D model rendered straight down. */
+  elBase: ElBase;
+  /** El-plan: dimension lines from every point to the nearest corners / walls. */
+  elMeasures: boolean;
 }
+
+export type ElBase = 'plan' | 'model';
 
 /** What the el-plan shows: the flat today, the flat as planned, or both side by side. */
 export type ElPhase = 'today' | 'planned' | 'compare';
@@ -49,7 +55,7 @@ export interface ColorFile {
 }
 
 export const defaultView: ViewSettings = {
-  sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false, elPhase: 'compare', elFurniture: true,
+  sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false, elPhase: 'compare', elFurniture: true, elBase: 'plan', elMeasures: false,
 };
 
 const STORAGE_KEY = 'leilighet-3d:colors:v1';
@@ -283,5 +289,7 @@ function pickView(view: unknown): ViewSettings {
     dimensions: v.dimensions === true,
     elPhase: v.elPhase === 'today' || v.elPhase === 'planned' ? v.elPhase : 'compare',
     elFurniture: v.elFurniture !== false,
+    elBase: v.elBase === 'model' ? 'model' : 'plan',
+    elMeasures: v.elMeasures === true,
   };
 }

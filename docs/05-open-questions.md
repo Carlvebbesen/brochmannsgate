@@ -23,8 +23,15 @@
    per room and they'll be placed.
 9. **Circuits (kurs)** are not modelled: a point has a type, a status, a height and a note, but no circuit number, and there is no
    fuse box symbol or cable routing. Say the word if the electrician wants the plan grouped or coloured by kurs.
-10. **Fixed symbol orientation**: symbols are drawn upright and are not rotated to face along the wall they sit on. Readable, but
-    not the convention on a formal el-tegning.
+10. ~~Fixed symbol orientation~~ — done in round 17: wall symbols stand on their wall and face the room.
+
+## Waiting for the owner (el-plan, round 17)
+11. **Sockets on the radiators**: the low built-ins under the windows (radiators) count as faces, so a socket dropped next to one
+    snaps onto the radiator front. Say if they should be ignored so sockets always go on the wall.
+12. **Measurement units**: dimensions are in metres with two decimals, like the rest of the sheet. Electricians often want cm/mm —
+    say the word to switch.
+13. **Legacy point at (4.45, 5.53)** (existing dimmer by the entré) sits on the end of the short wall stub by the tall cabinets.
+    Check it is on the right wall; drag it in Edit mode if not.
 
 ## Known deviations in the current model (el-plan, round 16)
 - **Heavy/utility points are not in the palette** (cooker point, floor-heating thermostat, fuse box, floor outlet, outdoor

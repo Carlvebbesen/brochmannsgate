@@ -30,9 +30,15 @@ A third mode, next to Dollhouse and Walk: the apartment as a flat, to-scale 2D s
   blue = new, red with a cross = to be removed). Every point carries one of those three statuses.
 - **Point types**: outlet 2-gang, outlet 6-gang, TV/antenna, network (RJ45); dimmer, switch, two-way switch; ceiling light,
   wall light, downlight/spot, LED strip/driver. All in `src/data/electrical.ts`, with their symbols and default heights.
-- **Placing**: pick a type in the panel, then click the plan — it snaps to the nearest wall or cabinet face within 40 cm, else to
-  a 5 cm grid (hold **Alt** to place freely). Drag a point to move it, click it to edit type/status/height/note, **Delete** to
-  remove it, **Esc** to put the tool away. Pan by dragging the background, zoom with the scroll wheel, *Fit* to re-centre.
+- **View only / Edit**: the plan always opens view-only — hover a point for a card with its type, status, height, room and
+  distances; click it for the details. *Edit* (or **E**) unlocks placing, moving, editing and deleting.
+- **Placing** (Edit on): pick a type in the panel, then click the plan. Wall points snap onto the nearest wall or cabinet face
+  within 40 cm and turn to face the room (over a worktop: onto the wall behind it); ceiling points go to a 5 cm grid. Hold **Alt**
+  to place freely. Drag a point to move it, click it to edit type/status/height/note, **Delete** to remove it, **Esc** to put the
+  tool away. Pan by dragging the background, zoom with the scroll wheel, *Fit* to re-centre.
+- **Base**: *Floor plan* (the drawn plan) or *3D top view* (the model rendered straight down, aligned to the plan).
+- **Show measurements**: chained dimensions along each wall (corner → point → point → corner) and ceiling points to the nearest
+  walls. The hovered/selected point always shows its distances to the corners.
 - **Heights** are in cm above the floor (or "tak" for a ceiling point) and print next to each symbol, together with any note.
 - **Print / PNG** produce the whole sheet with its title block, legend (only the types in use, with counts per status) and a 1 m
   scale bar. Print is set up for A3 landscape.
@@ -56,8 +62,8 @@ A third mode, next to Dollhouse and Walk: the apartment as a flat, to-scale 2D s
 | `src/data/furniture.ts` | Movable furniture: footprints and default poses; fixed Kontor millwork and TV placement |
 | `src/data/palette.ts` | Colour keys, panel groups, defaults |
 | `src/data/electrical.ts` | El-plan point types: symbols, codes, Norwegian names, default heights; the `ElectricalItem` shape |
-| `src/ui/plan2d.ts` | The 2D SVG plan: shell from `apartment.ts`, the points, legend/title block, pan/zoom/place/drag |
-| `src/ui/electrical.ts` | El-plan panel section: phase switch, palette, point editor |
+| `src/ui/plan2d.ts` | The 2D SVG plan: shell from `apartment.ts`, wall faces/mounting, points, measurements, hover card, 3D base, legend/title block, pan/zoom/place/drag |
+| `src/ui/electrical.ts` | El-plan panel section: edit toggle, base/phase switches, measurement toggle, palette, point editor |
 | `src/data/types.ts` | Data types |
 | `src/build/walls.ts` | Splits walls around openings and at room boundaries. Each face takes the colour of the room it faces |
 | `src/build/openings.ts` | Door leaves and casings, window frames, glass and sills, doorless openings |
