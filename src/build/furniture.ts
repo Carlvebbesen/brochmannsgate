@@ -7,6 +7,9 @@ import {
   diningChairs,
   footprints,
   furnitureDefaults,
+  SHOE_BENCH_D,
+  SHOE_BENCH_H,
+  SHOE_BENCH_W,
   SKJENK_D,
   SKJENK_H,
   SKJENK_LEG_H,
@@ -22,6 +25,7 @@ import {
   type Pose,
 } from '../data/furniture';
 import type { Rect } from '../data/types';
+import { buildBalconySofa, buildBalconyTable, buildGrill } from './balconyFurniture';
 import type { BuildContext } from './context';
 
 export interface MovableItem {
@@ -67,6 +71,10 @@ export function buildFurniture(ctx: BuildContext): MovableItem[] {
   add('tvBench', (g) => buildTvBench(ctx, g));
   add('diningTable', (g) => buildDiningTable(ctx, g));
   add('skjenk', (g) => buildSkjenk(ctx, g));
+  add('shoeBench', (g) => buildShoeBench(ctx, g));
+  add('grill', (g) => buildGrill(ctx, g));
+  add('balconySofa', (g) => buildBalconySofa(ctx, g));
+  add('balconyTable', (g) => buildBalconyTable(ctx, g));
   return items;
 }
 
@@ -333,4 +341,41 @@ function buildSkjenk(ctx: BuildContext, g: THREE.Group) {
     });
   }
   ctx.cylinder('nightstand.metal', [E[1] - 0.09, hd + 0.012], (inner0 + z1 - PANEL) / 2, 0.008, 0.024, 'y', { parent: g });
+}
+
+/**
+ * 1898 Bäckebo skohylle med sitteplass, 80×30×48, bjørk (product photo): a solid seat board on four slim legs,
+ * two shoe shelves of round rods between side rails. Back at -y (the wall), front at +y.
+ */
+function buildShoeBench(ctx: BuildContext, g: THREE.Group) {
+  const key = 'furniture.shoeBench';
+  const hw = SHOE_BENCH_W / 2;
+  const hd = SHOE_BENCH_D / 2;
+  const seat = 0.022;
+  const leg = 0.03;
+  const legX = hw - 0.035 - leg / 2; // the seat overhangs the legs a little at the ends
+  const legY = hd - 0.02 - leg / 2;
+
+  ctx.box(key, rect(-hw, hw, -hd, hd), SHOE_BENCH_H - seat, SHOE_BENCH_H, { parent: g, rounded: 0.004 });
+  for (const sx of [-1, 1]) {
+    for (const sy of [-1, 1]) {
+      const x = sx * legX;
+      const y = sy * legY;
+      ctx.box(key, rect(x - leg / 2, x + leg / 2, y - leg / 2, y + leg / 2), 0, SHOE_BENCH_H - seat, { parent: g, rounded: 0.006 });
+    }
+  }
+
+  const rodR = 0.009;
+  const railX = legX - leg / 2 - 0.01; // side rails just inside the legs
+  for (const z of [0.05, 0.25]) {
+    for (const sx of [-1, 1]) {
+      const x = sx * railX;
+      ctx.box(key, rect(x - 0.01, x + 0.01, -legY, legY), z - 0.015, z + 0.015, { parent: g });
+    }
+    const n = 5;
+    for (let i = 0; i < n; i++) {
+      const y = -legY + 0.01 + ((2 * legY - 0.02) * i) / (n - 1);
+      ctx.cylinder(key, [0, y], z + 0.015 + rodR, i === n - 1 ? rodR * 1.2 : rodR, 2 * railX, 'x', { parent: g });
+    }
+  }
 }

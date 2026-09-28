@@ -33,6 +33,10 @@
 13. **Legacy point at (4.45, 5.53)** (existing dimmer by the entré) sits on the end of the short wall stub by the tall cabinets.
     Check it is on the right wall; drag it in Edit mode if not.
 
+## Kott fittings (round 18)
+- All sizes are estimates. Tell me if the shelf heights, the rail height (1.70) or the number of shoe shelves (3) should change,
+  or if the vacuum/baskets should swap sides.
+
 ## Known deviations in the current model (el-plan, round 16)
 - **Heavy/utility points are not in the palette** (cooker point, floor-heating thermostat, fuse box, floor outlet, outdoor
   socket) — the owner picked the outlet/data, switch and light sets. Adding more is a few lines in `src/data/electrical.ts`.
@@ -56,8 +60,14 @@
 - **Bedroom wall colours** come from photos; which photo shows Kontor and which Tvstue is uncertain.
 - **Estimates** (tag E in `src/data/apartment.ts`): wall thicknesses, most door widths, window heights, and the bathroom window size.
 - **Vinyl texture** is derived from parkett.no's product photo and is published with the public repo and site (owner's choice).
-- **Later (owner said yes, not yet built)**: realistic tiles for the entry and bathroom (needs the tile sizes), and a
-  path-traced "Render photo" button.
+- **Later (owner said yes, not yet built)**: realistic bathroom tiles (needs the tile sizes) and a path-traced "Render photo"
+  button. The entry tiles got their pattern in round 19.
+- **Entry coat-hook wall (round 19)**: hook-rail height 1.70 and shelf top 1.95 are estimates from the reference photo, and the
+  20 × 20 cm tile size and the exact motif are drawn from the photo, not measured. The Norrgavel consoles' shape is a guess
+  (the linked page is the shelf only). All three pieces are centred on the 0.99 m wall.
+- **Balcony (round 20)**: the bistro table, chairs, rug and plants are sized from the reference image (E), not products. The
+  NÄMMARÖ is built armless as sold, though the image shows arms. Flower boxes on the railing and the facade wall lamp are not
+  modelled yet.
 - Doors are shown standing open or ajar (front door and bathroom door ajar, as in photo 38). They can't be opened or closed in the app yet.
 
 ## Resolved

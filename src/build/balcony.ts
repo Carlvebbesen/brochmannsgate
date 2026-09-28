@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { balcony } from '../data/apartment';
 import { slabGeometry, toWorld } from '../core/geom';
+import { buildBalconyPlants } from './balconyFurniture';
 import type { BuildContext } from './context';
 
 const BALUSTRADE_H = 0.7;
@@ -43,4 +44,6 @@ export function buildBalcony(ctx: BuildContext) {
   inst.castShadow = true;
   inst.userData.key = 'balkong.railing';
   ctx.root.add(inst);
+
+  buildBalconyPlants(ctx);
 }

@@ -46,10 +46,20 @@ const KOTT_Y0 = KS_Y0 + INT;
 const KOTT_Y1 = KOTT_Y0 + 0.94; // M: kott depth 0.94
 const TILE_X1 = A_X1 + 0.958; // M: tiles end between the front door and the kott door
 
+/** Inside of the kott (walk-in closet off the entry); its door D3 is in the south wall. */
+export const KOTT: Rect = { x0: KOTT_X0, x1: LIV_W, y0: KOTT_Y0, y1: KOTT_Y1 };
+
+/** The entry's south wall (the coat-hook wall, "knaggvegg"), opposite the front door: its face into the entry. */
+export const ENTRY_HOOK_WALL = { x0: A_X1, x1: CORR_X0, y: J_Y1 };
+/** Corner the entry's cement tiles are laid out from: the bathroom wall at the front-door wall. */
+export const ENTRY_TILE_ORIGIN: Vec2 = [A_X1, BAD_Y1];
+
 // ---- Balcony (inset in the north-west corner)
 const BAL_X = KIT_X0 - EXT; // outer face of the kitchen/bath facade
 const H_Y1 = LIV_D + EXT; // outer face of the balcony-door wall
 const BAL_Y1 = H_Y1 + 3.325; // M: width along the facade 3.325
+/** The balcony's straight sides: the facade it runs along (x) from the door wall (y0) to the north railing (y1). */
+export const BALCONY_EDGE = { x: BAL_X, y0: H_Y1, y1: BAL_Y1 };
 
 // ---- Kitchen
 const WORKTOP = 0.9;
@@ -154,7 +164,7 @@ export const rooms: Room[] = [
 /** Entry tiles in front of the front door and the bathroom door (M: 0.958 out from the bathroom wall × 1.662 full depth). */
 export const floorZones: FloorZone[] = [
   {
-    key: 'entre.tiles',
+    key: 'entre.cementTiles',
     polygon: [
       [A_X1, J_Y1],
       [TILE_X1, J_Y1],

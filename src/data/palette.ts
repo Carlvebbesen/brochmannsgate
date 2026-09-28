@@ -29,7 +29,7 @@ export const paletteGroups: PaletteGroup[] = [
   { title: 'Stue/Kjøkken', items: room('stue', SAGE) },
   {
     title: 'Entré',
-    items: [...room('entre', SAGE), { key: 'entre.tiles', label: 'Entry tiles', color: '#9c9b97' }],
+    items: [...room('entre', SAGE), { key: 'entre.cementTiles', label: 'Entry tiles (tint over the pattern)', color: '#ffffff' }],
   },
   {
     title: 'Bad',
@@ -50,6 +50,13 @@ export const paletteGroups: PaletteGroup[] = [
       { key: 'balkong.ceiling', label: 'Soffit', color: '#ede6d2' },
       { key: 'balkong.balustrade', label: 'Balustrade', color: '#ede6d2' },
       { key: 'balkong.railing', label: 'Railing', color: '#d6d7d3' },
+      { key: 'balkong.grill', label: 'Grill (Weber Spirit E-325)', color: '#1d1e20' },
+      { key: 'balkong.sofaFrame', label: 'Sofa, ramme (Nämmarö, akasie)', color: '#a36d3f' },
+      { key: 'balkong.sofaCushion', label: 'Sofa, puter (Frösön/Duvholmen beige)', color: '#e6decd' },
+      { key: 'balkong.tableTop', label: 'Salongbord (treplate)', color: '#b98a5a' },
+      { key: 'balkong.chair', label: 'Klappstoler', color: '#6d7757' },
+      { key: 'balkong.chairCushion', label: 'Stolputer', color: '#f1ede4' },
+      { key: 'balkong.rug', label: 'Jutetepper', color: '#c4a574' },
     ],
   },
   {
@@ -75,6 +82,14 @@ export const paletteGroups: PaletteGroup[] = [
     items: [{ key: 'kontor.wardrobe', label: 'Wardrobes & desk (fixed)', color: '#d9c8a8' }],
   },
   {
+    title: 'Kott innredning',
+    items: [
+      { key: 'kott.shelves', label: 'Hyller, skohylle & knagger (eik)', color: '#cfae7e' },
+      { key: 'kott.boxes', label: 'Oppbevaringsbokser', color: '#efe9dd' },
+      { key: 'kott.baskets', label: 'Trådkurver', color: '#f4f4f1' },
+    ],
+  },
+  {
     title: 'Møbler',
     items: [
       { key: 'furniture.bedFabric', label: 'Seng (ramme & gavel)', color: '#b8a88d' },
@@ -86,6 +101,9 @@ export const paletteGroups: PaletteGroup[] = [
       { key: 'furniture.diningChair', label: 'Spisestol (Casper armstol)', color: '#e8dfc9' },
       { key: 'furniture.diningChairSeat', label: 'Spisestol, sete', color: '#f2ede2' },
       { key: 'furniture.skjenk', label: 'Skjenk (Eikeskjenk 240)', color: '#e6dcc4' },
+      { key: 'furniture.hookRail', label: 'Knaggrekke (Allsarp, eik)', color: '#d6b98c' },
+      { key: 'furniture.hatShelf', label: 'Hattehylle (Norrgavel, bjørk)', color: '#e2cfb2' },
+      { key: 'furniture.shoeBench', label: 'Skohylle/benk (Bäckebo, bjørk)', color: '#e9dcc6' },
     ],
   },
   {
