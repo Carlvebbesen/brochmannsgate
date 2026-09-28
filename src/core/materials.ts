@@ -1,7 +1,8 @@
 import * as THREE from 'three';
+import { ENTRY_TILE_ORIGIN } from '../data/apartment';
 import { VINYL_FLOORS } from '../data/palette';
 import type { ColorChange, ColorStore } from './state';
-import { fabricWeaveMap, woodGrainMap } from './textures';
+import { cementTileMap, fabricWeaveMap, woodGrainMap } from './textures';
 import { VINYL, type VinylMaps } from './vinyl';
 
 /** Furniture surfaces that get a bump map on top of whatever flat colour is picked, for a bit of realism. */
@@ -12,8 +13,28 @@ const WOOD_KEYS = new Set([
   'furniture.diningTable',
   'furniture.skjenk',
   'furniture.diningChair',
+  'furniture.hookRail',
+  'furniture.hatShelf',
+  'furniture.shoeBench',
+  'kott.shelves',
+  'balkong.sofaFrame',
+  'balkong.tableTop',
 ]);
-const FABRIC_KEYS = new Set(['furniture.bedFabric', 'furniture.sofa', 'furniture.diningChairSeat']);
+const FABRIC_KEYS = new Set([
+  'furniture.bedFabric',
+  'furniture.sofa',
+  'furniture.diningChairSeat',
+  'balkong.sofaCushion',
+  'balkong.chairCushion',
+  'balkong.rug',
+]);
+
+/** Plain matte materials for props that are not user-colourable. */
+function props(colors: Record<string, string>): Record<string, THREE.Material> {
+  return Object.fromEntries(
+    Object.entries(colors).map(([key, color]) => [key, new THREE.MeshStandardMaterial({ color, roughness: 0.85 })]),
+  );
+}
 
 /** Materials that are not user-colourable. */
 const FIXED: Record<string, THREE.Material> = {
@@ -34,10 +55,37 @@ const FIXED: Record<string, THREE.Material> = {
   'tv.screen': new THREE.MeshStandardMaterial({ color: '#0c0d0f', roughness: 0.15, metalness: 0.2 }),
   'tv.frame': new THREE.MeshStandardMaterial({ color: '#1c1d1e', roughness: 0.4, metalness: 0.3 }),
   'nightstand.metal': new THREE.MeshStandardMaterial({ color: '#1a1a1a', roughness: 0.4, metalness: 0.6 }),
+  // Kott contents (coats, shoes, vacuum, bottles): props, not colourable.
+  ...props({
+    'kott.coatCream': '#d8ccb6',
+    'kott.coatGreen': '#4f5b45',
+    'kott.coatBlack': '#26272a',
+    'kott.coatBeige': '#b7a384',
+    'kott.shoeWhite': '#e9e7e2',
+    'kott.shoeBlack': '#2a2a2c',
+    'kott.shoeBrown': '#6b4a33',
+    'kott.vacuum': '#5d5f64',
+    'kott.vacuumAccent': '#6b4fa0',
+    'kott.bottleWhite': '#f2f2ef',
+    'kott.bottleGreen': '#7fae8a',
+    // Balcony grill details and pot plants
+    'grill.red': '#b8262b',
+    'grill.tyre': '#141414',
+    'plant.basket': '#b8996a',
+    'plant.pot': '#d9d4c8',
+    'plant.trunk': '#6b5842',
+    'plant.olive': '#8d9a74',
+    'plant.leaf': '#4d6a3c',
+    'plant.hydrangea': '#eceedb',
+    'plant.lavenderLeaf': '#8a9a82',
+    'plant.lavender': '#8672b4',
+  }),
+  'grill.table': new THREE.MeshStandardMaterial({ color: '#8e9093', roughness: 0.55, metalness: 0.35 }),
 };
 
 let wood: THREE.CanvasTexture | null = null;
 let fabric: THREE.CanvasTexture | null = null;
+let tiles: THREE.CanvasTexture | null = null;
 
 /** Surface finish per key; everything else is matte paint. */
 const FINISH: Record<string, THREE.MeshStandardMaterialParameters> = {
@@ -49,6 +97,8 @@ const FINISH: Record<string, THREE.MeshStandardMaterialParameters> = {
   'bad.walls': { roughness: 0.5 },
   'bad.floor': { roughness: 0.6 },
   'balkong.railing': { roughness: 0.5, metalness: 0.3 },
+  'balkong.grill': { roughness: 0.4, metalness: 0.25 },
+  'balkong.chair': { roughness: 0.5, metalness: 0.3 },
 };
 
 interface FaceSlot {
@@ -88,6 +138,9 @@ export class MaterialRegistry {
         m.bumpMap = wood ??= woodGrainMap();
         m.bumpScale = 0.006;
         m.roughness = 0.6;
+      } else if (key === 'entre.cementTiles') {
+        m.map = tiles ??= cementTileMap(ENTRY_TILE_ORIGIN);
+        m.roughness = 0.55;
       } else if (FABRIC_KEYS.has(key)) {
         m.bumpMap = fabric ??= fabricWeaveMap();
         m.bumpScale = 0.012;

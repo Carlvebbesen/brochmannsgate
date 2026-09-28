@@ -335,3 +335,65 @@ Verified with headless Playwright on the live shared points (26): symbols face t
 the balcony socket faces out, hover card, measurements on/off, 3D top view aligned, locked drag/Delete change nothing, edit-mode
 drag round a corner, export SVG (with 3D base) rasterises, Dollhouse renders normally afterwards.
 Renders: `docs/images/model-elplan.png`, `model-elplan-measures.png`, `model-elplan-3d.png`.
+
+## Round 18: kott fitted out like the owner's reference photo (2026-09-28)
+
+The owner sent a photo of a fitted walk-in closet and asked for the kott to be done "litt sånn som dette, bare litt mindre
+skohyller". Built as fixed fittings (`src/data/kott.ts` sizes, all E; `src/build/kott.ts`) in the 0.79 × 0.94 m kott. D3 swings
+out into the entry, so the whole inside is used:
+- **Top**: two wall-to-wall oak shelves (tops 1.80 and 2.22, 40 cm deep, on side battens), each with two white storage boxes.
+- **Coat rail** (steel, 1.70 m, 28 cm out from the back wall) under the lower shelf, with five coats on hangers.
+- **Shoe rack** against the back wall: 30 cm deep, **three shelves** (tops 0.04 / 0.22 / 0.40) instead of the photo's five,
+  three pairs per shelf. This leaves the coats hanging free down to 0.92.
+- **Left wall**: stick vacuum in a wall dock by the door, short oak peg rail at 1.78.
+- **Right wall**: three white wire baskets (0.82 / 1.08 / 1.34) and a small shelf with cleaning bottles at 1.60.
+- New colour group *Kott innredning*: `kott.shelves` (oak, wood grain), `kott.boxes`, `kott.baskets`. Coats, shoes, vacuum
+  and bottles are fixed prop colours. The rail/coats/shoe rack block walking in Walk mode.
+
+Render: `docs/images/model-kott.png`.
+
+## Round 19: entry coat-hook wall and patterned cement tiles (2026-09-28)
+
+The owner linked three products and a reference photo (looking west in the entry: coat wall on the left, bathroom door ahead,
+front door on the right). All three go on the **coat-hook wall** (the entry's south wall, opposite the front door), centred on it.
+Product photos and sizes were fetched from the pages (og:image + spec JSON), not guessed:
+- **1898 Allsarp knaggrekke, 9 knagger** (Nordic Nest, eik): 86 cm × 6 cm deep. A round oak rod with nine short pegs, rail at
+  1.70 m (E). Fixed, `furniture.hookRail`.
+- **Norrgavel Hyllplan Rundat, bjørk 90 cm**: 90 × 30 × 1.9 cm with rounded front corners, top at 1.95 m (E), on two 28.5 cm
+  wooden consoles with a concave curve (the page sells the shelf on its own; the consoles are the matching Konsol Rundad-rak,
+  shape E). Fixed, `furniture.hatShelf`.
+- **1898 Bäckebo skohylle med sitteplass** (Nordic Nest, bjørk): 80 × 30 × 48 cm, solid seat, four slim legs and two shoe shelves
+  of round rods. **Movable** (`shoeBench` in `src/data/furniture.ts`), default 1 cm off the wall on the tiles.
+- **Entry tiles** now show the cement-tile pattern from the photo: grey medallions with a white rosette and blue scroll crosses
+  where four tiles meet, 20 × 20 cm (E), laid from the bathroom-wall / front-door corner. Procedural canvas map
+  (`cementTileMap` in `src/core/textures.ts`). The colour key changed from `entre.tiles` (flat grey) to `entre.cementTiles`, a
+  tint over the pattern (white = as drawn), so the old saved grey doesn't darken it.
+
+Code: `src/build/entre.ts` (hook rail + shelf), `buildShoeBench` in `src/build/furniture.ts`, `ENTRY_HOOK_WALL` /
+`ENTRY_TILE_ORIGIN` in `src/data/apartment.ts`. `BuildContext.finish` is public now, for custom geometry (the consoles).
+Render: `docs/images/model-entry-hookwall.png`.
+
+## Round 20: balcony furnished like the owner's reference image (2026-09-28)
+
+The owner sent a (generated) image of the balcony seen from the door: grill in the far corner by the facade, a sofa along the
+facade, an olive tree between them, two folding chairs and a round coffee table on a jute rug by the curved railing, pot plants.
+The owner said the grill is **placed right** but should be the linked **Weber Spirit E-325**, and that the sofa is **IKEA
+NÄMMARÖ 2-seter**. Both product photos and sizes were fetched from the pages (og:image + spec data):
+- **Weber Spirit E-325** (Jernia): 123 × 67.5 × 117 cm with both side tables up. Black cart with a cabinet door, feet left and
+  wheels right, red strip under the stainless control panel (three knobs), black lid with thermometer and steel handle, grey
+  side tables. Backed onto the north railing in the corner by the facade, facing south. **Movable** (`grill`),
+  colour `balkong.grill`.
+- **IKEA NÄMMARÖ 2-seter**, lys brunbeiset akasie, Frösön/Duvholmen beige: 162 × 92 × 87, seat 43, seat depth 68. Two armless
+  modules (the reference image shows arms; the product has none, so it follows the product). Back against the facade, facing
+  west, starting 45 cm north of the door wall so the step out of the door stays clear. **Movable** (`balconySofa`), colours
+  `balkong.sofaFrame` (wood grain) and `balkong.sofaCushion`.
+- **Bistro set** from the image (sizes E): Ø 140 jute rug, Ø 60 × 45 wood-top coffee table on black metal legs with a candle
+  lantern and a small herb pot, two olive-green folding chairs with white seat cushions. One **movable** group
+  (`balconyTable`, footprint = the rug), like the dining table + chairs.
+- **Fixed pot plants**: olive tree in a woven basket between the grill and the sofa, a white hydrangea next to it, another by the
+  railing at the door end, and a lavender in the corner south of the sofa (positions `balconyPlants`, props not colourable).
+- Not modelled from the image: the railing flower boxes, the wall lantern on the facade, throws and cushions.
+
+Code: `src/build/balconyFurniture.ts` (grill, sofa, table set, plants), sizes/poses in `src/data/furniture.ts`,
+`BALCONY_EDGE` in `src/data/apartment.ts`. Balcony pieces are built 5 cm down in their group (`BALCONY_FLOOR`), since the deck
+is lower than the flat's floor. Renders: `docs/images/model-balcony.png`, `model-balcony-top.png`.

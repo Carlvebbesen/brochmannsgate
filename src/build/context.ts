@@ -57,7 +57,8 @@ export class BuildContext {
     return this.finish(mesh, key, opts);
   }
 
-  private finish(mesh: THREE.Mesh, key: string, opts: BoxOptions) {
+  /** Adds a ready-made mesh with the key's material handling (shadows, picking). */
+  finish(mesh: THREE.Mesh, key: string, opts: BoxOptions) {
     mesh.castShadow = opts.castShadow ?? !this.mats.isFixed(key);
     mesh.receiveShadow = true;
     if (opts.pickable !== false && !this.mats.isFixed(key)) mesh.userData.key = key;

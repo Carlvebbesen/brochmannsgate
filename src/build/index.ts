@@ -6,10 +6,12 @@ import { rooms } from '../data/apartment';
 import type { Rect } from '../data/types';
 import { buildBalcony } from './balcony';
 import { BuildContext } from './context';
+import { buildEntryWall } from './entre';
 import { buildFixtures } from './fixtures';
 import { buildFurniture, type MovableItem } from './furniture';
 import { buildKitchen } from './kitchen';
 import { buildKontorMillwork } from './kontor';
+import { buildKott } from './kott';
 import { buildOpenings, doorPassages } from './openings';
 import { buildRooms } from './rooms';
 import { buildTrim } from './trim';
@@ -35,6 +37,8 @@ export function buildApartment(mats: MaterialRegistry): ApartmentModel {
   buildFixtures(ctx);
   buildKitchen(ctx);
   buildKontorMillwork(ctx);
+  buildKott(ctx);
+  buildEntryWall(ctx);
   buildBalcony(ctx);
   const furniture = buildFurniture(ctx);
   for (const item of furniture) {
