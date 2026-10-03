@@ -89,7 +89,7 @@ interface ElectricalItem {
 }
 
 interface Settings {
-  version: 4;
+  version: 5;
   colors: Record<string, string>;
   overrides: Record<string, string>;
   view: {
@@ -120,7 +120,7 @@ function sanitize(body: unknown): Settings | null {
   const v = (b.view ?? {}) as Record<string, unknown>;
   const cut = num(v.cut, 0.4, 2.8);
   return {
-    version: 4,
+    version: 5,
     colors: hexMap(b.colors),
     overrides: hexMap(b.overrides),
     view: {

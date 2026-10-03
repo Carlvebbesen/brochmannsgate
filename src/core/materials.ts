@@ -16,6 +16,7 @@ const WOOD_KEYS = new Set([
   'furniture.hookRail',
   'furniture.hatShelf',
   'furniture.shoeBench',
+  'furniture.laundryBasket',
   'kott.shelves',
   'balkong.sofaFrame',
   'balkong.tableTop',

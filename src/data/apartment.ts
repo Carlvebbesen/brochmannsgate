@@ -201,6 +201,8 @@ const DOOR_H = 2.05;
 const D4_FRAME_TO = BAD_Y1;
 const D4_FRAME_FROM = D4_FRAME_TO - 0.881;
 const D5_FRAME_TO = D4_FRAME_FROM - 1.565; // M: "kommodevegg" 1.565 between the two door frames
+/** The corridor's east wall between the Kontor and Hovedsoverom door frames ("kommodevegg"): its face into the entry. */
+export const KOMMODE_WALL = { x: LIV_W, y0: D5_FRAME_TO, y1: D4_FRAME_FROM };
 
 const door = (
   id: string,

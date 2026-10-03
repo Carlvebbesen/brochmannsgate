@@ -409,3 +409,19 @@ is lower than the flat's floor. Renders: `docs/images/model-balcony.png`, `model
   straight down on that room, high enough that the whole room fits the view (`setView('top', roomId)` in `src/main.ts`;
   `window.apartment3d.setView` takes the room id too). Panning was already possible (right-drag or Shift-drag), and the Top view
   button's tooltip says so now.
+
+## Round 22: oak entry pieces, ReCollector laundry baskets (2026-10-03)
+
+- **Entry pieces in oak**: the Norrgavel hat shelf and the Bäckebo shoe bench are now oak (`#d6b98c`, the same as the Allsarp hook
+  rail), and their labels say *eik*. Settings went to **v5**: older saved files drop their stored `furniture.hatShelf` /
+  `furniture.shoeBench` colours, because the old birch tones were saved in KV and would otherwise override the new default.
+  The Worker's `sanitize()` writes v5 too.
+- **Three ReCollector Smart Wall-Mounted Laundry Baskets, Nordic Oak**, from the Boozt listing: 43 × 70 × 30 cm each (129 cm in all),
+  on the corridor's *kommodevegg*. That is the 1.565 m wall between the Kontor and Hovedsoverom door frames (`KOMMODE_WALL`
+  in apartment.ts). They are centred on the wall with their bottoms 30 cm above the floor (owner), so the tops are at 1.00 m.
+  The build follows the product photos. Each unit is a plain oak box hung flush on the wall: top and bottom run the full width,
+  the sides sit between them, and there is a thin back. A full tilt-out flap with a push latch and no handle sits flush in the
+  front, with a 2 mm shadow gap all round. They are shown closed, so the linen bag on its rod inside is not modelled. The wood
+  grain runs vertically on the fronts and sides. They are fixed, not draggable, and coloured by the key
+  `furniture.laundryBasket`. Code: `buildLaundryBaskets` in `src/build/entre.ts`, sizes in `laundryBaskets` in
+  `src/data/furniture.ts`. Render: `docs/images/model-laundry-baskets.png`.

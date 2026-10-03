@@ -72,7 +72,7 @@ A third mode, next to Dollhouse and Walk: the apartment as a flat, to-scale 2D s
 | `src/build/fixtures.ts`, `balcony.ts` | Built-ins; balcony slab, soffit, balustrade and railing |
 | `src/build/kitchen.ts` | Kitchen runs: carcasses, fronts with shadow gaps, bar pulls, worktops with the sink cut-out, hob, ovens |
 | `src/build/kontor.ts` | Fixed Kontor built-ins (Pax-style wardrobe, opposite wardrobe + desk) and the wall-mounted TV |
-| `src/build/entre.ts` | Fixed entry coat-hook wall pieces: Allsarp hook rail and Norrgavel hat shelf on consoles (the Bäckebo shoe bench is movable furniture). |
+| `src/build/entre.ts` | Fixed entry pieces: Allsarp hook rail and Norrgavel hat shelf on consoles on the coat-hook wall (the Bäckebo shoe bench is movable furniture), three ReCollector laundry baskets on the corridor's kommodevegg. |
 | `src/build/furniture.ts` | Movable furniture meshes (bed, nightstands, sofa, TV-benk, spisebord); `setPose` repositions a group |
 | `src/build/balconyFurniture.ts` | Balcony: Weber grill, NÄMMARÖ sofa, bistro table set on a rug (movable) and the fixed pot plants. |
 | `src/core/*` | Colour/view/furniture-pose store, material registry, sun position, geometry helpers |

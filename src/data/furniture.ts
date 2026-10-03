@@ -8,7 +8,7 @@
  * built-ins (`src/build/kontor.ts`), not furniture, and never move.
  */
 
-import { BALCONY_EDGE, BED_X1, CEILING, ENTRY_HOOK_WALL, HOV_Y1, K_X1, KON_Y0, KON_Y1, LIV_W, TV_Y1 } from './apartment';
+import { BALCONY_EDGE, BED_X1, CEILING, ENTRY_HOOK_WALL, HOV_Y1, K_X1, KOMMODE_WALL, KON_Y0, KON_Y1, LIV_W, TV_Y1 } from './apartment';
 
 export interface Pose {
   x: number;
@@ -63,7 +63,7 @@ export const SKJENK_H = 0.8;
 export const SKJENK_LEG_H = 0.1;
 const SKJENK_WALL_GAP = 0.02;
 
-// 1898 Bäckebo skohylle med sitteplass (Nordic Nest), bjørk: 80 × 30 × 48 cm (product page), two slatted shoe shelves.
+// 1898 Bäckebo skohylle med sitteplass (Nordic Nest), in oak (owner); 80 × 30 × 48 cm as the birch listing: two slatted shoe shelves.
 export const SHOE_BENCH_W = 0.8;
 export const SHOE_BENCH_D = 0.3;
 export const SHOE_BENCH_H = 0.48;
@@ -169,8 +169,26 @@ export const entryWall = {
   y: ENTRY_HOOK_WALL.y,
   // 1898 Allsarp knaggrekke 9 knagger, eik: 86 cm long, 6 cm deep (product page); rod and peg sizes E from the photo.
   hooks: { length: 0.86, depth: 0.06, rodR: 0.018, pegR: 0.0065, count: 9, endInset: 0.043, z: 1.7 },
-  // Norrgavel Hyllplan Rundat, bjørk: 90 × 30 × 1.9 cm, rounded front corners, on two wooden consoles (28.5 cm).
+  // Norrgavel Hyllplan Rundat, in oak (owner): 90 × 30 × 1.9 cm, rounded front corners, on two wooden consoles (28.5 cm).
   shelf: { length: 0.9, depth: 0.3, thickness: 0.019, top: 1.95, consoleDepth: 0.285, consoleH: 0.2, consoleInset: 0.12 },
+};
+
+/**
+ * Three ReCollector Smart Wall-Mounted Laundry Baskets, Nordic Oak, side by side on the corridor's kommodevegg
+ * (fixed, `src/build/entre.ts`). 43 × 70 × 30 cm each (Boozt listing), centred on the wall, bottoms 30 cm above
+ * the floor (owner). Panel thickness, gaps and rod position are E from the product photos.
+ */
+export const laundryBaskets = {
+  x: KOMMODE_WALL.x,
+  cy: (KOMMODE_WALL.y0 + KOMMODE_WALL.y1) / 2,
+  count: 3,
+  width: 0.43,
+  height: 0.7,
+  depth: 0.3,
+  z0: 0.3,
+  panel: 0.018,
+  back: 0.008,
+  gap: 0.002, // hairline gap round the push-latch flap
 };
 
 /** Wall-mounted TV above the bench (fixed, not furniture). */

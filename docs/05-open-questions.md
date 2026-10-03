@@ -33,6 +33,11 @@
 13. **Legacy point at (4.45, 5.53)** (existing dimmer by the entré) sits on the end of the short wall stub by the tall cabinets.
     Check it is on the right wall; drag it in Edit mode if not.
 
+## Laundry baskets (round 22)
+- ~~Which wall~~: the owner confirmed it is the corridor wall between the Kontor and Hovedsoverom doors (the kommodevegg).
+- Panel thickness (18 mm) and the flap gap come from the product photos (E). The baskets are shown closed. One could be shown
+  tilted open, with the bag, if that is wanted.
+
 ## Kott fittings (round 18)
 - All sizes are estimates. Tell me if the shelf heights, the rail height (1.70) or the number of shoe shelves (3) should change,
   or if the vacuum/baskets should swap sides.

@@ -102,8 +102,9 @@ export const paletteGroups: PaletteGroup[] = [
       { key: 'furniture.diningChairSeat', label: 'Spisestol, sete', color: '#f2ede2' },
       { key: 'furniture.skjenk', label: 'Skjenk (Eikeskjenk 240)', color: '#e6dcc4' },
       { key: 'furniture.hookRail', label: 'Knaggrekke (Allsarp, eik)', color: '#d6b98c' },
-      { key: 'furniture.hatShelf', label: 'Hattehylle (Norrgavel, bjørk)', color: '#e2cfb2' },
-      { key: 'furniture.shoeBench', label: 'Skohylle/benk (Bäckebo, bjørk)', color: '#e9dcc6' },
+      { key: 'furniture.hatShelf', label: 'Hattehylle (Norrgavel, eik)', color: '#d6b98c' },
+      { key: 'furniture.shoeBench', label: 'Skohylle/benk (Bäckebo, eik)', color: '#d6b98c' },
+      { key: 'furniture.laundryBasket', label: 'Skittentøyskurver (ReCollector, eik)', color: '#d6b98c' },
     ],
   },
   {

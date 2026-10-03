@@ -344,7 +344,7 @@ function buildSkjenk(ctx: BuildContext, g: THREE.Group) {
 }
 
 /**
- * 1898 Bäckebo skohylle med sitteplass, 80×30×48, bjørk (product photo): a solid seat board on four slim legs,
+ * 1898 Bäckebo skohylle med sitteplass, 80×30×48, in oak (owner; shape from the birch product photo): a solid seat board on four slim legs,
  * two shoe shelves of round rods between side rails. Back at -y (the wall), front at +y.
  */
 function buildShoeBench(ctx: BuildContext, g: THREE.Group) {

@@ -44,7 +44,7 @@ export type ElPhase = 'today' | 'planned' | 'compare';
 
 export interface ColorFile {
   /** 3: floor colours are a tint over the vinyl texture (before that they were flat oak). 4: adds the el-plan. */
-  version: 1 | 2 | 3 | 4;
+  version: 1 | 2 | 3 | 4 | 5;
   colors: Record<string, string>;
   overrides: Record<string, string>;
   view?: ViewSettings;
@@ -163,7 +163,7 @@ export class ColorStore {
 
   toJSON(): ColorFile {
     return {
-      version: 4,
+      version: 5,
       colors: { ...this.colors },
       overrides: { ...this.overrides },
       view: { ...this.view },
@@ -197,6 +197,8 @@ export class ColorStore {
     const colors = pickHex(file.colors);
     // Older files hold the flat oak floor colour, which would now tint the vinyl orange.
     if ((file.version ?? 1) < 3) for (const key of VINYL_FLOORS) delete colors[key];
+    // Before v5 the entry's hat shelf and shoe bench were birch; the owner wants them oak like the hook rail.
+    if ((file.version ?? 1) < 5) for (const key of ['furniture.hatShelf', 'furniture.shoeBench']) delete colors[key];
     this.colors = { ...this.defaults, ...colors };
     this.overrides = pickHex(file.overrides ?? {});
     this.view = pickView(file.view);
