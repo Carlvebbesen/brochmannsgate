@@ -10,6 +10,7 @@ import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer
 import { buildApartment, updateObstacle } from './build';
 import { setPose } from './build/furniture';
 import { WalkController } from './controls/walk';
+import { TouchControls, isTouchDevice } from './ui/touch';
 import { MaterialRegistry } from './core/materials';
 import { Remote, isNewRemote, rememberSeen, type SyncStatus } from './core/remote';
 import { ColorStore } from './core/state';
@@ -27,6 +28,8 @@ const viewport = document.getElementById('viewport')!;
 const walkHint = document.getElementById('walk-hint')!;
 const planHost = document.getElementById('plan')!;
 const crosshair = document.getElementById('crosshair')!;
+const app = document.getElementById('app')!;
+const menuToggle = document.getElementById('menu-toggle')!;
 
 // ---- Renderer & scene
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -129,6 +132,18 @@ orbit.maxDistance = 40;
 camera.position.copy(PERSPECTIVE_POS);
 
 const walk = new WalkController(camera, renderer.domElement, apartment.obstacles, apartment.walkable);
+walk.touch = isTouchDevice;
+
+// ---- Phone layout: the menu can be folded away (the button only shows on narrow screens).
+function setMenuOpen(open: boolean) {
+  app.classList.toggle('menu-hidden', !open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+  menuToggle.setAttribute('aria-label', open ? 'Hide menu' : 'Show menu');
+}
+menuToggle.addEventListener('click', () => setMenuOpen(app.classList.contains('menu-hidden')));
+const narrow = window.matchMedia('(max-width: 800px)');
+/** Set when starting to walk on a phone folded the menu away, so leaving walk brings it back. */
+let menuFoldedByWalk = false;
 
 let mode: Mode = 'orbit';
 const clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
@@ -162,6 +177,7 @@ function setMode(next: Mode) {
     crosshair.hidden = true;
     mode = next;
     panel.setMode(mode);
+    touchControls?.setMode(mode);
     plan.refresh(); // renders the 3D top view now, if that is the base
     return;
   }
@@ -172,6 +188,7 @@ function setMode(next: Mode) {
     mode = 'orbit';
     if (next === 'orbit') {
       panel.setMode(mode);
+      touchControls?.setMode(mode);
       return;
     }
   }
@@ -182,7 +199,10 @@ function setMode(next: Mode) {
     walk.enabled = true;
     walk.place(walkStart.at, walkStart.lookAt);
     camera.fov = 70;
-    walkHint.hidden = false;
+    // Touch screens walk with the bottom bar instead of pointer lock, and get the whole screen for it.
+    walkHint.hidden = walk.touch;
+    menuFoldedByWalk = walk.touch && narrow.matches && !app.classList.contains('menu-hidden');
+    if (menuFoldedByWalk) setMenuOpen(false);
   } else {
     walk.enabled = false;
     walk.controls.unlock();
@@ -192,13 +212,21 @@ function setMode(next: Mode) {
     camera.fov = 45;
     walkHint.hidden = true;
     crosshair.hidden = true;
+    if (menuFoldedByWalk) setMenuOpen(true);
+    menuFoldedByWalk = false;
   }
   camera.updateProjectionMatrix();
   mode = next;
   applyVisibility();
   setMoveFurniture(moveFurniture);
   panel.setMode(mode);
+  touchControls?.setMode(mode);
 }
+
+const touchControls = isTouchDevice
+  ? new TouchControls(document.getElementById('touch-bar')!, renderer.domElement, walk, { setMode })
+  : null;
+touchControls?.setMode(mode);
 
 walkHint.addEventListener('click', () => walk.controls.lock());
 walk.controls.addEventListener('lock', () => {
@@ -366,6 +394,9 @@ window.addEventListener('pointerup', (e) => {
   }
   if (mode === 'walk') {
     if (walk.controls.isLocked) select(pick(new THREE.Vector2(0, 0)));
+    // On a touch screen a tap (not a look-around drag) selects what is under the finger.
+    else if (walk.touch && e.target === renderer.domElement && down.distanceTo(new THREE.Vector2(e.clientX, e.clientY)) <= 8)
+      select(pick(ndcFromEvent(e)));
     return;
   }
   if (down.distanceTo(new THREE.Vector2(e.clientX, e.clientY)) > 5) return;
@@ -597,7 +628,7 @@ new ResizeObserver(resize).observe(viewport);
 resize();
 
 // Handle for debugging from the browser console / automated screenshots.
-Object.assign(window, { apartment3d: { scene, camera, orbit, setMode, setView, select, store, remote, renderer, gtao, setQuality, plan, selectPoint } });
+Object.assign(window, { apartment3d: { scene, camera, orbit, walk, setMode, setMenuOpen, setView, select, store, remote, renderer, gtao, setQuality, plan, selectPoint } });
 
 renderer.setAnimationLoop((time) => {
   timer.update(time);

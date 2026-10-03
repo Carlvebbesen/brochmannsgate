@@ -425,3 +425,22 @@ is lower than the flat's floor. Renders: `docs/images/model-balcony.png`, `model
   grain runs vertically on the fronts and sides. They are fixed, not draggable, and coloured by the key
   `furniture.laundryBasket`. Code: `buildLaundryBaskets` in `src/build/entre.ts`, sizes in `laundryBaskets` in
   `src/data/furniture.ts`. Render: `docs/images/model-laundry-baskets.png`.
+
+## Round 23: phone menu toggle and touch walking (2026-10-03)
+
+Owner request: fold the menu away on a phone, and on-screen controls at the bottom for walking, with Walk on/off there too.
+
+- **Menu toggle** (screens ≤ 800 px): a chevron button in the top-right corner of the 3D view folds the panel away so the
+  view gets the whole screen (`#app.menu-hidden`), and brings it back. The layout now uses `100dvh`, so the mobile browser bars
+  don't cut off the bottom.
+- **Touch walking** (devices with `pointer: coarse`): pointer lock doesn't exist on phones, so Walk skips the "Click to walk"
+  hint. A bar at the bottom holds a **Walk / Exit walk** button (always there outside the El-plan), and while walking an
+  analog **joystick** on the left: a small push walks slowly, a full push moves at the Shift speed. **Dragging** anywhere on the
+  view turns your head, and a **tap** selects the surface under your finger. Starting to walk on a phone folds the menu away,
+  and leaving walk brings it back.
+- Desktop is unchanged: mouse + pointer lock + WASD.
+
+Code: `src/ui/touch.ts` (bar, joystick, look-drag), `WalkController.touch` / `stick` / `look()` in `src/controls/walk.ts`,
+`setMenuOpen` in `src/main.ts` (also on `window.apartment3d`). Verified in headless Chromium emulating an iPhone 13: the joystick
+moved the camera ~3 m forward, a 100 px drag turned it 0.5 rad, and the menu folded and returned as described. Render:
+`docs/images/mobile-walk.png`.

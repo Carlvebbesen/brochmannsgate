@@ -478,16 +478,135 @@ footer .danger {
   color: #9b3b2f !important;
 }
 
+/* ---- Phone layout: menu below the view, foldable with the button in the view's corner */
+
+#menu-toggle {
+  display: none;
+  position: absolute;
+  top: max(10px, env(safe-area-inset-top));
+  right: 10px;
+  z-index: 6;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.9);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.15);
+  cursor: pointer;
+}
+
+/* A chevron: points down (fold the menu away) while open, up (bring it back) while hidden. */
+#menu-toggle span {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 10px auto 0;
+  border-right: 2.5px solid var(--text);
+  border-bottom: 2.5px solid var(--text);
+  transform: rotate(45deg);
+}
+
+#app.menu-hidden #menu-toggle span {
+  margin-top: 17px;
+  transform: rotate(-135deg);
+}
+
 @media (max-width: 800px) {
   #app {
     grid-template-columns: 1fr;
-    grid-template-rows: 60vh 40vh;
+    grid-template-rows: 60fr 40fr;
+    height: 100dvh;
+  }
+
+  #app.menu-hidden {
+    grid-template-rows: 1fr 0;
+  }
+
+  #app.menu-hidden #panel {
+    display: none;
   }
 
   #panel {
     border-left: 0;
     border-top: 1px solid var(--line);
   }
+
+  #menu-toggle {
+    display: block;
+  }
+}
+
+/* ---- Touch walking: bottom bar with a joystick and the Walk / Exit button */
+
+#touch-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 14px max(14px, env(safe-area-inset-bottom));
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#touch-bar[hidden] {
+  display: none;
+}
+
+#touch-bar.walking {
+  justify-content: space-between;
+}
+
+#touch-bar .stick {
+  display: none;
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border: 2px solid rgb(255 255 255 / 0.7);
+  border-radius: 50%;
+  background: rgb(20 24 22 / 0.28);
+  touch-action: none;
+  pointer-events: auto;
+}
+
+#touch-bar.walking .stick {
+  display: block;
+}
+
+#touch-bar .knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.9);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  pointer-events: none;
+}
+
+#touch-bar .walk-toggle {
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  touch-action: manipulation;
+  pointer-events: auto;
+}
+
+#touch-bar .walk-toggle.on {
+  background: rgb(20 24 22 / 0.78);
 }
 
 

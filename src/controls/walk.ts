@@ -5,13 +5,19 @@ import type { Rect, Vec2 } from '../data/types';
 const EYE = 1.62;
 const RADIUS = 0.2;
 const SPEED = 1.8;
+const LOOK = 0.005; // radians per dragged pixel on a touch screen
 
 /** First-person walking with simple 2D collision against walls and built-ins. */
 export class WalkController {
   readonly controls: PointerLockControls;
   enabled = false;
+  /** Touch mode: no pointer lock; the on-screen joystick drives `stick` and dragging the view calls `look`. */
+  touch = false;
+  /** Joystick deflection, x = strafe right, y = forward, each -1..1. */
+  readonly stick = new THREE.Vector2();
   private keys = new Set<string>();
   private forward = new THREE.Vector3();
+  private euler = new THREE.Euler(0, 0, 0, 'YXZ');
 
   constructor(
     private readonly camera: THREE.PerspectiveCamera,
@@ -32,16 +38,30 @@ export class WalkController {
     this.camera.lookAt(lx, EYE, -ly);
   }
 
+  /** Turns the view by a touch drag of (dx, dy) pixels, like PointerLockControls does for the mouse. */
+  look(dx: number, dy: number) {
+    this.euler.setFromQuaternion(this.camera.quaternion);
+    this.euler.y -= dx * LOOK;
+    this.euler.x = THREE.MathUtils.clamp(this.euler.x - dy * LOOK, -Math.PI / 2 + 0.01, Math.PI / 2 - 0.01);
+    this.camera.quaternion.setFromEuler(this.euler);
+  }
+
   update(dt: number) {
-    if (!this.enabled || !this.controls.isLocked) return;
+    if (!this.enabled || !(this.controls.isLocked || this.touch)) return;
     const k = (...codes: string[]) => (codes.some((c) => this.keys.has(c)) ? 1 : 0);
-    const fwd = k('KeyW', 'ArrowUp') - k('KeyS', 'ArrowDown');
-    const side = k('KeyD', 'ArrowRight') - k('KeyA', 'ArrowLeft');
+    let fwd = k('KeyW', 'ArrowUp') - k('KeyS', 'ArrowDown');
+    let side = k('KeyD', 'ArrowRight') - k('KeyA', 'ArrowLeft');
+    let speed = SPEED * (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight') ? 1.8 : 1);
+    if (this.touch && this.stick.lengthSq() > 0.01) {
+      // The stick is analog: a small push walks slowly, a full push runs at the Shift speed.
+      fwd = this.stick.y;
+      side = this.stick.x;
+      speed = SPEED * 1.8 * Math.min(1, this.stick.length());
+    }
     if (!fwd && !side) return;
 
     const f = this.camera.getWorldDirection(this.forward).setY(0).normalize();
     const move = new THREE.Vector3(f.x * fwd - f.z * side, 0, f.z * fwd + f.x * side);
-    const speed = SPEED * (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight') ? 1.8 : 1);
     move.normalize().multiplyScalar(speed * Math.min(dt, 0.1));
 
     const p = this.camera.position;
