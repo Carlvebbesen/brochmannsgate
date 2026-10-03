@@ -210,7 +210,23 @@ walk.controls.addEventListener('unlock', () => {
   if (mode === 'walk') walkHint.hidden = false;
 });
 
-function setView(preset: 'perspective' | 'top') {
+function setView(preset: 'perspective' | 'top', roomId?: string) {
+  const room = roomId ? rooms.find((r) => r.id === roomId) : undefined;
+  if (room) {
+    // Straight down on the room's floor, just high enough that the room (plus a margin for the wall tops,
+    // which are nearer the camera) fills the view.
+    const xs = room.polygon.map((p) => p[0]);
+    const ys = room.polygon.map((p) => p[1]);
+    const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+    const floor = room.floorLevel ?? 0;
+    const margin = 0.5;
+    const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    const fit = Math.max((y1 - y0) / 2 + margin, ((x1 - x0) / 2 + margin) / camera.aspect) / tan;
+    const height = Math.max(fit + room.ceilingHeight * 0.6, orbit.minDistance + 0.5);
+    orbit.target.copy(toWorld((x0 + x1) / 2, (y0 + y1) / 2, floor));
+    camera.position.copy(orbit.target).add(new THREE.Vector3(0, height, 0.01));
+    return;
+  }
   orbit.target.copy(CENTER);
   if (preset === 'top') camera.position.set(CENTER.x, 17, CENTER.z + 0.01);
   else camera.position.copy(PERSPECTIVE_POS);

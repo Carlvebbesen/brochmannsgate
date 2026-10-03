@@ -397,3 +397,15 @@ NÄMMARÖ 2-seter**. Both product photos and sizes were fetched from the pages (
 Code: `src/build/balconyFurniture.ts` (grill, sofa, table set, plants), sizes/poses in `src/data/furniture.ts`,
 `BALCONY_EDGE` in `src/data/apartment.ts`. Balcony pieces are built 5 cm down in their group (`BALCONY_FLOOR`), since the deck
 is lower than the flat's floor. Renders: `docs/images/model-balcony.png`, `model-balcony-top.png`.
+
+## Round 21: Hope Gloucester entry tiles, top view per room (2026-10-03)
+
+- **Entry tiles** now follow the owner's pick, **Lhådös Hope Gloucester 15 × 15 cm matt** (bygghjemme.no), and their reference
+  photo: the tile size went from 20 to **15 cm** (`CEMENT_TILE`), and `cementTileMap` was redrawn: a grey ring with a pale-grey
+  pointed eight-petal flower, framed by a pale blue-grey quatrefoil, denim-blue C-scrolls in mirrored pairs across each joint and a
+  lobed blue cloud on each edge's midpoint, on an off-white ground. The product page's og:image returns 404 on their CDN, so
+  the motif is drawn from the reference photo only.
+- **Top view of one room**: the dollhouse panel has a "From above:" row with one button per room (balcony included). It looks
+  straight down on that room, high enough that the whole room fits the view (`setView('top', roomId)` in `src/main.ts`;
+  `window.apartment3d.setView` takes the room id too). Panning was already possible (right-drag or Shift-drag), and the Top view
+  button's tooltip says so now.

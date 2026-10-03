@@ -1,3 +1,4 @@
+import { rooms } from '../data/apartment';
 import { labelFor, paletteGroups, VINYL_FLOORS } from '../data/palette';
 import { isHex, normalizeHex, type ColorStore, type ViewSettings } from '../core/state';
 import type { SyncStatus } from '../core/remote';
@@ -20,7 +21,8 @@ export interface PanelActions {
   setSun(hour: number): void;
   setVinyl(on: boolean): void;
   setQuality(high: boolean): void;
-  view(preset: 'perspective' | 'top'): void;
+  /** A camera preset; `room` (a room id) frames that room straight from above. */
+  view(preset: 'perspective' | 'top', room?: string): void;
   select(sel: Selection | null): void;
   login(password: string): Promise<{ ok: boolean; error?: string }>;
   logout(): void;
@@ -50,7 +52,11 @@ const TEMPLATE = /* html */ `
     <div class="orbit-only">
       <div class="views">
         <button data-view="perspective">3D view</button>
-        <button data-view="top">Top view</button>
+        <button data-view="top" title="Whole flat from above. Right-drag (or Shift-drag) pans, scroll zooms.">Top view</button>
+      </div>
+      <div class="room-views" title="Look straight down on one room">
+        <span>From above:</span>
+        ${rooms.map((r) => `<button data-room="${r.id}">${r.name}</button>`).join('')}
       </div>
       <label class="check move-furniture" title="While on, click-drag a bed/sofa/table/etc. to slide it. While off, dragging never moves furniture by accident.">
         <input type="checkbox" id="opt-move" /> Move furniture
@@ -263,6 +269,9 @@ export class Panel {
     );
     this.el.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((b) =>
       b.addEventListener('click', () => this.actions.view(b.dataset.view as 'perspective' | 'top')),
+    );
+    this.el.querySelectorAll<HTMLButtonElement>('[data-room]').forEach((b) =>
+      b.addEventListener('click', () => this.actions.view('top', b.dataset.room)),
     );
     const move = this.$<HTMLInputElement>('#opt-move');
     move.addEventListener('change', () => this.actions.setMoveFurniture(move.checked));

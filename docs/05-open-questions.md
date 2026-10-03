@@ -63,7 +63,8 @@
 - **Later (owner said yes, not yet built)**: realistic bathroom tiles (needs the tile sizes) and a path-traced "Render photo"
   button. The entry tiles got their pattern in round 19.
 - **Entry coat-hook wall (round 19)**: hook-rail height 1.70 and shelf top 1.95 are estimates from the reference photo, and the
-  20 × 20 cm tile size and the exact motif are drawn from the photo, not measured. The Norrgavel consoles' shape is a guess
+  tile motif is drawn from the photo, not measured (round 21: tiles are now the chosen Lhådös Hope Gloucester, 15 × 15 cm;
+  the retailer's product photo was a dead link, so the motif follows the owner's reference photo). The Norrgavel consoles' shape is a guess
   (the linked page is the shelf only). All three pieces are centred on the 0.99 m wall.
 - **Balcony (round 20)**: the bistro table, chairs, rug and plants are sized from the reference image (E), not products. The
   NÄMMARÖ is built armless as sold, though the image shows arms. Flower boxes on the railing and the facade wall lamp are not

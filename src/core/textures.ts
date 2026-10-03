@@ -59,104 +59,134 @@ export function fabricWeaveMap(): THREE.CanvasTexture {
   );
 }
 
-/** Side of one cement tile in the entry, in metres (E: classic 20 × 20 cm, matching the owner's reference photo). */
-export const CEMENT_TILE = 0.2;
+/** Side of one cement tile in the entry, in metres (P: Lhådös Hope Gloucester, 15 × 15 cm). */
+export const CEMENT_TILE = 0.15;
 
 /**
- * Colour map for the entry's patterned cement tiles (owner's reference photo): a grey medallion with a white
- * rosette in each tile, blue scroll crosses where four tiles meet, on an off-white ground. Floor UVs are plan
- * metres, so one repeat = one tile; `origin` is the plan corner the tiles are laid out from.
+ * Colour map for the entry's patterned tiles, after the owner's pick (Lhådös Hope Gloucester) and reference photo:
+ * a grey ring with a pale-grey eight-petal flower in the middle of each tile, framed by a pale blue-grey quatrefoil,
+ * and denim-blue C-scrolls in mirrored pairs along each edge plus a lobed cloud on each edge's midpoint, on an
+ * off-white ground. Shapes on an edge are drawn whole and clipped, so the neighbouring tile completes them.
+ * Floor UVs are plan metres, so one repeat = one tile; `origin` is the plan corner the tiles are laid out from.
  */
 export function cementTileMap(origin: readonly [number, number]): THREE.CanvasTexture {
   const S = 512;
-  const BLUE = '#7090c8';
-  const GREY = '#b9bcc1';
-  const GROUND = '#f2f0eb';
+  const BLUE = '#7896c6';
+  const PALE = '#cfd7df';
+  const RING = '#a9abad';
+  const PETAL = '#c6c8ca';
+  const GROUND = '#f5f3ed';
   const tex = canvasTexture(
     S,
     (ctx) => {
+      const disc = (x: number, y: number, r: number, fill: string) => {
+        ctx.fillStyle = fill;
+        ctx.beginPath();
+        ctx.arc(x * S, y * S, r * S, 0, Math.PI * 2);
+        ctx.fill();
+      };
       ctx.fillStyle = GROUND;
       ctx.fillRect(0, 0, S, S);
 
-      // Blue scroll cross, centred on each tile corner (clipped by the canvas, so neighbours complete it).
-      const cross = (cx: number, cy: number) => {
+      // Pale quatrefoil behind the medallion, its lobes reaching towards the tile corners.
+      for (let i = 0; i < 4; i++) {
+        const a = Math.PI / 4 + (i * Math.PI) / 2;
+        disc(0.5 + Math.cos(a) * 0.2, 0.5 + Math.sin(a) * 0.2, 0.2, PALE);
+      }
+      disc(0.5, 0.5, 0.34, PALE);
+
+      // A thick C-scroll: an open ring with a round curl at each end, its gap facing `face` (radians).
+      const scroll = (x: number, y: number, face: number) => {
+        const r = 0.052 * S;
         ctx.save();
-        ctx.translate(cx, cy);
+        ctx.translate(x * S, y * S);
+        ctx.rotate(face);
+        ctx.strokeStyle = BLUE;
+        ctx.lineWidth = 0.044 * S;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0.95, Math.PI * 2 - 0.95);
+        ctx.stroke();
         ctx.fillStyle = BLUE;
-        for (let i = 0; i < 4; i++) {
-          ctx.save();
-          ctx.rotate((i * Math.PI) / 2);
-          // arm along the tile edge: a tapering lobe
+        for (const s of [-1, 1]) {
           ctx.beginPath();
-          ctx.moveTo(0, -0.05 * S);
-          ctx.quadraticCurveTo(0.2 * S, -0.07 * S, 0.3 * S, 0);
-          ctx.quadraticCurveTo(0.2 * S, 0.07 * S, 0, 0.05 * S);
+          ctx.arc(Math.cos(0.95) * r * 1.05, s * Math.sin(0.95) * r * 1.05, 0.031 * S, 0, Math.PI * 2);
           ctx.fill();
-          // a pair of C-scrolls curling off the arm towards the medallions
-          for (const side of [-1, 1]) {
-            ctx.beginPath();
-            ctx.arc(0.19 * S, side * 0.1 * S, 0.045 * S, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = GROUND;
-            ctx.beginPath();
-            ctx.arc(0.2 * S, side * 0.11 * S, 0.022 * S, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = BLUE;
-          }
-          ctx.restore();
         }
-        // diamond at the corner itself
-        ctx.beginPath();
-        ctx.moveTo(0, -0.09 * S);
-        ctx.lineTo(0.09 * S, 0);
-        ctx.lineTo(0, 0.09 * S);
-        ctx.lineTo(-0.09 * S, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = GROUND;
-        ctx.beginPath();
-        ctx.arc(0, 0, 0.03 * S, 0, Math.PI * 2);
-        ctx.fill();
         ctx.restore();
       };
-      for (const cx of [0, S]) for (const cy of [0, S]) cross(cx, cy);
+      // Lobed blue cloud, centred on an edge midpoint; `along` is the edge direction.
+      const cloud = (x: number, y: number, along: number) => {
+        ctx.save();
+        ctx.translate(x * S, y * S);
+        ctx.rotate(along);
+        ctx.fillStyle = BLUE;
+        for (const [dx, dy, r] of [
+          [0, 0, 0.06],
+          [-0.068, 0, 0.042],
+          [0.068, 0, 0.042],
+          [0, -0.06, 0.04],
+          [0, 0.06, 0.04],
+        ]) {
+          ctx.beginPath();
+          ctx.arc(dx * S, dy * S, r * S, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      };
 
-      // Grey medallion with a white eight-petal rosette in the middle of the tile.
+      // Each corner: a pale diamond on the corner itself, and two C-scrolls (one along each edge), their gaps
+      // facing the edge so that, with the neighbour's mirror image, they read as "C Ↄ" pairs across the joint.
+      for (const cx of [0, 1]) {
+        for (const cy of [0, 1]) {
+          const sx = cx ? -1 : 1; // direction into the tile
+          const sy = cy ? -1 : 1;
+          ctx.fillStyle = PALE;
+          ctx.beginPath();
+          ctx.moveTo(cx * S, (cy + sy * 0.09) * S);
+          ctx.lineTo((cx + sx * 0.09) * S, cy * S);
+          ctx.lineTo(cx * S, (cy - sy * 0.09) * S);
+          ctx.lineTo((cx - sx * 0.09) * S, cy * S);
+          ctx.fill();
+          disc(cx, cy, 0.025, BLUE);
+          // along the horizontal edge (y = cy): sits just inside, gap facing the edge
+          scroll(cx + sx * 0.2, cy + sy * 0.082, sy > 0 ? -Math.PI / 2 : Math.PI / 2);
+          // along the vertical edge (x = cx)
+          scroll(cx + sx * 0.082, cy + sy * 0.2, sx > 0 ? Math.PI : 0);
+        }
+      }
+      cloud(0.5, 0, 0);
+      cloud(0.5, 1, 0);
+      cloud(0, 0.5, Math.PI / 2);
+      cloud(1, 0.5, Math.PI / 2);
+
+      // Medallion: off-white disc, a grey ring, and a pale-grey pointed eight-petal flower.
+      disc(0.5, 0.5, 0.29, GROUND);
+      ctx.strokeStyle = RING;
+      ctx.lineWidth = 0.028 * S;
+      ctx.beginPath();
+      ctx.arc(0.5 * S, 0.5 * S, 0.258 * S, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = PETAL;
       const c = S / 2;
-      ctx.fillStyle = GREY;
-      ctx.beginPath();
-      ctx.arc(c, c, 0.27 * S, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = GROUND;
-      ctx.beginPath();
-      ctx.arc(c, c, 0.235 * S, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = GREY;
-      ctx.beginPath();
-      ctx.arc(c, c, 0.2 * S, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = GROUND;
       for (let i = 0; i < 8; i++) {
         const a = (i * Math.PI) / 4;
+        const tip = 0.2 * S;
+        const w = 0.055 * S;
+        ctx.save();
+        ctx.translate(c, c);
+        ctx.rotate(a);
         ctx.beginPath();
-        ctx.ellipse(c + Math.cos(a) * 0.1 * S, c + Math.sin(a) * 0.1 * S, 0.085 * S, 0.035 * S, a, 0, Math.PI * 2);
+        ctx.moveTo(0.02 * S, 0);
+        ctx.quadraticCurveTo(0.1 * S, -w, tip, 0);
+        ctx.quadraticCurveTo(0.1 * S, w, 0.02 * S, 0);
         ctx.fill();
+        ctx.restore();
       }
-      ctx.fillStyle = GREY;
-      ctx.beginPath();
-      ctx.arc(c, c, 0.04 * S, 0, Math.PI * 2);
-      ctx.fill();
-      // small blue dots between the petals' tips and the ring
-      ctx.fillStyle = BLUE;
-      for (let i = 0; i < 8; i++) {
-        const a = ((i + 0.5) * Math.PI) / 4;
-        ctx.beginPath();
-        ctx.arc(c + Math.cos(a) * 0.215 * S, c + Math.sin(a) * 0.215 * S, 0.012 * S, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      disc(0.5, 0.5, 0.018, RING);
 
       // grout
-      ctx.strokeStyle = '#d9d6cf';
+      ctx.strokeStyle = '#dcd8d0';
       ctx.lineWidth = 3;
       ctx.strokeRect(0, 0, S, S);
     },
