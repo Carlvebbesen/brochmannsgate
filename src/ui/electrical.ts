@@ -32,7 +32,7 @@ export interface ElectricalActions {
 }
 
 const PHASES: { id: ElPhase; label: string; hint: string }[] = [
-  { id: 'today', label: 'Today', hint: 'What is there now (existing + points to be removed)' },
+  { id: 'today', label: 'Today', hint: 'Everything that is there now; points to be removed are only marked in Compare' },
   { id: 'planned', label: 'Planned', hint: 'What the flat ends up with (existing + new)' },
   { id: 'compare', label: 'Compare', hint: 'Everything at once: grey = existing, blue = new, red = to be removed' },
 ];
@@ -52,6 +52,10 @@ const TEMPLATE = /* html */ `
   <label class="check" title="Distance along the wall to the corner (or door/window edge) on each side; for ceiling points, to the nearest wall in each direction. The hovered or selected point always shows its own.">
     <input type="checkbox" id="el-measure" /> Show measurements
   </label>
+  <div class="el-place" id="el-place">
+    <span>New points are</span>
+    <div class="seg el-status" id="el-place-seg"></div>
+  </div>
   <div class="el-selected" id="el-selected"></div>
   <div class="el-palette" id="el-palette"></div>
   <div class="el-summary" id="el-summary"></div>
@@ -67,6 +71,8 @@ export class ElectricalPanel {
   private selected: string | null = null;
   private tool: ElTypeId | null = null;
   private editing = false;
+  /** Status for points placed in Compare; Today places existing points and Planned places new ones. */
+  private compareStatus: ElStatus = 'new';
 
   constructor(
     private readonly el: HTMLElement,
@@ -77,6 +83,7 @@ export class ElectricalPanel {
     this.buildSeg('#el-base', BASES, (id) => this.store.setView({ elBase: id }), 'base');
     this.buildSeg('#el-phase', PHASES, (id) => this.store.setView({ elPhase: id }), 'phase');
     this.buildPalette();
+    this.buildPlaceSeg();
     this.wire();
     this.setEditing(false);
     this.refresh();
@@ -105,6 +112,12 @@ export class ElectricalPanel {
     return this.editing;
   }
 
+  /** The status a point placed now gets, so it shows up in the phase it was placed in. */
+  get placeStatus(): ElStatus {
+    const phase = this.store.view.elPhase;
+    return phase === 'today' ? 'existing' : phase === 'planned' ? 'new' : this.compareStatus;
+  }
+
   showSelection(id: string | null) {
     this.selected = id;
     this.renderSelected();
@@ -122,6 +135,7 @@ export class ElectricalPanel {
     furn.disabled = this.store.view.elBase === 'model';
     this.$('#el-furn-row').classList.toggle('disabled', furn.disabled);
     this.$<HTMLInputElement>('#el-measure').checked = this.store.view.elMeasures;
+    this.renderPlace();
     this.renderSelected();
     this.renderSummary();
   }
@@ -136,6 +150,30 @@ export class ElectricalPanel {
       b.addEventListener('click', () => pick(o.id));
       host.appendChild(b);
     }
+  }
+
+  private buildPlaceSeg() {
+    const host = this.$('#el-place-seg');
+    for (const s of EL_STATUS) {
+      const b = document.createElement('button');
+      b.dataset.place = s.id;
+      b.textContent = s.label;
+      b.title = s.hint;
+      b.style.setProperty('--c', STATUS_COLOR[s.id]);
+      b.addEventListener('click', () => {
+        this.compareStatus = s.id;
+        this.renderPlace();
+        this.renderSelected();
+      });
+      host.appendChild(b);
+    }
+  }
+
+  /** Today and Planned imply the status of a new point; only Compare needs the choice. */
+  private renderPlace() {
+    const host = this.$('#el-place');
+    host.hidden = this.store.view.elPhase !== 'compare';
+    host.querySelectorAll<HTMLButtonElement>('[data-place]').forEach((b) => b.classList.toggle('on', b.dataset.place === this.compareStatus));
   }
 
   private buildPalette() {
@@ -166,8 +204,9 @@ export class ElectricalPanel {
         host.innerHTML = `<p class="hint">Hover a point to see what it is and where it sits; click it for the details. Switch on <strong>Edit</strong> to place, move or delete points.</p>`;
         return;
       }
+      const as = { existing: 'an existing', new: 'a new', remove: 'a to-be-removed' }[this.placeStatus];
       host.innerHTML = this.tool
-        ? `<p class="hint">Click the plan to place a <strong>${elType(this.tool).label}</strong>. It snaps to the nearest wall or cabinet; hold <kbd>Alt</kbd> for free placement, and <kbd>Esc</kbd> to stop.</p>`
+        ? `<p class="hint">Click the plan to place ${as} <strong>${elType(this.tool).label}</strong>. It snaps to the nearest wall or cabinet; hold <kbd>Alt</kbd> for free placement, and <kbd>Esc</kbd> to stop.</p>`
         : `<p class="hint">Pick a point type below and click the plan to place it. Click a point to edit it, drag to move it, <kbd>Delete</kbd> to remove it.</p>`;
       return;
     }
@@ -247,9 +286,9 @@ export class ElectricalPanel {
   }
 }
 
-/** A point placed by clicking the plan: the type's default height, marked as new. */
-export function newItem(type: ElTypeId, x: number, y: number): ElectricalItem {
-  return { id: `el-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`, type, x, y, status: 'new' };
+/** A point placed by clicking the plan: the type's default height, with the status the current phase calls for. */
+export function newItem(type: ElTypeId, x: number, y: number, status: ElStatus): ElectricalItem {
+  return { id: `el-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`, type, x, y, status };
 }
 
 const escapeHtml = (s: string) =>

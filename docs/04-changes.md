@@ -444,3 +444,14 @@ Code: `src/ui/touch.ts` (bar, joystick, look-drag), `WalkController.touch` / `st
 `setMenuOpen` in `src/main.ts` (also on `window.apartment3d`). Verified in headless Chromium emulating an iPhone 13: the joystick
 moved the camera ~3 m forward, a 100 px drag turned it 0.5 rad, and the menu folded and returned as described. Render:
 `docs/images/mobile-walk.png`.
+
+## Round 24: el-plan placing in Today / Planned (2026-10-05)
+- Owner report: in **Today**, placing an Outlet 2-gang marked it as *new*, so it vanished from Today and the plan was hard
+  to build up. New points now take the status of the view they are placed in: **Today → existing**, **Planned → new**.
+  In **Compare** a "New points are: Existing / New / Remove" switch picks it (default New).
+- **Today shows everything that is there today**: points marked *to be removed* are drawn grey like any existing point
+  (no red, no cross), and the legend/key only lists *Eksisterende*. Removal is only marked in **Compare**.
+
+Code: `ElectricalPanel.placeStatus` and the `#el-place` switch in `src/ui/electrical.ts`, `newItem(…, status)`,
+`Plan2D.shownStatus` / `phaseStatuses` in `src/ui/plan2d.ts`. Verified headless: in Today, Edit → Outlet 2-gang → click
+placed 1 existing point that stays visible.

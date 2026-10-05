@@ -837,6 +837,7 @@ footer .danger {
 }
 
 .el:not(.editing) .el-palette,
+.el:not(.editing) .el-place,
 .el:not(.editing) #el-clear {
   display: none;
 }
@@ -922,6 +923,19 @@ footer .danger {
 .el-status {
   grid-template-columns: 1fr 1fr 1fr;
   margin-top: 8px;
+}
+
+.el-place[hidden] {
+  display: none;
+}
+
+.el-place > span {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.el-place .el-status {
+  margin-top: 4px;
 }
 
 .el-status button.on {

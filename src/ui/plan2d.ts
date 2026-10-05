@@ -590,6 +590,17 @@ export class Plan2D {
     return item.status !== 'remove'; // planned: what the flat ends up with
   }
 
+  /** How a point is drawn: "today" is just the flat as it is, so points to be removed look existing there. */
+  private shownStatus(item: ElectricalItem): ElStatus {
+    return this.store.view.elPhase === 'today' && item.status === 'remove' ? 'existing' : item.status;
+  }
+
+  /** The statuses a phase can show, for the legend key. */
+  private phaseStatuses(): ElStatus[] {
+    const phase = this.store.view.elPhase;
+    return phase === 'today' ? ['existing'] : phase === 'planned' ? ['existing', 'new'] : ['existing', 'new', 'remove'];
+  }
+
   private drawItems() {
     const g = this.itemLayer;
     g.replaceChildren();
@@ -613,8 +624,9 @@ export class Plan2D {
     const type = elType(item.type);
     const m = onWall(item) ? mountAt(at[0], at[1]) : null;
     const anchor = m ? m.p : at;
-    const g = el('g', { class: `point ${item.status}`, 'data-id': item.id, transform: `translate(${anchor[0]} ${-anchor[1]})` });
-    g.style.setProperty('--c', STATUS_COLOR[item.status]);
+    const status = this.shownStatus(item);
+    const g = el('g', { class: `point ${status}`, 'data-id': item.id, transform: `translate(${anchor[0]} ${-anchor[1]})` });
+    g.style.setProperty('--c', STATUS_COLOR[status]);
 
     const wall = onWall(item);
     const n: Vec2 = m ? m.n : [0, 1];
@@ -627,7 +639,7 @@ export class Plan2D {
     sym.appendChild(el('circle', { cy, r: r + 0.35, class: 'hit' }));
     sym.appendChild(el('circle', { cy, r, class: 'halo' }));
     this.appendGlyph(sym, type);
-    if (item.status === 'remove') {
+    if (status === 'remove') {
       const s = r * 0.8;
       sym.appendChild(path(`M ${-s} ${cy - s} L ${s} ${cy + s} M ${-s} ${cy + s} L ${s} ${cy - s}`, { class: 'strike' }));
     }
@@ -842,8 +854,8 @@ export class Plan2D {
       this.appendGlyph(item, type);
       g.appendChild(item);
       const count = this.store.electrical.filter((e) => e.type === type.id && this.visible(e));
-      const counts = (['existing', 'new', 'remove'] as ElStatus[])
-        .map((st) => ({ st, n: count.filter((e) => e.status === st).length }))
+      const counts = this.phaseStatuses()
+        .map((st) => ({ st, n: count.filter((e) => this.shownStatus(e) === st).length }))
         .filter((c) => c.n > 0)
         .map((c) => `${c.n} ${c.st === 'existing' ? 'eks' : c.st === 'new' ? 'ny' : 'ut'}`)
         .join(' · ');
@@ -852,7 +864,7 @@ export class Plan2D {
 
     // Status key
     const keyX = left + 0.2 + 2 * colW;
-    (['existing', 'new', 'remove'] as ElStatus[]).forEach((s, i) => {
+    this.phaseStatuses().forEach((s, i) => {
       const y = top - 0.95 - i * 0.34;
       const line = el('rect', { x: keyX, y: -y - 0.06, width: 0.3, height: 0.12, fill: STATUS_COLOR[s] });
       g.appendChild(line);

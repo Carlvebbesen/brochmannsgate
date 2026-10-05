@@ -475,7 +475,7 @@ let pointSelection: string | null = null;
 const plan = new Plan2D(planHost, store, {
   select: (id) => selectPoint(id),
   place: (type, x, y) => {
-    const item = newItem(type, x, y);
+    const item = newItem(type, x, y, electrical.placeStatus);
     store.addElectrical(item);
     selectPoint(item.id);
   },
