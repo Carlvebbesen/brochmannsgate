@@ -16,9 +16,11 @@ import {
   EL_TYPES,
   SYMBOL_R,
   elType,
+  filterName,
   formatHeight,
   glyphIcon,
   itemHeight,
+  matchesFilter,
   onWall,
   type ElStatus,
   type ElType,
@@ -584,6 +586,7 @@ export class Plan2D {
   // ---- The points
 
   private visible(item: ElectricalItem): boolean {
+    if (!matchesFilter(this.store.view.elFilter, item.type)) return false;
     const phase = this.store.view.elPhase;
     if (phase === 'compare') return true;
     if (phase === 'today') return item.status !== 'new';
@@ -830,9 +833,10 @@ export class Plan2D {
 
     const title = text(left, top, 'Brochmanns gate 14C, 4. etg – EL-PLAN', { class: 'sheet-title', 'text-anchor': 'start' });
     g.appendChild(title);
+    const only = filterName(this.store.view.elFilter);
     const phaseName: Record<ElPhase, string> = { today: 'Slik det er i dag', planned: 'Slik det blir (planlagt)', compare: 'I dag + planlagt' };
     g.appendChild(
-      text(left, top - 0.32, `${phaseName[this.store.view.elPhase]} · ${new Date().toLocaleDateString('no-NO')} · mål i meter, høyder i cm over gulv`, {
+      text(left, top - 0.32, `${phaseName[this.store.view.elPhase]}${only ? ` · kun ${only.toLowerCase()}` : ''} · ${new Date().toLocaleDateString('no-NO')} · mål i meter, høyder i cm over gulv`, {
         class: 'sheet-sub',
         'text-anchor': 'start',
       }),

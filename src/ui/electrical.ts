@@ -9,9 +9,11 @@
  */
 
 import {
+  EL_GROUPS,
   EL_STATUS,
   EL_TYPES,
   elType,
+  matchesFilter,
   glyphIcon,
   itemHeight,
   type ElStatus,
@@ -52,6 +54,9 @@ const TEMPLATE = /* html */ `
   <label class="check" title="Distance along the wall to the corner (or door/window edge) on each side; for ceiling points, to the nearest wall in each direction. The hovered or selected point always shows its own.">
     <input type="checkbox" id="el-measure" /> Show measurements
   </label>
+  <label class="el-field el-filter" title="Only draw one group or type of point – also on the printed sheet and the PNG"><span>Show</span>
+    <select id="el-filter"></select>
+  </label>
   <div class="el-place" id="el-place">
     <span>New points are</span>
     <div class="seg el-status" id="el-place-seg"></div>
@@ -83,6 +88,7 @@ export class ElectricalPanel {
     this.buildSeg('#el-base', BASES, (id) => this.store.setView({ elBase: id }), 'base');
     this.buildSeg('#el-phase', PHASES, (id) => this.store.setView({ elPhase: id }), 'phase');
     this.buildPalette();
+    this.buildFilter();
     this.buildPlaceSeg();
     this.wire();
     this.setEditing(false);
@@ -94,6 +100,8 @@ export class ElectricalPanel {
 
   setTool(tool: ElTypeId | null) {
     this.tool = tool;
+    // A point placed while its type is filtered out would vanish as soon as it lands.
+    if (tool && !matchesFilter(this.store.view.elFilter, tool)) this.store.setView({ elFilter: null });
     this.el.querySelectorAll<HTMLButtonElement>('[data-type]').forEach((b) => b.classList.toggle('on', b.dataset.type === tool));
     this.actions.setTool(tool);
   }
@@ -135,6 +143,7 @@ export class ElectricalPanel {
     furn.disabled = this.store.view.elBase === 'model';
     this.$('#el-furn-row').classList.toggle('disabled', furn.disabled);
     this.$<HTMLInputElement>('#el-measure').checked = this.store.view.elMeasures;
+    this.$<HTMLSelectElement>('#el-filter').value = this.store.view.elFilter ?? '';
     this.renderPlace();
     this.renderSelected();
     this.renderSummary();
@@ -176,10 +185,23 @@ export class ElectricalPanel {
     host.querySelectorAll<HTMLButtonElement>('[data-place]').forEach((b) => b.classList.toggle('on', b.dataset.place === this.compareStatus));
   }
 
+  private buildFilter() {
+    const select = this.$<HTMLSelectElement>('#el-filter');
+    const opt = (value: string, label: string) => `<option value="${value}">${label}</option>`;
+    select.innerHTML =
+      opt('', 'All points') +
+      EL_GROUPS.map(
+        (g) =>
+          `<optgroup label="${g}">${opt(`group:${g}`, `All ${g.toLowerCase()}`)}${EL_TYPES.filter((t) => t.group === g)
+            .map((t) => opt(t.id, `Only ${t.label}`))
+            .join('')}</optgroup>`,
+      ).join('');
+    select.addEventListener('change', () => this.store.setView({ elFilter: select.value || null }));
+  }
+
   private buildPalette() {
     const host = this.$('#el-palette');
-    const groups = [...new Set(EL_TYPES.map((t) => t.group))];
-    for (const group of groups) {
+    for (const group of EL_GROUPS) {
       const details = document.createElement('details');
       details.open = true;
       details.innerHTML = `<summary>${group}</summary>`;
@@ -257,10 +279,12 @@ export class ElectricalPanel {
   }
 
   private renderSummary() {
-    const items = this.store.electrical;
+    const all = this.store.electrical;
+    const items = all.filter((i) => matchesFilter(this.store.view.elFilter, i.type));
     const count = (s: ElStatus) => items.filter((i) => i.status === s).length;
-    this.$('#el-summary').innerHTML = items.length
-      ? `<span title="Existing">${count('existing')} existing</span><span title="New">${count('new')} new</span><span title="To be removed">${count('remove')} removed</span>`
+    const hidden = all.length - items.length;
+    this.$('#el-summary').innerHTML = all.length
+      ? `<span title="Existing">${count('existing')} existing</span><span title="New">${count('new')} new</span><span title="To be removed">${count('remove')} removed</span>${hidden ? `<span class="muted" title="Filtered out by Show">${hidden} hidden</span>` : ''}`
       : `<span class="muted">No points yet.</span>`;
   }
 

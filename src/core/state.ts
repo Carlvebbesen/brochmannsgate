@@ -7,7 +7,7 @@
 
 import { VINYL_FLOORS } from '../data/palette';
 import type { Pose } from '../data/furniture';
-import { isElStatus, isElTypeId, type ElectricalItem } from '../data/electrical';
+import { isElFilter, isElStatus, isElTypeId, type ElFilter, type ElectricalItem } from '../data/electrical';
 
 export type ColorChange =
   | { type: 'color'; key: string; hex: string }
@@ -35,6 +35,8 @@ export interface ViewSettings {
   elBase: ElBase;
   /** El-plan: dimension lines from every point to the nearest corners / walls. */
   elMeasures: boolean;
+  /** El-plan: only draw one group or type of point (null = all). */
+  elFilter: ElFilter;
 }
 
 export type ElBase = 'plan' | 'model';
@@ -55,7 +57,7 @@ export interface ColorFile {
 }
 
 export const defaultView: ViewSettings = {
-  sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false, elPhase: 'compare', elFurniture: true, elBase: 'plan', elMeasures: false,
+  sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false, elPhase: 'compare', elFurniture: true, elBase: 'plan', elMeasures: false, elFilter: null,
 };
 
 const STORAGE_KEY = 'leilighet-3d:colors:v1';
@@ -293,5 +295,6 @@ function pickView(view: unknown): ViewSettings {
     elFurniture: v.elFurniture !== false,
     elBase: v.elBase === 'model' ? 'model' : 'plan',
     elMeasures: v.elMeasures === true,
+    elFilter: isElFilter(v.elFilter) ? v.elFilter : null,
   };
 }

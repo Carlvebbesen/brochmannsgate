@@ -47,13 +47,13 @@ export interface ElectricalItem {
 }
 ```
 
-A catalogue of 11 types, each `{ id, code, label, no, group, height, symbol }` — `code` is the short tag printed on
+A catalogue of 12 types, each `{ id, code, label, no, group, height, symbol }` — `code` is the short tag printed on
 the plan, `no` the Norwegian name for the printed sheet, `height` the default mounting height in cm (`null` = in the
 ceiling), `symbol` an SVG path drawn in a ±1 box:
 
 | group | id / code | label | default height |
 |---|---|---|---|
-| Outlets & data | `outlet2` "2", `outlet6` "6", `tv` "TV", `net` "NET" | Outlet 2-gang / 6-gang, TV-antenna, RJ45 | 20 cm |
+| Outlets & data | `outlet2` "2", `outlet4` "4", `outlet6` "6", `tv` "TV", `net` "NET" | Outlet 2-gang / 4-gang / 6-gang, TV-antenna, RJ45 | 20 cm |
 | Switches | `dimmer` "D", `switch` "B", `switch2` "B2" | Dimmer, switch, two-way switch | 110 cm |
 | Lights | `ceiling` "L", `wallLight` "V", `spot` "S", `led` "LED" | Ceiling light, wall light, downlight, LED strip | ceiling (`null`), wall light 180 |
 

@@ -455,3 +455,25 @@ moved the camera ~3 m forward, a 100 px drag turned it 0.5 rad, and the menu fol
 Code: `ElectricalPanel.placeStatus` and the `#el-place` switch in `src/ui/electrical.ts`, `newItem(…, status)`,
 `Plan2D.shownStatus` / `phaseStatuses` in `src/ui/plan2d.ts`. Verified headless: in Today, Edit → Outlet 2-gang → click
 placed 1 existing point that stays visible.
+
+## Round 25: 4-gang outlet (2026-10-05)
+
+- Owner request: a 4-outlet option in the el-plan. New type **`outlet4` "4" – Outlet, 4-gang / Stikkontakt 4-veis**
+  (20 cm default), between the 2- and 6-gang in the palette. Symbol: the same rounded plate as the 6-gang, narrower, with
+  two pairs of pins and one divider.
+
+Code: `EL_TYPES` in `src/data/electrical.ts`. Verified headless: the palette lists it, and placing one draws the symbol
+and adds "4 – Stikkontakt 4-veis (1 ny)" to the legend.
+
+## Round 26: "Show only…" filter on the el-plan (2026-10-05)
+
+- Owner request: a way to only see one kind of point. A **Show** dropdown (always available, also in view-only) picks
+  **All points**, a whole group (*All outlets & data / switches / lights*) or a single type (*Only Outlet, 4-gang*, …).
+- The filter applies to the drawn points, the measurements, the legend and the printed sheet/PNG; the sheet subtitle says
+  "kun …" (e.g. "kun taklampepunkt"). The summary under the palette counts the shown points and adds "n hidden".
+- Picking a type to place that the filter hides resets the filter to All, so the new point doesn't vanish when it lands.
+- Saved with the other view settings as `view.elFilter` (null = all, `group:<name>` or a type id).
+
+Code: `ElFilter` / `matchesFilter` / `filterName` in `src/data/electrical.ts`, `Plan2D.visible`, `ElectricalPanel.buildFilter`.
+Verified headless: with a 4-gang outlet, a ceiling light and a switch placed, "All outlets & data" and "Only Ceiling light" each
+draw 1 point with "2 hidden", and choosing the switch to place resets the filter.

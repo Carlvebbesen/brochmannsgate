@@ -20,6 +20,7 @@ export const EL_STATUS: { id: ElStatus; label: string; hint: string }[] = [
 
 export type ElTypeId =
   | 'outlet2'
+  | 'outlet4'
   | 'outlet6'
   | 'tv'
   | 'net'
@@ -68,8 +69,8 @@ const circle = (x: number, y: number, r: number) =>
 
 /**
  * Sockets use the Norwegian el-plan half circle with its flat side on the wall, with the two pin
- * holes of a Schuko face drawn in, so it reads as a "stikkontakt" without a legend. A 6-gang frame
- * is a wide plate with three pairs of pins. Switches are the usual circle with a lever (one per
+ * holes of a Schuko face drawn in, so it reads as a "stikkontakt" without a legend. A 4- or 6-gang
+ * frame is a wide plate with two or three pairs of pins. Switches are the usual circle with a lever (one per
  * direction for a two-way switch, half filled for a dimmer), lights a circle with a cross.
  */
 const HALF_DISC = 'M -1 0 A 1 1 0 0 1 1 0 Z';
@@ -82,6 +83,16 @@ export const EL_TYPES: ElType[] = [
   {
     id: 'outlet2', code: '2', label: 'Outlet, 2-gang', no: 'Stikkontakt 2-veis', group: 'Outlets & data', height: 20,
     glyph: { body: HALF_DISC, dots: PINS, depth: 1, half: 1 },
+  },
+  {
+    id: 'outlet4', code: '4', label: 'Outlet, 4-gang', no: 'Stikkontakt 4-veis', group: 'Outlets & data', height: 20,
+    glyph: {
+      body: 'M -1.2 0 L -1.2 -0.72 Q -1.2 -1 -0.92 -1 L 0.92 -1 Q 1.2 -1 1.2 -0.72 L 1.2 0 Z',
+      lines: 'M 0 -0.1 L 0 -0.9',
+      dots: [-0.6, 0.6].map((x) => `${circle(x - 0.22, -0.5, 0.13)} ${circle(x + 0.22, -0.5, 0.13)}`).join(' '),
+      depth: 1,
+      half: 1.2,
+    },
   },
   {
     id: 'outlet6', code: '6', label: 'Outlet, 6-gang', no: 'Stikkontakt 6-veis', group: 'Outlets & data', height: 20,
@@ -198,6 +209,29 @@ export function formatHeight(h: number | null): string {
 }
 
 export const isElTypeId = (v: unknown): v is ElTypeId => typeof v === 'string' && EL_TYPE.has(v as ElTypeId);
+/**
+ * What the el-plan shows: every point (null), one group (`group:Lights`) or a single type (its id),
+ * so the plan can be read – or printed – as "only the sockets" or "only the lights".
+ */
+export type ElFilter = string | null;
+
+export const EL_GROUPS = [...new Set(EL_TYPES.map((t) => t.group))];
+
+export const isElFilter = (v: unknown): v is ElFilter =>
+  v === null || isElTypeId(v) || EL_GROUPS.some((g) => v === `group:${g}`);
+
+export function matchesFilter(filter: ElFilter, type: ElTypeId): boolean {
+  return filter === null || filter === type || filter === `group:${elType(type).group}`;
+}
+
+/** Name of a filter for the sheet subtitle, in Norwegian like the rest of the printed sheet. */
+export function filterName(filter: ElFilter): string | null {
+  if (filter === null) return null;
+  if (isElTypeId(filter)) return elType(filter).no;
+  const group = filter.slice('group:'.length);
+  return { 'Outlets & data': 'Stikkontakter og data', Switches: 'Brytere', Lights: 'Lys' }[group] ?? group;
+}
+
 export const isElStatus = (v: unknown): v is ElStatus => v === 'existing' || v === 'new' || v === 'remove';
 
 /** Radius the symbols are drawn at, in metres of plan. */
