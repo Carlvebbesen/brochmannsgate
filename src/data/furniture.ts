@@ -51,7 +51,7 @@ export const SOFA_D = 2.18;
 export const SOFA_ARM = 0.95; // E: seat + backrest depth of a straight sofa arm
 
 export const TV_BENCH_W = 2.0;
-export const TV_BENCH_D = 0.4;
+export const TV_BENCH_D = 0.35; // M: owner-confirmed depth
 export const TV_BENCH_Z0 = 0.35; // "floating" bench, off the floor
 export const TV_BENCH_H = 0.49;
 const TV_BENCH_WALL_GAP = 0.02;

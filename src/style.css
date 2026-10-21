@@ -275,6 +275,43 @@ footer button:hover {
   font-variant-numeric: tabular-nums;
 }
 
+.tv-walls {
+  display: grid;
+  gap: 4px;
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 78px 26px 1fr 26px;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stepper button {
+  height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.stepper button:hover:not(:disabled) {
+  border-color: #cfcfc8;
+}
+
+.stepper button:disabled {
+  opacity: 0.4;
+}
+
+.stepper output {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---- Shared settings / password lock */
 
 .sync {

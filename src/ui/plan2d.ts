@@ -404,6 +404,13 @@ export class Plan2D {
     this.drawLegend();
   }
 
+  /** The walls themselves changed (the Tvstue opening): redraw them, and the 3D top view with them. */
+  redrawShell() {
+    this.drawShell();
+    this.invalidateModel();
+    this.refresh();
+  }
+
   /** The 3D model changed (colours, furniture…): the top view is re-rendered next time it is shown. */
   invalidateModel() {
     this.modelDirty = true;

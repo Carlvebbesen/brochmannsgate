@@ -37,7 +37,7 @@ N north facade · E east facade (V4–V6) · K living room/entry ↔ bedrooms (D
 | D3 kott | Kott front, in line with the front door | 0.60 × 2.05 | E |
 | D4 Hovedsoverom | 0.88 frame ending at the entry's north wall (7.332) | ≈0.80 × 2.05 | ⚠ measured 0.597 / 1.244 doesn't fit |
 | D5 Kontor | Frame 1.565 south of D4's frame (y 4.05–4.85) | 0.80 × 2.05 | M |
-| O6 Tvstue | Doorless opening, centred on the wall (y 0.392–2.692) | 2.30 × 2.10 | Owner request, head height E |
+| O6 Tvstue | Doorless opening; wall left either side is a setting (default 0.40 each → y 0.40–2.684) | 2.284 × 2.10 | Owner request, head height E |
 | D7 balcony | Wall H, glazed, opens into the living room | 0.80 × 2.20 | E |
 
 ## Windows (sill 0.915 M, top 2.25 E unless noted)

@@ -197,7 +197,7 @@ function buildSofa(ctx: BuildContext, g: THREE.Group) {
   }
 }
 
-/** Porto-style floating TV-benk, 200×40×49, off the floor. */
+/** Porto-style floating TV-benk, 200×35×49, off the floor. */
 function buildTvBench(ctx: BuildContext, g: THREE.Group) {
   const hw = TV_BENCH_W / 2;
   const hd = TV_BENCH_D / 2;

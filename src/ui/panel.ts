@@ -1,4 +1,4 @@
-import { rooms } from '../data/apartment';
+import { rooms, tvWallMax } from '../data/apartment';
 import { labelFor, paletteGroups, VINYL_FLOORS } from '../data/palette';
 import { isHex, normalizeHex, type ColorStore, type ViewSettings } from '../core/state';
 import type { SyncStatus } from '../core/remote';
@@ -20,6 +20,7 @@ export interface PanelActions {
   setCut(height: number | null): void;
   setSun(hour: number): void;
   setVinyl(on: boolean): void;
+  setTvWalls(left: number, right: number): void;
   setQuality(high: boolean): void;
   /** A camera preset; `room` (a room id) frames that room straight from above. */
   view(preset: 'perspective' | 'top', room?: string): void;
@@ -37,6 +38,7 @@ export interface SyncView {
 }
 
 const CUT_OFF = 2.8;
+const TV_WALL_STEP = 0.1;
 
 const TEMPLATE = /* html */ `
   <header>
@@ -65,6 +67,19 @@ const TEMPLATE = /* html */ `
       <label class="check"><input type="checkbox" id="opt-labels" checked /> Room labels</label>
       <label class="check" title="Width × depth on every room and movable piece of furniture."><input type="checkbox" id="opt-dims" /> Show dimensions</label>
       <label class="range"><span>Section cut</span><input type="range" id="opt-cut" min="0.4" max="${CUT_OFF}" step="0.05" value="${CUT_OFF}" /><output id="cut-v">off</output></label>
+    </div>
+    <div class="tv-walls" title="How much wall is left beside the Tvstue opening, seen from the living room. 0 leaves no wall on that side.">
+      <span>Tvstue opening</span>
+      ${(['left', 'right'] as const)
+        .map(
+          (side) => `<div class="stepper" data-side="${side}">
+        <span>${side === 'left' ? 'Left wall' : 'Right wall'}</span>
+        <button data-step="-1" aria-label="Shorter ${side} wall">−</button>
+        <output></output>
+        <button data-step="1" aria-label="Longer ${side} wall">+</button>
+      </div>`,
+        )
+        .join('')}
     </div>
     <label class="range"><span>Sun</span><input type="range" id="opt-sun" min="5" max="22" step="0.25" value="16" /><output id="sun-v">16:00</output></label>
     <label class="check"><input type="checkbox" id="opt-vinyl" checked /> Vinyl floor texture</label>
@@ -117,6 +132,19 @@ export class Panel {
     const sun = this.$<HTMLInputElement>('#opt-sun');
     sun.value = String(v.sun);
     this.$<HTMLOutputElement>('#sun-v').textContent = formatHour(v.sun);
+    this.showTvWalls(v);
+  }
+
+  private showTvWalls({ tvWallLeft: left, tvWallRight: right }: ViewSettings) {
+    for (const [side, len, other] of [
+      ['left', left, right],
+      ['right', right, left],
+    ] as const) {
+      const row = this.$(`.stepper[data-side="${side}"]`);
+      row.querySelector('output')!.textContent = `${Math.round(len * 100)} cm`;
+      row.querySelector<HTMLButtonElement>('[data-step="-1"]')!.disabled = len <= 0;
+      row.querySelector<HTMLButtonElement>('[data-step="1"]')!.disabled = len + TV_WALL_STEP > tvWallMax(other) + 1e-6;
+    }
   }
 
   /** Quality is a per-browser setting (not shared), so main.ts tells the panel what it loaded. */
@@ -294,6 +322,18 @@ export class Panel {
       cutV.textContent = on ? `${h.toFixed(2)} m` : 'off';
       this.actions.setCut(on ? h : null);
     });
+
+    this.el.querySelectorAll<HTMLButtonElement>('.stepper button').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const { tvWallLeft, tvWallRight } = this.store.view;
+        const delta = Number(btn.dataset.step) * TV_WALL_STEP;
+        // Rounded to whole centimetres so repeated steps never drift off the 10 cm grid.
+        const step = (len: number) => Math.max(0, Math.round((len + delta) * 100) / 100);
+        if (btn.closest<HTMLElement>('.stepper')!.dataset.side === 'left') this.actions.setTvWalls(step(tvWallLeft), tvWallRight);
+        else this.actions.setTvWalls(tvWallLeft, step(tvWallRight));
+        this.showTvWalls(this.store.view);
+      }),
+    );
 
     const sun = this.$<HTMLInputElement>('#opt-sun');
     const sunV = this.$<HTMLOutputElement>('#sun-v');

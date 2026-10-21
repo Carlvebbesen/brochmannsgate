@@ -17,7 +17,7 @@ import { ColorStore } from './core/state';
 import { sunDirection } from './core/sun';
 import { loadVinyl } from './core/vinyl';
 import { toWorld } from './core/geom';
-import { center, rooms, walkStart } from './data/apartment';
+import { center, rooms, setTvstueWalls, walkStart } from './data/apartment';
 import { furnitureDefaults } from './data/furniture';
 import { defaultColors } from './data/palette';
 import { Panel, type Mode, type Selection } from './ui/panel';
@@ -53,7 +53,10 @@ const PERSPECTIVE_POS = new THREE.Vector3(CENTER.x - 5.5, 13, CENTER.z + 10);
 // ---- Model
 const store = new ColorStore(defaultColors, furnitureDefaults);
 const mats = new MaterialRegistry(store, loadVinyl(renderer.capabilities.getMaxAnisotropy()));
-const apartment = buildApartment(mats);
+const tvWalls = () => `${store.view.tvWallLeft}:${store.view.tvWallRight}`;
+let builtTvWalls = tvWalls();
+setTvstueWalls(store.view.tvWallLeft, store.view.tvWallRight);
+let apartment = buildApartment(mats);
 scene.add(apartment.root);
 
 // ---- Furniture: positioned from the store (defaults, then any saved drag), kept in sync with it
@@ -85,8 +88,8 @@ compassEl.textContent = 'N ↑';
 const compass = new CSS2DObject(compassEl);
 compass.position.copy(toWorld(center[0], 10.4, 0));
 scene.add(compass);
-const labelObjects = [...apartment.labels, compass];
-const dimensionObjects = apartment.dimensions;
+let labelObjects = [...apartment.labels, compass];
+let dimensionObjects = apartment.dimensions;
 
 // ---- Lights
 const timer = new THREE.Timer();
@@ -131,7 +134,8 @@ orbit.minDistance = 2;
 orbit.maxDistance = 40;
 camera.position.copy(PERSPECTIVE_POS);
 
-const walk = new WalkController(camera, renderer.domElement, apartment.obstacles, apartment.walkable);
+const obstacles = [...apartment.obstacles];
+const walk = new WalkController(camera, renderer.domElement, obstacles, (x, y) => apartment.walkable(x, y));
 walk.touch = isTouchDevice;
 
 // ---- Phone layout: the menu can be folded away (the button only shows on narrow screens).
@@ -449,6 +453,7 @@ const panel = new Panel(document.getElementById('panel')!, store, {
   setCut: (cut) => store.setView({ cut }),
   setSun: (sun) => store.setView({ sun }),
   setVinyl: (vinyl) => store.setView({ vinyl }),
+  setTvWalls: (tvWallLeft, tvWallRight) => store.setView({ tvWallLeft, tvWallRight }),
   setQuality,
   view: setView,
   select,
@@ -598,6 +603,31 @@ function exportPlanPng() {
   };
   img.src = url;
 }
+
+// ---- Layout settings that change the geometry (the Tvstue opening) rebuild the whole model.
+function rebuildApartment() {
+  scene.remove(apartment.root);
+  apartment.root.traverse((o) => {
+    if (o instanceof THREE.Mesh || o instanceof THREE.LineSegments) o.geometry.dispose();
+    // Removing the root alone leaves the CSS2D label elements behind in the DOM.
+    if (o instanceof CSS2DObject) o.element.remove();
+  });
+  apartment = buildApartment(mats);
+  scene.add(apartment.root);
+  obstacles.splice(0, obstacles.length, ...apartment.obstacles);
+  labelObjects = [...apartment.labels, compass];
+  dimensionObjects = apartment.dimensions;
+  applyFurniturePoses();
+  applyVisibility();
+  refreshHighlight();
+  plan.redrawShell();
+}
+store.onChange((c) => {
+  if ((c.type !== 'view' && c.type !== 'all') || tvWalls() === builtTvWalls) return;
+  builtTvWalls = tvWalls();
+  setTvstueWalls(store.view.tvWallLeft, store.view.tvWallRight);
+  rebuildApartment();
+});
 
 // ---- Shared settings (Cloudflare KV via worker/index.ts)
 const remote = new Remote();

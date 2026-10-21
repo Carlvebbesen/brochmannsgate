@@ -249,6 +249,21 @@ const win = (
   window: { panes, transom },
 });
 
+// Tvstue opened up to the living room, no door (head 2.10 – E). How much wall is left either side is a
+// setting (ViewSettings.tvWallLeft/Right); left/right as seen from the living room, looking east.
+export const TV_WALL_DEFAULT = 0.4;
+export const TV_OPENING_MIN = 0.8;
+const tvOpening: Opening = { id: 'O6', name: 'Åpning Tvstue', wall: 'K', from: TV_WALL_DEFAULT, to: TV_Y1 - TV_WALL_DEFAULT, bottom: 0, top: 2.1, kind: 'opening' };
+
+/** The longest the wall on one side of the Tvstue opening can be while the opening stays passable. */
+export const tvWallMax = (other: number) => TV_Y1 - TV_OPENING_MIN - other;
+
+/** Left = north (towards Kontor), right = south (the facade). 0 leaves no wall: the opening runs into the corner. */
+export function setTvstueWalls(left: number, right: number) {
+  tvOpening.from = right;
+  tvOpening.to = TV_Y1 - left;
+}
+
 export const openings: Opening[] = [
   // Front door hinged next to the bathroom corner, standing ajar (photo 38)
   door('D1', 'Inngangsdør', 'N1', A_X1 + 0.03, 0.88, 'from', '-y', 2.1, false, 25),
@@ -257,8 +272,7 @@ export const openings: Opening[] = [
   door('D3', 'Kottdør', 'KS', KOTT_X0 + 0.095, 0.6, 'from', '-y'),
   door('D4', 'Hovedsoverom', 'K', D4_FRAME_FROM + 0.04, D4_FRAME_TO - D4_FRAME_FROM - 0.08, 'to', '+x'),
   door('D5', 'Kontor', 'K', D5_FRAME_TO - 0.04 - 0.8, 0.8, 'to', '+x'),
-  // Tvstue opened up to the living room: 2.3 m wide opening, no door (centred on the wall, head 2.10 – E)
-  { id: 'O6', name: 'Åpning Tvstue', wall: 'K', from: (TV_Y1 - 2.3) / 2, to: (TV_Y1 + 2.3) / 2, bottom: 0, top: 2.1, kind: 'opening' },
+  tvOpening,
   door('D7', 'Balkongdør', 'H', 0.13, 0.8, 'from', '-y', 2.2, true),
 
   win('V1', 'Stue', 'G', 0.39, 2.6, 4),

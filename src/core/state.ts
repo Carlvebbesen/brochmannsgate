@@ -5,6 +5,7 @@
  * own experiments survive a reload.
  */
 
+import { TV_WALL_DEFAULT, tvWallMax } from '../data/apartment';
 import { VINYL_FLOORS } from '../data/palette';
 import type { Pose } from '../data/furniture';
 import { isElFilter, isElStatus, isElTypeId, type ElFilter, type ElectricalItem } from '../data/electrical';
@@ -37,6 +38,9 @@ export interface ViewSettings {
   elMeasures: boolean;
   /** El-plan: only draw one group or type of point (null = all). */
   elFilter: ElFilter;
+  /** Metres of wall left of / right of the Tvstue opening, seen from the living room (src/data/apartment.ts). */
+  tvWallLeft: number;
+  tvWallRight: number;
 }
 
 export type ElBase = 'plan' | 'model';
@@ -58,6 +62,7 @@ export interface ColorFile {
 
 export const defaultView: ViewSettings = {
   sun: 16, ceilings: false, labels: true, cut: null, vinyl: true, dimensions: false, elPhase: 'compare', elFurniture: true, elBase: 'plan', elMeasures: false, elFilter: null,
+  tvWallLeft: TV_WALL_DEFAULT, tvWallRight: TV_WALL_DEFAULT,
 };
 
 const STORAGE_KEY = 'leilighet-3d:colors:v1';
@@ -284,6 +289,7 @@ function pickView(view: unknown): ViewSettings {
   const v = (view ?? {}) as Partial<ViewSettings>;
   const clamp = (n: unknown, min: number, max: number, fallback: number) =>
     typeof n === 'number' && Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+  const tvWallLeft = clamp(v.tvWallLeft, 0, tvWallMax(0), TV_WALL_DEFAULT);
   return {
     sun: clamp(v.sun, 5, 22, defaultView.sun),
     ceilings: v.ceilings === true,
@@ -296,5 +302,7 @@ function pickView(view: unknown): ViewSettings {
     elBase: v.elBase === 'model' ? 'model' : 'plan',
     elMeasures: v.elMeasures === true,
     elFilter: isElFilter(v.elFilter) ? v.elFilter : null,
+    tvWallLeft,
+    tvWallRight: clamp(v.tvWallRight, 0, tvWallMax(tvWallLeft), TV_WALL_DEFAULT),
   };
 }

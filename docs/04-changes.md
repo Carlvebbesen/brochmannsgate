@@ -477,3 +477,19 @@ and adds "4 – Stikkontakt 4-veis (1 ny)" to the legend.
 Code: `ElFilter` / `matchesFilter` / `filterName` in `src/data/electrical.ts`, `Plan2D.visible`, `ElectricalPanel.buildFilter`.
 Verified headless: with a 4-gang outlet, a ceiling light and a switch placed, "All outlets & data" and "Only Ceiling light" each
 draw 1 point with "2 hidden", and choosing the switch to place resets the filter.
+
+## Round 27: TV-benk depth and an adjustable Tvstue opening (2026-10-21)
+
+- Owner check: the TV-benk is **35 cm** deep (was modelled at 40). `TV_BENCH_D` is now 0.35 (M); it still hangs 2 cm off the
+  TV wall. A tvBench pose saved before this round keeps its old centre, so the bench sits 2.5 cm further off the wall until
+  it is dragged back or the furniture is reset.
+- Owner request: set how much wall is left on each side of the Tvstue opening. Panel → **Tvstue opening** has a −/+ stepper
+  (10 cm steps) for the **Left wall** (north, towards Kontor) and **Right wall** (south, the facade), as seen from the living
+  room. 0 removes that side's wall, so the opening runs straight into the corner. The opening never gets narrower than
+  0.80 m. Default 0.40 each (the old centred 2.30 m opening had 0.392 each side).
+- Saved with the other view settings as `view.tvWallLeft` / `view.tvWallRight` (metres). A change rebuilds the 3D model and
+  redraws the el-plan walls.
+
+Code: `setTvstueWalls` / `tvWallMax` in `src/data/apartment.ts`, `rebuildApartment` in `src/main.ts`, `Plan2D.redrawShell`,
+`Panel.showTvWalls`. Verified headless: bench mesh 0.35 deep; left wall 0 gives a clean corner at Kontor's wall in the 3D
+top view; right wall steps up to 2.20 and stops there (0.884 opening); the el-plan redraws; settings survive a reload.

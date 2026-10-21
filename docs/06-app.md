@@ -13,6 +13,7 @@ Live at https://brochmannsgate.ecvebbesen.workers.dev. Pushing to GitHub `main` 
 ## Controls
 - **Dollhouse**: left-drag to orbit, right-drag to pan, scroll to zoom. *3D view* / *Top view* presets. The ceilings are hidden
   unless *Show ceilings* is on. *Section cut* slices everything above a height. *Room labels* shows names and areas.
+  *Tvstue opening* sets the wall left beside the Tvstue opening on each side, in 10 cm steps (0 = no wall on that side).
 - **Furniture**: turn on *Move furniture* in the panel, then click-drag any movable piece (bed, nightstands, sofa, TV-benk,
   spisebord) to slide it across the floor; release to drop it. It's **off by default** so that orbiting near a piece never nudges
   it by accident. A plain click always still opens the colour picker for it, on or off. The Kontor wardrobes/desk and the
