@@ -46,9 +46,9 @@ const NIGHT_W = 0.46;
 const NIGHT_D = 0.4;
 const NIGHT_CY = HOV_Y1 - BED_WALL_GAP - NIGHT_D / 2;
 
-export const SOFA_W = 2.65;
-export const SOFA_D = 2.18;
-export const SOFA_ARM = 0.95; // E: seat + backrest depth of a straight sofa arm
+export const SOFA_W = 2.73; // M
+export const SOFA_D = 2.13; // M
+export const SOFA_ARM = 0.93; // M: seat + backrest depth of a straight sofa arm
 
 export const TV_BENCH_W = 2.0;
 export const TV_BENCH_D = 0.35; // M: owner-confirmed depth

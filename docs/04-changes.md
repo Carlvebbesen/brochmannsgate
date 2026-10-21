@@ -493,3 +493,11 @@ draw 1 point with "2 hidden", and choosing the switch to place resets the filter
 Code: `setTvstueWalls` / `tvWallMax` in `src/data/apartment.ts`, `rebuildApartment` in `src/main.ts`, `Plan2D.redrawShell`,
 `Panel.showTvWalls`. Verified headless: bench mesh 0.35 deep; left wall 0 gives a clean corner at Kontor's wall in the 3D
 top view; right wall steps up to 2.20 and stops there (0.884 opening); the el-plan redraws; settings survive a reload.
+
+## Round 28: Sofa measurements (2026-10-21)
+
+- Owner measurements for the Tvstue L-sofa: long side (along the south wall) **2.73 m**, short side (along the window wall)
+  **2.13 m**, arm depth **0.93 m** (was 2.65 × 2.18 with an estimated 0.95 depth). Heights unchanged. It stays in the
+  south-east corner; a sofa pose saved before this round keeps its old centre until dragged or reset.
+
+Code: `SOFA_W` / `SOFA_D` / `SOFA_ARM` in `src/data/furniture.ts`. Verified with `bun run build`.
